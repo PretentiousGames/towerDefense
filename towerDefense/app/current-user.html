@@ -1,0 +1,36 @@
+﻿<dom-module id="current-user">
+    <style>
+    </style>
+
+    <template>
+        <div hidden$="{{empty}}">Enter your name:<paper-input value="{name}"></paper-input></div>
+    </template>
+
+    <script>
+        Polymer({
+            is: "current-user",
+            properties: {
+                empty: {
+                    type: Boolean,
+                    value: true
+                },
+                name: {
+                    type: String
+                }
+            },
+            ready: function () {
+                if (Storage.name) {
+                    this.name = Storage.name;
+                    this.empty = false;
+                }
+            },
+            listeners: {
+                "name": "nameUpdated"
+            },
+            nameUpdated: function(e) {
+                Storage.name = this.name;
+                this.empty = false;
+            }
+        });
+    </script>
+</dom-module>

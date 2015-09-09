@@ -1,0 +1,38 @@
+﻿@model dynamic
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Tower Defense</title>
+    <link rel="import" href="~/app/includes.html">
+</head>
+<body>
+<div>
+    <div><current-user /></div>
+
+    <h2>JOIN A GAME!</h2>
+    @foreach (var game in Model)
+    {
+        <a href="/Game/@Html.Raw(game.Name)">@game.Name</a><br/>
+    }
+
+    <h2>CREATE A GAME!</h2>
+    <form action="/Home/CreateGame" method="post">
+        Your Name:<input type="text" name="creatorName"/><br/>
+        Game Name:<input type="text" name="gameName"/><br/>
+        <button type="submit">Create</button>
+    </form>
+    @*<form action="/Home/UploadFile" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="file"/>
+        <input type="text" name="name"/>
+
+        <button type="submit">Submit</button>
+    </form>*@
+</div>
+</body>
+</html>
