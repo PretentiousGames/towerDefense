@@ -14,7 +14,12 @@
 </head>
 <body>
     <game-page gamename="@Model"></game-page>
-
-    @foreach(GameManager)
+    <div>
+        All Players:
+        @foreach (var player in GameManager.Games.Single(game => game.Name == @Model).Players)
+        {
+            <div>@player.Name</div>
+        }
+    </div>
 </body>
 </html>
