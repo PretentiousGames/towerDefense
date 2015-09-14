@@ -13,10 +13,17 @@ namespace towerDefense
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+
             routes.MapRoute(
                 name: "Game",
+                url: "Game/UploadFile",
+                defaults: new { controller = "Game", action = "UploadFile" }
+            );
+
+            routes.MapRoute(
+                name: "GameName",
                 url: "Game/{gameName}",
-                defaults: new { controller = "Game", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Game", action = "Index" }
             );
 
             routes.MapRoute(
