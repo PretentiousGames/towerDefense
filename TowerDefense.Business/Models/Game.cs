@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace towerDefense.Controllers
+namespace TowerDefense.Business.Models
 {
     public class Game
     {
