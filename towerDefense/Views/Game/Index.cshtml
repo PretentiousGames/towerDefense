@@ -1,4 +1,5 @@
-﻿@model dynamic
+﻿@using TowerDefense.Business
+@model dynamic
 
 @{
     Layout = null;
@@ -8,11 +9,12 @@
 
 <html>
 <head>
-    <title>title</title>
+    <title>Tower Defense Game @Model</title>
+    <link rel="import" href="~/app/includes.html">
 </head>
 <body>
-<div>
-      This is game @Model
-</div>
+    <game-page gamename="@Model"></game-page>
+
+    @foreach(GameManager)
 </body>
 </html>

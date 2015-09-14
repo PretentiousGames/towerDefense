@@ -1,0 +1,36 @@
+﻿<dom-module id="game-page">
+    <style>
+    </style>
+
+    <template>
+        <div>
+            Hi <span>{{playername}}</span>
+            <h1>{{gamename}}</h1>
+
+            <div>
+                Upload a tower:
+                <form action="/Game/UploadFile" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" id="file"/>
+                    <input type="hidden" name="playername" value="{{playername}}"/>
+                    <input type="hidden" name="gamename" value="{{gamename}}"/>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: "game-page",
+            properties: {
+                gamename: String,
+                playername: String
+            },
+            ready: function() {
+                this.playername = localStorage.name;
+            }
+        });
+    </script>
+</dom-module>
+

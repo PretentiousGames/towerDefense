@@ -3,33 +3,30 @@
     </style>
 
     <template>
-        <div hidden$="{{empty}}">Enter your name:<paper-input value="{name}"></paper-input></div>
+        <div hidden$="{{filled}}">Enter your name:<paper-input value="{{name}}" on-change="nameUpdated"></paper-input></div>
     </template>
 
     <script>
         Polymer({
             is: "current-user",
             properties: {
-                empty: {
+                filled: {
                     type: Boolean,
-                    value: true
+                    value: false
                 },
                 name: {
                     type: String
                 }
             },
             ready: function () {
-                if (Storage.name) {
-                    this.name = Storage.name;
-                    this.empty = false;
+                if (localStorage.name) {
+                    this.name = localStorage.name;
+                    this.filled = true;
                 }
             },
-            listeners: {
-                "name": "nameUpdated"
-            },
             nameUpdated: function(e) {
-                Storage.name = this.name;
-                this.empty = false;
+                localStorage.name = this.name;
+                this.filled = true;
             }
         });
     </script>

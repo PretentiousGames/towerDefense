@@ -1,0 +1,41 @@
+﻿<dom-module id="main-page">
+    <style>
+    </style>
+
+    <template>
+        <div>
+            <div>
+                <current-user name="{{name}}" filled="{{filled}}"/>
+            </div>
+
+            <h2>View a game</h2>
+            <div>
+                <content></content>
+            </div>
+
+            <h2>Create a game</h2>
+            <div>
+                <form action="/Home/CreateGame" method="post">
+                    Game Name:<input type="text" name="gameName"/><br/>
+                    <input type="hidden" value="{{name}}"/>
+                    <button type="submit">Create</button>
+                </form>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: "main-page",
+            properties: {
+                filled: {
+                    type: Boolean
+                },
+                name: {
+                    type: String
+                }
+            }
+        });
+    </script>
+</dom-module>
+

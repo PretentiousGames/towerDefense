@@ -81,7 +81,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\current-user.html" />
+    <Content Include="app\players-list.html" />
     <Content Include="app\includes.html" />
+    <Content Include="app\game-page.html" />
+    <Content Include="app\main-page.html" />
     <Content Include="bower_components\font-roboto\roboto.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\demo\index.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\demo\x-key-aware.html" />
@@ -257,10 +260,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\Game.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\Player.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -328,9 +329,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TowerDefense.Business\TowerDefense.Business.csproj">
+      <Project>{7C59B829-D26A-4A45-A58E-A6BB59483311}</Project>
+      <Name>TowerDefense.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TowerDefense.Interfaces\TowerDefense.Interfaces.csproj">
       <Project>{13DF735F-B1EB-4B67-8A49-CD230B3E6F06}</Project>
       <Name>TowerDefense.Interfaces</Name>
