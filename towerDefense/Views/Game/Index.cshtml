@@ -1,5 +1,5 @@
 ﻿@using TowerDefense.Business
-@model dynamic
+@model TowerDefense.Business.Models.Game
 
 @{
     Layout = null;
@@ -9,17 +9,24 @@
 
 <html>
 <head>
-    <title>Tower Defense Game @Model</title>
+    <title>Tower Defense Game @Model.Name</title>
     <link rel="import" href="~/app/includes.html">
 </head>
 <body>
-    <game-page gamename="@Model"></game-page>
-    <div>
-        All Players:
-        @foreach (var player in GameManager.Games.Single(game => game.Name == @Model).Players)
-        {
-            <div>@player.Name</div>
-        }
-    </div>
+    <script>
+        (function() {
+            var rawModel = @Html.Raw(Json.Encode(Model));
+            var cleanUp = function(m) {
+                var players = m.Players;
+                _.forEach(players, function (p){return {name: p.Name, tower: p.Tower};});
+                return { players: players };
+            };
+            var model = cleanUp(rawModel);
+            window.towerDefense = window.towerDefense || {};
+            window.towerDefense.game = model;
+        })();
+
+    </script>
+    <game-page gamename="@Model.Name"></game-page>
 </body>
 </html>

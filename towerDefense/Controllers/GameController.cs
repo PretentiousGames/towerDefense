@@ -14,7 +14,8 @@ namespace towerDefense.Controllers
         // GET: Game
         public ActionResult Index(string gameName)
         {
-            return View("Index", (object)gameName);
+            var game = GameManager.Games.Single(x => x.Name == gameName);
+            return View("Index", game);
         }
 
         [HttpPost]

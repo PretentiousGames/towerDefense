@@ -8,14 +8,21 @@
             <h1>{{gamename}}</h1>
 
             <div>
-                Upload a tower:
+                <h3>Upload a tower:</h3>
                 <form action="/Game/UploadFile" method="post" enctype="multipart/form-data">
-                    <input type="file" name="file" id="file"/>
-                    <input type="hidden" name="playername" value="{{playername}}"/>
-                    <input type="hidden" name="gamename" value="{{gamename}}"/>
-
+                    <input type="file" name="file" id="file" />
+                    <input type="hidden" name="playername" value="{{playername}}" />
+                    <input type="hidden" name="gamename" value="{{gamename}}" />
                     <button type="submit">Submit</button>
                 </form>
+            </div>
+
+            <div>
+                <h3>All Players:</h3>
+                <template is="dom-repeat" items="{{players}}">
+                    <div># <span>{{index}}</span></div>
+                    <div>Name: <span>{{item.name}}</span></div>
+                </template>
             </div>
         </div>
     </template>
@@ -25,10 +32,12 @@
             is: "game-page",
             properties: {
                 gamename: String,
-                playername: String
+                playername: String,
+                players: Array
             },
-            ready: function() {
+            ready: function () {
                 this.playername = localStorage.name;
+                this.players = towerDefense.game.players;
             }
         });
     </script>
