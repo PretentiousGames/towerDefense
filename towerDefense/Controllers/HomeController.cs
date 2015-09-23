@@ -16,7 +16,7 @@ namespace towerDefense.Controllers
         [HttpPost]
         public ActionResult CreateGame(string creatorName, string gameName)
         {
-            GameManager.Games.Add(new Game {Name = gameName, Players = new List<Player> {new Player {Name = creatorName}}});
+            GameManager.Games.Add(new Game {Name = gameName, Players = new List<Player>()});
             return RedirectToAction("../Game/" + gameName);
         }
     }
