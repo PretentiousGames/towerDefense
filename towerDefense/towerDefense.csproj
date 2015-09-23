@@ -256,6 +256,7 @@
     <Content Include="bower_components\webcomponentsjs\webcomponents.js" />
     <Content Include="bower_components\webcomponentsjs\webcomponents.min.js" />
     <Content Include="Global.asax" />
+    <Content Include="Libraries\underscore.js" />
     <Content Include="Sprites\bullet_0.png" />
     <Content Include="Sprites\tankBase.png" />
     <Content Include="Sprites\tankTurret.png" />
