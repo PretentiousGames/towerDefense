@@ -12,6 +12,8 @@ namespace TestTower
         public double X { get; set; }
         public double Y { get; set; }
 
+        public string Name{get{return "TestTower";}}
+
         public IFoe Update(GameState gameState)
         {
             return gameState.Foes.OrderBy(foe => GetDistance(foe)).First();

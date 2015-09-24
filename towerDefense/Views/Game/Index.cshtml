@@ -18,7 +18,7 @@
             var rawModel = @Html.Raw(Json.Encode(Model));
             var cleanUp = function(m) {
                 var players = m.Players;
-                players = _.map(players, function(p){return {name: p.Name, tower: p.Tower}});
+                players = _.map(players, function(p){return {name: p.Name, towers: p.Towers}});
                 return { players: players };
             };
             var model = cleanUp(rawModel);

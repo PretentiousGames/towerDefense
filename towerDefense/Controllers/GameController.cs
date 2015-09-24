@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Web;
@@ -14,8 +15,16 @@ namespace towerDefense.Controllers
         // GET: Game
         public ActionResult Index(string gameName)
         {
-            var game = GameManager.Games.Single(x => x.Name == gameName);
-            return View("Index", game);
+            var game = GameManager.Games.SingleOrDefault(x => x.Name == gameName);
+
+            if (game != null)
+            {
+                return View("Index", game);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
@@ -32,11 +41,22 @@ namespace towerDefense.Controllers
             var tower = (ITower) constructor.Invoke(new object[] { });
 
             var game = GameManager.Games.Single(x => x.Name == gamename);
-            game.Players.Add(new Player
+
+            Player player = game.Players.FirstOrDefault(x => x.Name == playername);
+
+            if (player != null)
             {
-                Name = playername,
-                Tower = tower
-            });
+                player.Towers.Add(tower);
+            }
+            else
+            {
+                List<ITower> towers = new List<ITower>{tower};
+                game.Players.Add(new Player
+                {
+                    Name = playername,
+                    Towers = towers
+                });
+            }
 
             return RedirectToAction("../Game/" + gamename);
         }
