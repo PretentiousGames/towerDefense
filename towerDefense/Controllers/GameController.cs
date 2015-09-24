@@ -16,15 +16,7 @@ namespace towerDefense.Controllers
         public ActionResult Index(string gameName)
         {
             var game = GameManager.Games.SingleOrDefault(x => x.Name == gameName);
-
-            if (game != null)
-            {
-                return View("Index", game);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            return game == null ? (ActionResult)RedirectToAction("Index", "Home") : View("Index", game);
         }
 
         [HttpPost]
@@ -51,11 +43,11 @@ namespace towerDefense.Controllers
             else
             {
                 List<ITower> towers = new List<ITower>{tower};
-                game.Players.Add(new Player
-                {
-                    Name = playername,
+            game.Players.Add(new Player
+            {
+                Name = playername,
                     Towers = towers
-                });
+            });
             }
 
             return RedirectToAction("../Game/" + gamename);

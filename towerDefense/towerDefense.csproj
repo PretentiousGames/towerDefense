@@ -85,6 +85,7 @@
     <Content Include="app\includes.html" />
     <Content Include="app\game-page.html" />
     <Content Include="app\main-page.html" />
+    <Content Include="app\Sprite.js" />
     <Content Include="bower_components\font-roboto\roboto.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\demo\index.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\demo\x-key-aware.html" />
@@ -257,9 +258,13 @@
     <Content Include="bower_components\webcomponentsjs\webcomponents.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Libraries\underscore.js" />
+    <Content Include="Sprites\background.png" />
     <Content Include="Sprites\bullet_0.png" />
+    <Content Include="Sprites\jelly.png" />
+    <Content Include="Sprites\spawnPoint.png" />
     <Content Include="Sprites\tankBase.png" />
     <Content Include="Sprites\tankTurret.png" />
+    <Content Include="Sprites\tower.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
