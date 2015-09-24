@@ -20,10 +20,10 @@
             <div>
                 <h3>All Players:</h3>
                 <template is="dom-repeat" items="{{players}}" as="player">
-                    <div><span>{{getPlayerNumeber(index)}}</span>. <span>{{player.name}}</span></div>
+                    <div><span>{{getPlayerNumber(index)}}</span>. <span>{{player.name}}</span></div>
 
                     <template is="dom-repeat" items="{{player.towers}}" as="tower">
-                        <div>&nbsp;&nbsp;<span>{{getPlayerNumeber(index)}}</span>. <span>{{tower.Name}}</span></div>
+                        <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tower.Name}}</span></div>
                     </template>
                 </template>
             </div>
@@ -41,6 +41,9 @@
                 gamename: String,
                 playername: String,
                 players: Array
+            },
+            getPlayerNumber: function(Number) {
+                return Number + 1;
             },
             ready: function () {
                 this.playername = localStorage.name;
