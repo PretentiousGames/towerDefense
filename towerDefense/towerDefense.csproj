@@ -257,9 +257,15 @@
     <Content Include="bower_components\webcomponentsjs\webcomponents.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Libraries\underscore.js" />
+    <Content Include="Sprites\background.png" />
     <Content Include="Sprites\bullet_0.png" />
+    <Content Include="Sprites\jelly_1.png" />
+    <Content Include="Sprites\jelly_2.png" />
+    <Content Include="Sprites\jelly_3.png" />
+    <Content Include="Sprites\spawnPoint.png" />
     <Content Include="Sprites\tankBase.png" />
     <Content Include="Sprites\tankTurret.png" />
+    <Content Include="Sprites\tower.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
