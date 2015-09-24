@@ -49,71 +49,10 @@
                 this.playername = localStorage.name;
                 this.players = towerDefense.game.players;
 
-                var jelly,
-                    jellyImage,
-                    canvas = document.getElementById("gameCanvas"),
-                    ctx = canvas.getContext("2d");
-                canvas.width = 800;
-                canvas.height = 800;
+                towerDefense.gameDrawer.init(document.getElementById("gameCanvas"));
+                var gameState = { foes: [{ x: 100, y: 100, id: 0 }] };
 
-                var bgImg = new Image();
-                var ptrn;
-                bgImg.src = "../Sprites/background.png";
-                bgImg.onload = function () {
-                    ptrn = ctx.createPattern(bgImg, 'repeat');
-                }
-
-                var spawnImg = new Image();
-                spawnImg.src = "../Sprites/spawnPoint.png";
-
-                var towerImg = new Image();
-                towerImg.src = "../Sprites/tower.png";
-
-                var drawBg = function () {
-                    ctx.fillStyle = ptrn;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                }
-
-                var drawSpawn = function() {
-                    ctx.drawImage(spawnImg, 0, 0, 32, 32);
-                }
-
-                var drawTower = function() {
-                    ctx.drawImage(towerImg, canvas.width - 32, canvas.height - 48, 32, 48);
-                }
-
-                var gameLoop = function () {
-                    window.requestAnimationFrame(gameLoop);
-                    drawBg();
-                    drawSpawn();
-                    jelly.render();
-                    drawTower();
-                }
-
-                jellyImage = new Image();
-
-                jelly = window.towerDefense.makeSprite({
-                    context: ctx,
-                    width: 48,
-                    height: 16,
-                    image: jellyImage,
-                    numberOfFrames: 3,
-                    ticksPerFrame: 10
-                });
-
-                jellyImage.addEventListener("load", gameLoop);
-                jellyImage.src = "../Sprites/jelly.png";
-
-                var movement = 800;
-                var fn = function () {
-                    if (movement > 0) {
-                        setTimeout(fn, 50);
-                        movement--;
-                        jelly.x++;
-                        jelly.y++;
-                    }
-                };
-                setTimeout(fn, 50);
+                //towerDefense.gameDrawer.drawGame(gameState);
             }
         });
     </script>
