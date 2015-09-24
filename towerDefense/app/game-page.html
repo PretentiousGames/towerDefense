@@ -50,10 +50,21 @@
                 canvas.width = 800;
                 canvas.height = 800;
 
+                var bgImg = new Image();
+                var ptrn;
+                bgImg.src = "../Sprites/background.png";
+                bgImg.onload = function () {
+                    ptrn = ctx.createPattern(bgImg, 'repeat');
+                }
+
+                var drawBg = function () {
+                    ctx.fillStyle = ptrn;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+
                 var gameLoop = function () {
                     window.requestAnimationFrame(gameLoop);
-                    jelly.update();
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawBg();
                     jelly.render();
                 }
 
@@ -71,16 +82,16 @@
                 jellyImage.addEventListener("load", gameLoop);
                 jellyImage.src = "../Sprites/jelly.png";
 
-                var movement = 100;
+                var movement = 800;
                 var fn = function () {
                     if (movement > 0) {
-                        setTimeout(fn, 100);
+                        setTimeout(fn, 50);
                         movement--;
                         jelly.x++;
                         jelly.y++;
                     }
                 };
-                setTimeout(fn, 100);
+                setTimeout(fn, 50);
             }
         });
     </script>

@@ -27,6 +27,7 @@
         };
 
         sprite.render = function () {
+            sprite.update();
             sprite.context.drawImage(
                 sprite.image,
                 frameIndex * sprite.width / numberOfFrames,
