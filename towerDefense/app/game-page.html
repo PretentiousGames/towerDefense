@@ -57,15 +57,31 @@
                     ptrn = ctx.createPattern(bgImg, 'repeat');
                 }
 
+                var spawnImg = new Image();
+                spawnImg.src = "../Sprites/spawnPoint.png";
+
+                var towerImg = new Image();
+                towerImg.src = "../Sprites/tower.png";
+
                 var drawBg = function () {
                     ctx.fillStyle = ptrn;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                 }
 
+                var drawSpawn = function() {
+                    ctx.drawImage(spawnImg, 0, 0, 32, 32);
+                }
+
+                var drawTower = function() {
+                    ctx.drawImage(towerImg, canvas.width - 32, canvas.height - 48, 32, 48);
+                }
+
                 var gameLoop = function () {
                     window.requestAnimationFrame(gameLoop);
                     drawBg();
+                    drawSpawn();
                     jelly.render();
+                    drawTower();
                 }
 
                 jellyImage = new Image();
