@@ -15,7 +15,14 @@ namespace towerDefense
 
 
             routes.MapRoute(
-                name: "Game",
+                name: "Carp?",
+                url: "Game/Carp",
+                defaults: new { controller = "Game", action = "Carp" }
+            );
+
+
+            routes.MapRoute(
+                name: "UploadFile",
                 url: "Game/UploadFile",
                 defaults: new { controller = "Game", action = "UploadFile" }
             );

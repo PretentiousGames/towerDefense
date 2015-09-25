@@ -4,6 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNet.SignalR.Infrastructure;
+using Ninject;
+using towerDefense.Hubs;
 using TowerDefense.Business;
 using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
@@ -30,7 +35,7 @@ namespace towerDefense.Controllers
 
             var constructor = type.GetConstructor(new Type[] { });
 
-            var tower = (ITower) constructor.Invoke(new object[] { });
+            var tower = (ITower)constructor.Invoke(new object[] { });
 
             var game = GameManager.Games.Single(x => x.Name == gamename);
 
@@ -42,15 +47,28 @@ namespace towerDefense.Controllers
             }
             else
             {
-                List<ITower> towers = new List<ITower>{tower};
-            game.Players.Add(new Player
-            {
-                Name = playername,
+                List<ITower> towers = new List<ITower> { tower };
+                game.Players.Add(new Player
+                {
+                    Name = playername,
                     Towers = towers
-            });
+                });
             }
 
             return RedirectToAction("../Game/" + gamename);
+        }
+
+        [HttpPost]
+        public JsonResult Carp()
+        {
+            IHubConnectionContext<dynamic> clients = GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients;
+            GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
+            Random r = new Random();
+            for (int i = 0; i < r.Next(100); i++)
+            {
+                gameBroadcaster.BroadcastGameState(new GameState { Foes = new List<IFoe> { new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000) } } });
+            }
+            return Json("Carp");
         }
     }
 }
