@@ -64,9 +64,12 @@ namespace towerDefense.Controllers
             IHubConnectionContext<dynamic> clients = GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients;
             GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
             Random r = new Random();
-            for (int i = 0; i < r.Next(100); i++)
+
+            Monster monster = new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000) };
+            for (int i = 0; i < 1000; i++)
             {
-                gameBroadcaster.BroadcastGameState(new GameState { Foes = new List<IFoe> { new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000) } } });
+                gameBroadcaster.BroadcastGameState(new GameState { Foes = new List<IFoe> { monster } });
+                monster.Update(new GameState());
             }
             return Json("Carp");
         }

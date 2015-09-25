@@ -1,4 +1,6 @@
-﻿namespace TowerDefense.Interfaces
+﻿using System.Threading;
+
+namespace TowerDefense.Interfaces
 {
     public interface IFoe
     {
@@ -29,7 +31,10 @@
         public double Speed { get; set; }
         public IFoe Update(GameState gameState)
         {
-            throw new System.NotImplementedException();
+            Thread.Sleep(10);
+            X++;
+            Y++;
+            return this;
         }
     }
 }
