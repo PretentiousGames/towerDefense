@@ -29,8 +29,9 @@
             </div>
 
             <div>
+                <paper-button on-click="carp">carp</paper-button>
                 <canvas id="gameCanvas"></canvas>
-        </div>
+            </div>
         </div>
     </template>
 
@@ -42,7 +43,7 @@
                 playername: String,
                 players: Array
             },
-            getPlayerNumber: function(Number) {
+            getPlayerNumber: function (Number) {
                 return Number + 1;
             },
             ready: function () {
@@ -50,9 +51,9 @@
                 this.players = towerDefense.game.players;
 
                 towerDefense.gameDrawer.init(document.getElementById("gameCanvas"));
-                var gameState = { foes: [{ x: 100, y: 100, id: 0 }] };
-
-                //towerDefense.gameDrawer.drawGame(gameState);
+            },
+            carp: function() {
+                
             }
         });
     </script>

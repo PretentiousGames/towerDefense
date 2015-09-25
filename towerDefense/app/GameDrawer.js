@@ -2,11 +2,11 @@
     var canvas, ctx;
     var foes = [];
     window.towerDefense = window.towerDefense || {};
-    
+
     var backgroundImage = new Image();
     var backgroundPattern;
-    backgroundImage.src = "../Sprites/background.png";
     backgroundImage.onload = function () {
+        if (!ctx) { return; }
         backgroundPattern = ctx.createPattern(backgroundImage, 'repeat');
     }
     var drawBackground = function () {
@@ -47,10 +47,12 @@
         init: function (c) {
             canvas = c;
             ctx = canvas.getContext("2d");
+            backgroundImage.src = "../Sprites/background.png";
             canvas.width = 800;
             canvas.height = 800;
         },
         drawGame: function (gameState) {
+            if (!ctx) { return; }
             _.each(gameState.foes, function (foe) {
                 var renderFoe = _.find(foes, function (f) {
                     return f.id === foe.id;
@@ -81,5 +83,4 @@
         }
     };
     window.towerDefense.gameDrawer = gameDrawer;
-
 })();

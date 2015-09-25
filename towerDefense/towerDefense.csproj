@@ -38,7 +38,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AspNet.SignalR.Core">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.2.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -86,6 +108,7 @@
     <Content Include="app\game-page.html" />
     <Content Include="app\main-page.html" />
     <Content Include="app\GameDrawer.js" />
+    <Content Include="app\Communicator.js" />
     <Content Include="app\Sprite.js" />
     <Content Include="bower_components\font-roboto\roboto.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\demo\index.html" />
@@ -94,6 +117,13 @@
     <Content Include="bower_components\iron-a11y-keys-behavior\iron-a11y-keys-behavior.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\test\basic-test.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\test\index.html" />
+    <Content Include="bower_components\iron-ajax\demo\index.html" />
+    <Content Include="bower_components\iron-ajax\index.html" />
+    <Content Include="bower_components\iron-ajax\iron-ajax.html" />
+    <Content Include="bower_components\iron-ajax\iron-request.html" />
+    <Content Include="bower_components\iron-ajax\test\index.html" />
+    <Content Include="bower_components\iron-ajax\test\iron-ajax.html" />
+    <Content Include="bower_components\iron-ajax\test\iron-request.html" />
     <Content Include="bower_components\iron-autogrow-textarea\demo\index.html" />
     <Content Include="bower_components\iron-autogrow-textarea\hero.svg" />
     <Content Include="bower_components\iron-autogrow-textarea\index.html" />
@@ -259,6 +289,13 @@
     <Content Include="bower_components\webcomponentsjs\webcomponents.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Libraries\underscore.js" />
+    <Content Include="bower_components\iron-ajax\bower.json" />
+    <Content Include="bower_components\iron-ajax\README.md" />
+    <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.6.4.js" />
+    <Content Include="Scripts\jquery-1.6.4.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Sprites\background.png" />
     <Content Include="Sprites\boom.png" />
     <Content Include="Sprites\bullet_0.png" />
@@ -271,11 +308,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\GameBroadcaster.cs" />
+    <Compile Include="Hubs\GameHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
