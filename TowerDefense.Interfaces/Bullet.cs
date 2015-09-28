@@ -1,6 +1,8 @@
-﻿namespace TowerDefense.Interfaces
+﻿using TowerDefense.Interfaces;
+
+namespace TowerDefense.Business.Models
 {
-    public class Bullet
+    public class Bullet : IBullet
     {
         public double Range { get; set; }
         public double Damage { get; set; }

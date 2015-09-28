@@ -41,10 +41,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bullet.cs" />
-    <Compile Include="GameState.cs" />
+    <Compile Include="IBullet.cs" />
+    <Compile Include="IEntity.cs" />
     <Compile Include="IFoe.cs" />
-    <Compile Include="ITower.cs" />
+    <Compile Include="IGameState.cs" />
+    <Compile Include="IGoal.cs" />
+    <Compile Include="IKillable.cs" />
+    <Compile Include="IMonster.cs" />
+    <Compile Include="ITank.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="Vector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

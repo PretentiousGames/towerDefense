@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR.Hubs;
+using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
 
 namespace towerDefense.Hubs

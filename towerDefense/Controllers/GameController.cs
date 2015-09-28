@@ -32,11 +32,11 @@ namespace towerDefense.Controllers
             file.InputStream.Read(data, 0, data.Length);
             var assembly = Assembly.Load(data);
 
-            var type = assembly.GetTypes().Single(t => t.GetInterfaces().Contains(typeof(ITower)));
+            var type = assembly.GetTypes().Single(t => t.GetInterfaces().Contains(typeof(ITank)));
 
             var constructor = type.GetConstructor(new Type[] { });
 
-            var tower = (ITower)constructor.Invoke(new object[] { });
+            var tower = (ITank)constructor.Invoke(new object[] { });
 
             var game = GameManager.Games.Single(x => x.Name == gamename);
 
@@ -48,7 +48,7 @@ namespace towerDefense.Controllers
             }
             else
             {
-                List<ITower> towers = new List<ITower> { tower };
+                List<ITank> towers = new List<ITank> { tower };
                 game.Players.Add(new Player
                 {
                     Name = playername,
@@ -67,12 +67,16 @@ namespace towerDefense.Controllers
             Random r = new Random();
 
             var foes = new List<IMonster>();
-            for (int i = 0; i < 100; i++)
-            {
-                Monster monster = new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000), Size = 15};
-                foes.Add(monster);
-            }
-            var gameState = new GameState { Foes = foes, Size = new Size { Height = 800, Width = 800 } };
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    Monster monster = new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000), Size = 15};
+            //    foes.Add(monster);
+            //}
+            
+            Monster m = new Monster { X = 400, Y = 400, Id = 0, Size = 15 };
+            foes.Add(m);
+            
+            var gameState = new GameState { Foes = foes, Size = new Size { Height = 800, Width = 800 }, Goals = new List<IGoal> { new Goal { X = 0, Y = 0 } } };
             for (int i = 0; i < 1000; i++)
             {
                 gameBroadcaster.BroadcastGameState(gameState);

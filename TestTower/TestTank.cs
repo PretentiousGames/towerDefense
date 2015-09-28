@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
 
 namespace TestTower
 {
-    public class TestTower : ITower
+    public class TestTank : ITank
     {
         public double X { get; set; }
         public double Y { get; set; }
 
-        public string Name{get{return "TestTower";}}
+        public string Name{get{return "TestTank";}}
 
-        public IFoe Update(GameState gameState)
+        public IFoe Update(IGameState gameState)
         {
             return gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
         }
@@ -24,7 +25,7 @@ namespace TestTower
             return Math.Sqrt(Math.Pow(X - foe.X, 2) + Math.Pow(Y - foe.Y, 2));
         }
 
-        public Bullet GetBullet()
+        public IBullet GetBullet()
         {
             return new Bullet { Damage = 1, Range = 1 };
         }

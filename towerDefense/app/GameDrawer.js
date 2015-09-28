@@ -67,13 +67,13 @@
                         numberOfFrames: 3,
                         ticksPerFrame: 10
                     });
-                    renderFoe.sprite.x = renderFoe.x;
-                    renderFoe.sprite.y = renderFoe.y;
+                    renderFoe.sprite.x = Math.floor(renderFoe.x);
+                    renderFoe.sprite.y = Math.floor(renderFoe.y);
                     foes.push(renderFoe);
                 } else {
                     _.extend(renderFoe, foe);
-                    renderFoe.sprite.x = renderFoe.x;
-                    renderFoe.sprite.y = renderFoe.y;
+                    renderFoe.sprite.x = Math.floor(renderFoe.x);
+                    renderFoe.sprite.y = Math.floor(renderFoe.y);
                 }
             });
             foes = _.filter(foes, function (foe) {
