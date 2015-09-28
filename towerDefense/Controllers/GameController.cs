@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
@@ -65,11 +66,21 @@ namespace towerDefense.Controllers
             GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
             Random r = new Random();
 
-            Monster monster = new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000) };
+            var foes = new List<IMonster>();
+            for (int i = 0; i < 100; i++)
+            {
+                Monster monster = new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000), Size = 15};
+                foes.Add(monster);
+            }
+            var gameState = new GameState { Foes = foes, Size = new Size { Height = 800, Width = 800 } };
             for (int i = 0; i < 1000; i++)
             {
-                gameBroadcaster.BroadcastGameState(new GameState { Foes = new List<IFoe> { monster } });
-                monster.Update(new GameState());
+                gameBroadcaster.BroadcastGameState(gameState);
+                foreach (var monster in foes)
+                {
+                    monster.Update(gameState);
+                }
+                Thread.Sleep(10);
             }
             return Json("Carp");
         }

@@ -76,6 +76,9 @@
                     renderFoe.sprite.y = renderFoe.y;
                 }
             });
+            foes = _.filter(foes, function (foe) {
+                return _.find(gameState.foes, function (f) { return f.id === foe.id; });
+            });
             if (!rendering) {
                 rendering = true;
                 renderLoop();
