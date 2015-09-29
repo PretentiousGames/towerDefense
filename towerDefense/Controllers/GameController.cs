@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNet.SignalR.Infrastructure;
+using Newtonsoft.Json.Serialization;
 using Ninject;
 using towerDefense.Hubs;
 using TowerDefense.Business;
@@ -76,7 +77,12 @@ namespace towerDefense.Controllers
             Monster m = new Monster { X = 400, Y = 400, Id = 0, Size = 15 };
             foes.Add(m);
             
-            var gameState = new GameState { Foes = foes, Size = new Size { Height = 800, Width = 800 }, Goals = new List<IGoal> { new Goal { X = 0, Y = 0 } } };
+            var gameState = new GameState
+            {
+                Foes = foes,
+                Size = new Size { Height = 800, Width = 800 },
+                Goals = new List<IGoal> { new Goal { X = 0, Y = 0 } }
+            };
             for (int i = 0; i < 1000; i++)
             {
                 gameBroadcaster.BroadcastGameState(gameState);
@@ -86,7 +92,15 @@ namespace towerDefense.Controllers
                 }
                 Thread.Sleep(10);
             }
+
             return Json("Carp");
+        }
+    }
+    public class LowercaseContractResolver : DefaultContractResolver
+    {
+        protected override string ResolvePropertyName(string propertyName)
+        {
+            return propertyName.ToLower();
         }
     }
 }

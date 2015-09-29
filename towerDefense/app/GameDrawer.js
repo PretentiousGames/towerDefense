@@ -1,7 +1,7 @@
 ﻿(function () {
     var canvas, ctx;
     var foes = [];
-    var towers = [];
+    var goals = [];
     window.towerDefense = window.towerDefense || {};
 
     var backgroundImage = new Image();
@@ -21,10 +21,10 @@
         ctx.drawImage(spawnImage, 0, 0);
     }
 
-    var towerImage = new Image();
-    towerImage.src = "../Sprites/tower.png";
-    var drawTower = function (x, y) {
-        ctx.drawImage(towerImage, x, y, 32, 48);
+    var goalImage = new Image();
+    goalImage.src = "../Sprites/tower.png";
+    var drawgoal = function (x, y) {
+        ctx.drawImage(goalImage, x, y, 32, 48);
     }
 
     var rendering = false;
@@ -37,8 +37,8 @@
         _.each(foes, function (foe) {
             foe.sprite.render();
         });
-        _.each(towers, function (tower) {
-            drawTower(tower.x, tower.y);
+        _.each(goals, function (goal) {
+            drawgoal(goal.x, goal.y);
         });
     }
 
@@ -83,19 +83,19 @@
                 return _.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
 
-            _.each(gameState.towers, function (tower) {
-                var rendertower = _.find(towers, function (f) {
-                    return f.id === tower.id;
+            _.each(gameState.goals, function (goal) {
+                var rendergoal = _.find(goals, function (f) {
+                    return f.id === goal.id;
                 });
-                if (typeof rendertower === "undefined") {
-                    rendertower = _.extend({}, tower);
-                    towers.push(rendertower);
+                if (typeof rendergoal === "undefined") {
+                    rendergoal = _.extend({}, goal);
+                    goals.push(rendergoal);
                 } else {
-                    _.extend(rendertower, tower);
+                    _.extend(rendergoal, goal);
                 }
             });
-            towers = _.filter(towers, function (tower) {
-                return _.find(gameState.towers, function (f) { return f.id === tower.id; });
+            goals = _.filter(goals, function (goal) {
+                return _.find(gameState.goals, function (f) { return f.id === goal.id; });
             });
 
             if (!rendering) {
