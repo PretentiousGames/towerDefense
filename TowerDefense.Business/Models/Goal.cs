@@ -6,7 +6,8 @@ namespace TowerDefense.Business.Models
     {
         public double X { get; set; }
         public double Y { get; set; }
-        public double Size { get; set; }
+        public Size Size { get; set; }
         public double Health { get; set; }
+        public int Id { get; set; }
     }
 }

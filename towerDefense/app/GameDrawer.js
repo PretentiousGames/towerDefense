@@ -2,6 +2,7 @@
     var canvas, ctx;
     var foes = [];
     var goals = [];
+    var booms = [];
     window.towerDefense = window.towerDefense || {};
 
     var backgroundImage = new Image();
@@ -18,7 +19,7 @@
     var spawnImage = new Image();
     spawnImage.src = "../Sprites/spawnPoint.png";
     var drawSpawn = function () {
-        ctx.drawImage(spawnImage, 0, 0);
+        ctx.drawImage(spawnImage, 400-16, 400-16);
     }
 
     var goalImage = new Image();
@@ -37,6 +38,9 @@
         _.each(foes, function (foe) {
             foe.sprite.render();
         });
+        //_.each(booms, function (boom) {
+        //    boom.sprite.render();
+        //});
         _.each(goals, function (goal) {
             drawgoal(goal.x, goal.y);
         });
@@ -45,6 +49,9 @@
     var foeImage = new Image();
     //foeImage.addEventListener("load", renderLoop);
     foeImage.src = "../Sprites/jelly.png";
+
+    var boomImage = new Image();
+    boomImage.src = "../Sprites/boom.png";
 
     var gameDrawer = {
         init: function (c) {
@@ -68,7 +75,7 @@
                         height: 16,
                         image: foeImage,
                         numberOfFrames: 3,
-                        ticksPerFrame: 10
+                        ticksPerFrame: 5
                     });
                     renderFoe.sprite.x = Math.floor(renderFoe.x);
                     renderFoe.sprite.y = Math.floor(renderFoe.y);
@@ -79,6 +86,30 @@
                     renderFoe.sprite.y = Math.floor(renderFoe.y);
                 }
             });
+
+            var deadFoes = _.filter(foes, function (foe) {
+                return !_.find(gameState.foes, function (f) { return f.id === foe.id; });
+            });
+            _.each(deadFoes, function(deadFoe) {
+                deadFoe.sprite = window.towerDefense.makeSprite({
+                    context: ctx,
+                    width: 320,
+                    height: 32,
+                    image: boomImage,
+                    numberOfFrames: 10,
+                    ticksPerFrame: 10,
+                    loop: false,
+                    destroyCallback: function() {
+                        booms = _.filter(booms, function(boom) {
+                            return boom.id !== deadFoe.id;
+                        });
+                    }
+                });
+                deadFoe.sprite.x = Math.floor(deadFoe.x);
+                deadFoe.sprite.y = Math.floor(deadFoe.y);
+                booms.push(deadFoe);
+            });
+
             foes = _.filter(foes, function (foe) {
                 return _.find(gameState.foes, function (f) { return f.id === foe.id; });
             });

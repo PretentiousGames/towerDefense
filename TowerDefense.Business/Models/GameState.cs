@@ -6,7 +6,7 @@ namespace TowerDefense.Business.Models
 {
     public class GameState : IGameState
     {
-        public IEnumerable<IFoe> Foes { get; set; }
+        public List<IFoe> Foes { get; set; }
         public IEnumerable<IEntity> Entities
         {
             get { return Foes.Select(foe => (IEntity)foe); }

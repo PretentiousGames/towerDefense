@@ -7,19 +7,36 @@ namespace TowerDefense.Business.Models
 {
     public class Monster : IMonster
     {
+        private static Random _random = new Random();
+        public Monster()
+        {
+            V = new Vector();
+        }
+
         public int Id { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
+        public Vector V { get; set; }
         public double Health { get; set; }
         public double Speed { get; set; }
-        public double Size { get; set; }
+        public Size Size { get; set; }
+
         public IFoe Update(IGameState gameState)
         {
             var pull = GeneratePull(gameState.Goals);
-            if (CanMove(X + pull.X, Y + pull.Y, gameState))
+            var randomComponent = new Vector(_random.NextDouble() * 2 - 1, _random.NextDouble() * 2 - 1);
+            pull += randomComponent;
+            V += pull;
+            var xMovement = Math.Max(Math.Min(V.X, 1), -1);
+            var yMovement = Math.Max(Math.Min(V.Y, 1), -1);
+
+            if (CanMove(X + xMovement, Y, gameState))
             {
-                X += pull.X;
-                Y += pull.Y;
+                X += xMovement;
+            }
+            if (CanMove(X, Y + yMovement, gameState))
+            {
+                Y += yMovement;
             }
             return this;
         }
@@ -29,11 +46,11 @@ namespace TowerDefense.Business.Models
             var pull = new Vector();
             foreach (var goal in goals)
             {
-                var xComponent = goal.X - X;
-                var yComponent = goal.Y - Y;
+                var xComponent = goal.X + goal.Size.Width / 2 - X;
+                var yComponent = goal.Y + goal.Size.Height / 2 - Y;
                 var distanceSquared = xComponent * xComponent + yComponent * yComponent;
                 var angle = Math.Atan2(yComponent, xComponent);
-                var magnitude = 100000 / distanceSquared;
+                var magnitude = 10000 / distanceSquared;
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
             return pull;
@@ -48,10 +65,10 @@ namespace TowerDefense.Business.Models
         {
             foreach (var obstacle in gameState.Entities.Where(entity => this != entity))
             {
-                if ((x < obstacle.X + obstacle.Size) &&
-                    (x + Size < obstacle.X) &&
-                    (y > obstacle.Y + obstacle.Size) &&
-                    (y + Size < obstacle.Y))
+                if ((x < obstacle.X + obstacle.Size.Width) &&
+                    (x + Size.Width < obstacle.X) &&
+                    (y > obstacle.Y + obstacle.Size.Height) &&
+                    (y + Size.Height < obstacle.Y))
                 {
                     return false;
                 }
@@ -61,8 +78,8 @@ namespace TowerDefense.Business.Models
 
         private bool InBounds(double x, double y, IGameState gameState)
         {
-            return x + Size < gameState.Size.Width && x > 0 &&
-                   y + Size < gameState.Size.Height && Y > 0;
+            return x + Size.Width < gameState.Size.Width && x > 0 &&
+                   y + Size.Height < gameState.Size.Height && y > 0;
         }
     }
 }
