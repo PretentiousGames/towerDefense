@@ -1,6 +1,7 @@
 ﻿(function () {
     var canvas, ctx;
     var foes = [];
+    var towers = [];
     window.towerDefense = window.towerDefense || {};
 
     var backgroundImage = new Image();
@@ -22,8 +23,8 @@
 
     var towerImage = new Image();
     towerImage.src = "../Sprites/tower.png";
-    var drawTower = function () {
-        ctx.drawImage(towerImage, canvas.width - 32, canvas.height - 48, 32, 48);
+    var drawTower = function (x, y) {
+        ctx.drawImage(towerImage, x, y, 32, 48);
     }
 
     var rendering = false;
@@ -36,7 +37,9 @@
         _.each(foes, function (foe) {
             foe.sprite.render();
         });
-        drawTower();
+        _.each(towers, function (tower) {
+            drawTower(tower.x, tower.y);
+        });
     }
 
     var foeImage = new Image();
@@ -79,6 +82,22 @@
             foes = _.filter(foes, function (foe) {
                 return _.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
+
+            _.each(gameState.towers, function (tower) {
+                var rendertower = _.find(towers, function (f) {
+                    return f.id === tower.id;
+                });
+                if (typeof rendertower === "undefined") {
+                    rendertower = _.extend({}, tower);
+                    towers.push(rendertower);
+                } else {
+                    _.extend(rendertower, tower);
+                }
+            });
+            towers = _.filter(towers, function (tower) {
+                return _.find(gameState.towers, function (f) { return f.id === tower.id; });
+            });
+
             if (!rendering) {
                 rendering = true;
                 renderLoop();
