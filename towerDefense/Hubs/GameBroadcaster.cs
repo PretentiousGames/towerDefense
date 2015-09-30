@@ -4,7 +4,7 @@ using TowerDefense.Interfaces;
 
 namespace towerDefense.Hubs
 {
-    public class GameBroadcaster
+    public class GameBroadcaster : IGameBroadcaster
     {
         private IHubConnectionContext<dynamic> Clients { get; set; }
 
@@ -13,7 +13,7 @@ namespace towerDefense.Hubs
             Clients = clients;
         }
         
-        public void BroadcastGameState(GameState gameState)
+        public void BroadcastGameState(IGameState gameState)
         {
             Clients.All.updateGameState(gameState);
         }

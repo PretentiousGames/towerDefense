@@ -14,13 +14,14 @@ namespace TowerDefense.Business.Models
 
         public Monster()
         {
-            V = new Vector();
+            V = new Vector(GetRandomVDelta() * 10, GetRandomVDelta() * 10);
             Size = new Size(Width, Height);
             Id = _id++;
             Health = MaxHealth;
         }
 
         private static Random _random = new Random();
+        private int _gravityConstant = 500;
 
         public int Id { get; private set; }
         public double X { get; set; }
@@ -33,7 +34,7 @@ namespace TowerDefense.Business.Models
         public IFoe Update(IGameState gameState)
         {
             var pull = GeneratePull(gameState.Goals);
-            var randomComponent = new Vector(_random.NextDouble() * 2 - 1, _random.NextDouble() * 2 - 1);
+            var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
             pull += randomComponent;
             V += pull;
             var xMovement = Math.Max(Math.Min(V.X, 1), -1);
@@ -43,11 +44,26 @@ namespace TowerDefense.Business.Models
             {
                 X += xMovement;
             }
+            else
+            {
+                V.X /= 2;
+            }
+
             if (CanMove(X, Y + yMovement, gameState))
             {
                 Y += yMovement;
             }
+            else
+            {
+                V.Y /= 2;
+            }
+
             return this;
+        }
+
+        private static double GetRandomVDelta()
+        {
+            return _random.NextDouble() * .1 - .05;
         }
 
         private Vector GeneratePull(List<IGoal> goals)
@@ -59,7 +75,7 @@ namespace TowerDefense.Business.Models
                 var yComponent = goal.Y + goal.Size.Height / 2 - Y;
                 var distanceSquared = xComponent * xComponent + yComponent * yComponent;
                 var angle = Math.Atan2(yComponent, xComponent);
-                var magnitude = 5000 / distanceSquared;
+                var magnitude = _gravityConstant / distanceSquared;
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
             return pull;
