@@ -62,64 +62,54 @@ namespace towerDefense.Controllers
             return RedirectToAction("../Game/" + gamename);
         }
 
-        private static Thread _thing;
+        private static Thread _gameThread;
         [HttpPost]
-        public JsonResult Carp()
+        public JsonResult Start()
         {
-            if (_thing != null && _thing.IsAlive)
+            if (_gameThread != null && _gameThread.IsAlive)
             {
-                _thing.Abort();
+                _gameThread.Abort();
             }
-            _thing = new Thread(ThreadStart);
-            _thing.Start();
+            _gameThread = new Thread(ThreadStart);
+            _gameThread.Start();
 
-            return Json("Carp");
+            return Json("start");
         }
 
         private static void ThreadStart()
         {
             IHubConnectionContext<dynamic> clients = GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients;
             GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
-            Random r = new Random();
+            //Random r = new Random();
 
-            //var foes = new List<IMonster>();
-
-            int i = 0;
-            //for (i = 0; i < 10; i++)
-            //{
-            //    Monster m = new Monster { X = 400 - 8, Y = 400 - 8, Id = i, Size = new Size(16) };
-            //    foes.Add(m);
-            //}
-
-            var height = 800;
-            var width = 800;
-            var towerWidth = 32;
-            var towerHeight = 48;
+            var height = Game.DefaultSize.Height;
+            var width = Game.DefaultSize.Width;
             var gameState = new GameState
             {
-                Foes = new List<IFoe>(),//foes.OfType<IFoe>().ToList(),
+                Foes = new List<IFoe>(),
                 Size = new Size { Height = height, Width = width },
-                Goals = new List<IGoal> //32, 48
+                Goals = new List<IGoal>
                 {
-                    new Goal {X = 0, Y = 0, Id = 0, Size = new Size(32,48)},
-                    new Goal {X = width - towerWidth, Y = 0, Id = 1, Size = new Size(32,48)},
-                    new Goal {X = 0, Y = height - towerHeight, Id = 2, Size = new Size(32,48)},
-                    new Goal {X = width - towerWidth, Y = height - towerHeight, Id = 3, Size = new Size(32,48)}
+                    new Goal {X = 0, Y = 0},
+                    new Goal {X = width - Goal.Width, Y = 0},
+                    new Goal {X = 0, Y = height - Goal.Height},
+                    new Goal {X = width - Goal.Width, Y = height - Goal.Height}
                 }
             };
-            //for (int i = 0; i < 10000; i++)
-            while(true)
+
+            int foeCount = 10;
+            while (true)
             {
-                if (gameState.Foes.Count < 10)
+                if (gameState.Foes.Count < foeCount)
                 {
-                    Monster m = new Monster {X = 400 - 8, Y = 400 - 8, Id = i++, Size = new Size(16)};
+                    Monster m = new Monster { X = 400 - 8, Y = 400 - 8 };
                     gameState.Foes.Add(m);
                 }
 
                 gameBroadcaster.BroadcastGameState(gameState);
                 for (int j = 0; j < gameState.Foes.Count; j++)
                 {
-                    var monster = (IMonster) gameState.Foes[j];
+                    var monster = (IMonster)gameState.Foes[j];
                     monster.Update(gameState);
                     var goal = IsMonsterAtGoal(monster, gameState.Goals);
                     if (goal != null)

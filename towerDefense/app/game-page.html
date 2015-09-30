@@ -29,7 +29,7 @@
             </div>
 
             <div>
-                <paper-button on-click="carp">carp</paper-button>
+                <paper-button on-click="start">Start</paper-button>
                 <canvas id="gameCanvas"></canvas>
             </div>
         </div>
@@ -52,8 +52,8 @@
 
                 towerDefense.gameDrawer.init(document.getElementById("gameCanvas"));
             },
-            carp: function () {
-                var url = "/Game/Carp";
+            start: function () {
+                var url = "/Game/Start";
                 var xhr = new XMLHttpRequest();
                 var callback = function() {};
                 xhr.open('POST', url);
@@ -66,7 +66,7 @@
                         }
                     }
                 };
-                xhr.send(JSON.stringify("OI!"));
+                xhr.send(JSON.stringify("Start!"));
             }
         });
     </script>

@@ -113,6 +113,7 @@
     <Content Include="app\main-page.html" />
     <Content Include="app\GameDrawer.js" />
     <Content Include="app\Communicator.js" />
+    <Content Include="app\JsMapper.js" />
     <Content Include="app\Sprite.js" />
     <Content Include="bower_components\font-roboto\roboto.html" />
     <Content Include="bower_components\iron-a11y-keys-behavior\demo\index.html" />

@@ -58,8 +58,8 @@
             canvas = c;
             ctx = canvas.getContext("2d");
             backgroundImage.src = "../Sprites/background.png";
-            canvas.width = 800;
-            canvas.height = 800;
+            canvas.width = towerDefense.game.size.width;
+            canvas.height = towerDefense.game.size.height;
         },
         drawGame: function (gameState) {
             if (!ctx) { return; }
