@@ -13,6 +13,8 @@
         sprite.image = options.image;
         sprite.x = options.x || 0;
         sprite.y = options.y || 0;
+        sprite.loop = options.loop || true;
+        sprite.destroy = options.destroyCallback || function() {};
 
         sprite.update = function () {
             tickCount += 1;
@@ -21,7 +23,11 @@
                 if (frameIndex < numberOfFrames - 1) {
                     frameIndex += 1;
                 } else {
-                    frameIndex = 0;
+                    if (loop) {
+                        frameIndex = 0;
+                    } else {
+                        sprite.destroy();
+                    }
                 }
             }
         };

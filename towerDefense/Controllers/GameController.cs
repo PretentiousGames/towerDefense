@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -14,6 +15,7 @@ using towerDefense.Hubs;
 using TowerDefense.Business;
 using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
+using Size = TowerDefense.Interfaces.Size;
 
 namespace towerDefense.Controllers
 {
@@ -60,40 +62,78 @@ namespace towerDefense.Controllers
             return RedirectToAction("../Game/" + gamename);
         }
 
+        private static Thread _thing;
         [HttpPost]
         public JsonResult Carp()
+        {
+            if (_thing != null && _thing.IsAlive)
+            {
+                _thing.Abort();
+            }
+            _thing = new Thread(ThreadStart);
+            _thing.Start();
+
+            return Json("Carp");
+        }
+
+        private static void ThreadStart()
         {
             IHubConnectionContext<dynamic> clients = GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients;
             GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
             Random r = new Random();
 
             var foes = new List<IMonster>();
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    Monster monster = new Monster { X = r.Next(800), Y = r.Next(800), Id = r.Next(8000), Size = 15};
-            //    foes.Add(monster);
-            //}
-            
-            Monster m = new Monster { X = 400, Y = 400, Id = 0, Size = 15 };
-            foes.Add(m);
-            
+
+            for (int i = 0; i < 10; i++)
+            {
+                Monster m = new Monster { X = 400 - 8, Y = 400 - 8, Id = i, Size = new Size(16) };
+                foes.Add(m);
+            }
+
+            var height = 800;
+            var width = 800;
+            var towerWidth = 32;
+            var towerHeight = 48;
             var gameState = new GameState
             {
-                Foes = foes,
-                Size = new Size { Height = 800, Width = 800 },
-                Goals = new List<IGoal> { new Goal { X = 0, Y = 0 } }
+                Foes = foes.OfType<IFoe>().ToList(),
+                Size = new Size { Height = height, Width = width },
+                Goals = new List<IGoal> //32, 48
+                {
+                    new Goal {X = 0, Y = 0, Id = 0, Size = new Size(32,48)},
+                    new Goal {X = width - towerWidth, Y = 0, Id = 1, Size = new Size(32,48)},
+                    new Goal {X = 0, Y = height - towerHeight, Id = 2, Size = new Size(32,48)},
+                    new Goal {X = width - towerWidth, Y = height - towerHeight, Id = 3, Size = new Size(32,48)}
+                }
             };
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 gameBroadcaster.BroadcastGameState(gameState);
                 foreach (var monster in foes)
                 {
                     monster.Update(gameState);
+                    var goal = IsMonsterAtGoal(monster, gameState.Goals);
+                    if (goal != null)
+                    {
+                        gameState.Foes.Remove(monster);
+                    }
                 }
                 Thread.Sleep(10);
             }
+        }
 
-            return Json("Carp");
+        public static IGoal IsMonsterAtGoal(IFoe monster, List<IGoal> goals)
+        {
+            foreach (var goal in goals)
+            {
+                if (((monster.X - monster.Size.Width / 2) > goal.X) && (monster.X + monster.Size.Width / 2 < (goal.X + goal.Size.Width)) &&
+                    ((monster.Y - monster.Size.Height / 2) > goal.Y) && (monster.Y + monster.Size.Height / 2 < (goal.Y + goal.Size.Height)))
+                {
+                    return goal;
+                }
+            }
+
+            return null;
         }
     }
     public class LowercaseContractResolver : DefaultContractResolver

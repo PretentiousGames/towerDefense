@@ -4,7 +4,7 @@ namespace TowerDefense.Interfaces
 {
     public interface IGameState
     {
-        IEnumerable<IFoe> Foes { get; }
+        List<IFoe> Foes { get; }
         IEnumerable<IEntity> Entities { get; }
         Size Size { get; }
         List<IGoal> Goals { get; }

@@ -4,6 +4,6 @@ namespace TowerDefense.Interfaces
     {
         double X { get; }
         double Y { get; }
-        double Size { get; }
+        Size Size { get; }
     }
 }
