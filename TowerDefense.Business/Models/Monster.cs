@@ -7,13 +7,22 @@ namespace TowerDefense.Business.Models
 {
     public class Monster : IMonster
     {
-        private static Random _random = new Random();
+        private static int _id = 0;
+        public const int Width = 16;
+        public const int Height = 16;
+        public const int MaxHealth = 100;
+
         public Monster()
         {
             V = new Vector();
+            Size = new Size(Width, Height);
+            Id = _id++;
+            Health = MaxHealth;
         }
 
-        public int Id { get; set; }
+        private static Random _random = new Random();
+
+        public int Id { get; private set; }
         public double X { get; set; }
         public double Y { get; set; }
         public Vector V { get; set; }
@@ -50,7 +59,7 @@ namespace TowerDefense.Business.Models
                 var yComponent = goal.Y + goal.Size.Height / 2 - Y;
                 var distanceSquared = xComponent * xComponent + yComponent * yComponent;
                 var angle = Math.Atan2(yComponent, xComponent);
-                var magnitude = 10000 / distanceSquared;
+                var magnitude = 5000 / distanceSquared;
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
             return pull;

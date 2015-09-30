@@ -38,11 +38,11 @@
         _.each(foes, function (foe) {
             foe.sprite.render();
         });
-        //_.each(booms, function (boom) {
-        //    boom.sprite.render();
-        //});
         _.each(goals, function (goal) {
             drawgoal(goal.x, goal.y);
+        });
+        _.each(booms, function (boom) {
+            boom.sprite.render();
         });
     }
 
@@ -51,15 +51,18 @@
     foeImage.src = "../Sprites/jelly.png";
 
     var boomImage = new Image();
-    boomImage.src = "../Sprites/boom.png";
+    boomImage.src = "../Sprites/boom.2.png";
+
+    var goalBoomImage = new Image();
+    goalBoomImage.src = "../Sprites/boom.4.png";
 
     var gameDrawer = {
         init: function (c) {
             canvas = c;
             ctx = canvas.getContext("2d");
             backgroundImage.src = "../Sprites/background.png";
-            canvas.width = 800;
-            canvas.height = 800;
+            canvas.width = towerDefense.game.size.width;
+            canvas.height = towerDefense.game.size.height;
         },
         drawGame: function (gameState) {
             if (!ctx) { return; }
@@ -90,14 +93,15 @@
             var deadFoes = _.filter(foes, function (foe) {
                 return !_.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
-            _.each(deadFoes, function(deadFoe) {
+            _.each(deadFoes, function (deadFoe) {
+                deadFoe = _.extend({}, deadFoe);
                 deadFoe.sprite = window.towerDefense.makeSprite({
                     context: ctx,
-                    width: 320,
-                    height: 32,
+                    width: 2560,
+                    height: 64,
                     image: boomImage,
-                    numberOfFrames: 10,
-                    ticksPerFrame: 10,
+                    numberOfFrames: 40,
+                    ticksPerFrame: 1,
                     loop: false,
                     destroyCallback: function() {
                         booms = _.filter(booms, function(boom) {
@@ -105,8 +109,8 @@
                         });
                     }
                 });
-                deadFoe.sprite.x = Math.floor(deadFoe.x);
-                deadFoe.sprite.y = Math.floor(deadFoe.y);
+                deadFoe.sprite.x = Math.floor(deadFoe.x-32);
+                deadFoe.sprite.y = Math.floor(deadFoe.y-32);
                 booms.push(deadFoe);
             });
 
@@ -125,6 +129,31 @@
                     _.extend(rendergoal, goal);
                 }
             });
+
+            var deadGoals = _.filter(goals, function (goal) {
+                return !_.find(gameState.goals, function (f) { return f.id === goal.id; });
+            });
+            _.each(deadGoals, function (deadGoal) {
+                deadGoal = _.extend({}, deadGoal);
+                deadGoal.sprite = window.towerDefense.makeSprite({
+                    context: ctx,
+                    width: 6144,
+                    height: 128,
+                    image: goalBoomImage,
+                    numberOfFrames: 48,
+                    ticksPerFrame: 1,
+                    loop: false,
+                    destroyCallback: function () {
+                        booms = _.filter(booms, function (boom) {
+                            return boom.id !== deadGoal.id;
+                        });
+                    }
+                });
+                deadGoal.sprite.x = Math.floor(deadGoal.x - 48);
+                deadGoal.sprite.y = Math.floor(deadGoal.y - 32);
+                booms.push(deadGoal);
+            });
+
             goals = _.filter(goals, function (goal) {
                 return _.find(gameState.goals, function (f) { return f.id === goal.id; });
             });

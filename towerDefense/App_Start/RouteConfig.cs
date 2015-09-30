@@ -15,9 +15,9 @@ namespace towerDefense
 
 
             routes.MapRoute(
-                name: "Carp?",
-                url: "Game/Carp",
-                defaults: new { controller = "Game", action = "Carp" }
+                name: "Start",
+                url: "Game/Start",
+                defaults: new { controller = "Game", action = "Start" }
             );
 
 
