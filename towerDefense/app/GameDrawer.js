@@ -24,8 +24,13 @@
 
     var goalImage = new Image();
     goalImage.src = "../Sprites/tower.png";
-    var drawgoal = function (x, y) {
-        ctx.drawImage(goalImage, x, y, 32, 48);
+    var drawgoal = function (goal) {
+        ctx.drawImage(goalImage, goal.x, goal.y, 32, 48);
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(goal.x, goal.y + 43, 32, 5);
+        ctx.fillStyle = "#F00";
+        ctx.fillRect(goal.x, goal.y + 43, (goal.health / goal.maxHealth) * 32, 5);
     }
 
     var rendering = false;
@@ -39,7 +44,7 @@
             foe.sprite.render();
         });
         _.each(goals, function (goal) {
-            drawgoal(goal.x, goal.y);
+            drawgoal(goal);
         });
         _.each(booms, function (boom) {
             boom.sprite.render();
