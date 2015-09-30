@@ -82,13 +82,14 @@ namespace towerDefense.Controllers
             GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
             Random r = new Random();
 
-            var foes = new List<IMonster>();
+            //var foes = new List<IMonster>();
 
-            for (int i = 0; i < 10; i++)
-            {
-                Monster m = new Monster { X = 400 - 8, Y = 400 - 8, Id = i, Size = new Size(16) };
-                foes.Add(m);
-            }
+            int i = 0;
+            //for (i = 0; i < 10; i++)
+            //{
+            //    Monster m = new Monster { X = 400 - 8, Y = 400 - 8, Id = i, Size = new Size(16) };
+            //    foes.Add(m);
+            //}
 
             var height = 800;
             var width = 800;
@@ -96,7 +97,7 @@ namespace towerDefense.Controllers
             var towerHeight = 48;
             var gameState = new GameState
             {
-                Foes = foes.OfType<IFoe>().ToList(),
+                Foes = new List<IFoe>(),//foes.OfType<IFoe>().ToList(),
                 Size = new Size { Height = height, Width = width },
                 Goals = new List<IGoal> //32, 48
                 {
@@ -106,16 +107,25 @@ namespace towerDefense.Controllers
                     new Goal {X = width - towerWidth, Y = height - towerHeight, Id = 3, Size = new Size(32,48)}
                 }
             };
-            for (int i = 0; i < 10000; i++)
+            //for (int i = 0; i < 10000; i++)
+            while(true)
             {
-                gameBroadcaster.BroadcastGameState(gameState);
-                foreach (var monster in foes)
+                if (gameState.Foes.Count < 10)
                 {
+                    Monster m = new Monster {X = 400 - 8, Y = 400 - 8, Id = i++, Size = new Size(16)};
+                    gameState.Foes.Add(m);
+                }
+
+                gameBroadcaster.BroadcastGameState(gameState);
+                for (int j = 0; j < gameState.Foes.Count; j++)
+                {
+                    var monster = (IMonster) gameState.Foes[j];
                     monster.Update(gameState);
                     var goal = IsMonsterAtGoal(monster, gameState.Goals);
                     if (goal != null)
                     {
                         gameState.Foes.Remove(monster);
+                        j--;
                     }
                 }
                 Thread.Sleep(10);

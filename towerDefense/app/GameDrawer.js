@@ -38,11 +38,11 @@
         _.each(foes, function (foe) {
             foe.sprite.render();
         });
-        //_.each(booms, function (boom) {
-        //    boom.sprite.render();
-        //});
         _.each(goals, function (goal) {
             drawgoal(goal.x, goal.y);
+        });
+        _.each(booms, function (boom) {
+            boom.sprite.render();
         });
     }
 
@@ -51,7 +51,7 @@
     foeImage.src = "../Sprites/jelly.png";
 
     var boomImage = new Image();
-    boomImage.src = "../Sprites/boom.png";
+    boomImage.src = "../Sprites/boom.2.png";
 
     var gameDrawer = {
         init: function (c) {
@@ -90,14 +90,15 @@
             var deadFoes = _.filter(foes, function (foe) {
                 return !_.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
-            _.each(deadFoes, function(deadFoe) {
+            _.each(deadFoes, function (deadFoe) {
+                deadFoe = _.extend({}, deadFoe);
                 deadFoe.sprite = window.towerDefense.makeSprite({
                     context: ctx,
-                    width: 320,
-                    height: 32,
+                    width: 2560,
+                    height: 64,
                     image: boomImage,
-                    numberOfFrames: 10,
-                    ticksPerFrame: 10,
+                    numberOfFrames: 40,
+                    ticksPerFrame: 1,
                     loop: false,
                     destroyCallback: function() {
                         booms = _.filter(booms, function(boom) {
@@ -105,8 +106,8 @@
                         });
                     }
                 });
-                deadFoe.sprite.x = Math.floor(deadFoe.x);
-                deadFoe.sprite.y = Math.floor(deadFoe.y);
+                deadFoe.sprite.x = Math.floor(deadFoe.x-32);
+                deadFoe.sprite.y = Math.floor(deadFoe.y-32);
                 booms.push(deadFoe);
             });
 

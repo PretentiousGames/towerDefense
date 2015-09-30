@@ -13,7 +13,7 @@
         sprite.image = options.image;
         sprite.x = options.x || 0;
         sprite.y = options.y || 0;
-        sprite.loop = options.loop || true;
+        sprite.loop = typeof options.loop === 'undefined' ? true : options.loop;
         sprite.destroy = options.destroyCallback || function() {};
 
         sprite.update = function () {
@@ -23,7 +23,7 @@
                 if (frameIndex < numberOfFrames - 1) {
                     frameIndex += 1;
                 } else {
-                    if (loop) {
+                    if (sprite.loop) {
                         frameIndex = 0;
                     } else {
                         sprite.destroy();
