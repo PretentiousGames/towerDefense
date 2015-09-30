@@ -53,6 +53,9 @@
     var boomImage = new Image();
     boomImage.src = "../Sprites/boom.2.png";
 
+    var goalBoomImage = new Image();
+    goalBoomImage.src = "../Sprites/boom.4.png";
+
     var gameDrawer = {
         init: function (c) {
             canvas = c;
@@ -126,6 +129,31 @@
                     _.extend(rendergoal, goal);
                 }
             });
+
+            var deadGoals = _.filter(goals, function (goal) {
+                return !_.find(gameState.goals, function (f) { return f.id === goal.id; });
+            });
+            _.each(deadGoals, function (deadGoal) {
+                deadGoal = _.extend({}, deadGoal);
+                deadGoal.sprite = window.towerDefense.makeSprite({
+                    context: ctx,
+                    width: 6144,
+                    height: 128,
+                    image: goalBoomImage,
+                    numberOfFrames: 48,
+                    ticksPerFrame: 1,
+                    loop: false,
+                    destroyCallback: function () {
+                        booms = _.filter(booms, function (boom) {
+                            return boom.id !== deadGoal.id;
+                        });
+                    }
+                });
+                deadGoal.sprite.x = Math.floor(deadGoal.x - 48);
+                deadGoal.sprite.y = Math.floor(deadGoal.y - 32);
+                booms.push(deadGoal);
+            });
+
             goals = _.filter(goals, function (goal) {
                 return _.find(gameState.goals, function (f) { return f.id === goal.id; });
             });

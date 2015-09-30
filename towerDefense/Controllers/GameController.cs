@@ -115,6 +115,11 @@ namespace towerDefense.Controllers
                     if (goal != null)
                     {
                         gameState.Foes.Remove(monster);
+                        ((Goal)goal).Health -= 1;
+                        if (goal.Health <= 0)
+                        {
+                            gameState.Goals.Remove(goal);
+                        }
                         j--;
                     }
                 }

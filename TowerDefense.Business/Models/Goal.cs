@@ -7,7 +7,7 @@ namespace TowerDefense.Business.Models
     {
         public const int Width = 32;
         public const int Height = 48;
-        public const int MaxHealth = 100;
+        public const int MaxHealth = 1;
         private static int _id = 0;
         public Goal()
         {
