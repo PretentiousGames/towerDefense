@@ -334,6 +334,7 @@
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Sprites\tower.png" />
     <Content Include="Sprites\background.png" />
     <Content Include="Sprites\boom.2.png" />
     <Content Include="Sprites\boom.4.png" />
@@ -343,7 +344,6 @@
     <Content Include="Sprites\spawnPoint.png" />
     <Content Include="Sprites\tankBase.png" />
     <Content Include="Sprites\tankTurret.png" />
-    <Content Include="Sprites\tower.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

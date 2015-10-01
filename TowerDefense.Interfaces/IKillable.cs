@@ -2,6 +2,7 @@
 {
     public interface IKillable
     {
-        double Health { get; }
+        int MaxHealth { get; }
+        int Health { get; }
     }
 }

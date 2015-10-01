@@ -19,19 +19,32 @@
     var spawnImage = new Image();
     spawnImage.src = "../Sprites/spawnPoint.png";
     var drawSpawn = function () {
-        ctx.drawImage(spawnImage, 400-16, 400-16);
+        ctx.drawImage(spawnImage, 400-20, 400-20);
     }
 
     var goalImage = new Image();
     goalImage.src = "../Sprites/tower.png";
     var drawgoal = function (goal) {
-        ctx.drawImage(goalImage, goal.x, goal.y, 32, 48);
+        ctx.drawImage(goalImage, goal.x, goal.y, 38, 38);
+
+        var yMod = goal.y > canvas.height / 2 ? -5 : 38;
 
         ctx.fillStyle = "#000";
-        ctx.fillRect(goal.x, goal.y + 43, 32, 5);
+        ctx.fillRect(goal.x, goal.y + yMod, 38, 5);
         ctx.fillStyle = "#F00";
-        ctx.fillRect(goal.x, goal.y + 43, (goal.health / goal.maxHealth) * 32, 5);
+        ctx.fillRect(goal.x, goal.y + yMod, (goal.health / goal.maxHealth) * 38, 5);
     }
+
+    var drawFoe = function(foe) {
+        foe.sprite.render();
+
+        var yMod = foe.y > canvas.height / 2 ? -6 : 20;
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(foe.x, foe.y + yMod, 16, 5);
+        ctx.fillStyle = "#F00";
+        ctx.fillRect(foe.x, foe.y + yMod, (foe.health / foe.maxHealth) * 16, 5);
+    };
 
     var rendering = false;
     var renderLoop = function () {
@@ -41,7 +54,7 @@
         drawBackground();
         drawSpawn();
         _.each(foes, function (foe) {
-            foe.sprite.render();
+            drawFoe(foe);
         });
         _.each(goals, function (goal) {
             drawgoal(goal);
@@ -154,8 +167,8 @@
                         });
                     }
                 });
-                deadGoal.sprite.x = Math.floor(deadGoal.x - 48);
-                deadGoal.sprite.y = Math.floor(deadGoal.y - 32);
+                deadGoal.sprite.x = Math.floor(deadGoal.x - 45);
+                deadGoal.sprite.y = Math.floor(deadGoal.y - 45);
                 booms.push(deadGoal);
             });
 

@@ -10,14 +10,14 @@ namespace TowerDefense.Business.Models
         private static int _id = 0;
         public const int Width = 16;
         public const int Height = 16;
-        public const int MaxHealth = 100;
+        public const int MonsterMaxHealth = 100;
 
         public Monster()
         {
             V = new Vector(GetRandomVDelta() * 10, GetRandomVDelta() * 10);
             Size = new Size(Width, Height);
             Id = _id++;
-            Health = MaxHealth;
+            Health = MaxHealth = MonsterMaxHealth;
         }
 
         private static Random _random = new Random();
@@ -27,7 +27,8 @@ namespace TowerDefense.Business.Models
         public double X { get; set; }
         public double Y { get; set; }
         public Vector V { get; set; }
-        public double Health { get; set; }
+        public int MaxHealth { get; private set; }
+        public int Health { get; set; }
         public double Speed { get; set; }
         public Size Size { get; set; }
 
