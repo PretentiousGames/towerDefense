@@ -45,15 +45,16 @@ namespace TowerDefense.Business.Models
             var width = DefaultSize.Width;
             var gameState = new GameState
             {
-                Foes = new List<IFoe>(),
                 Size = new Size { Height = height, Width = width },
+                Foes = new List<IFoe>(),
                 Goals = new List<IGoal>
                 {
                     new Goal {X = 0, Y = 0},
                     new Goal {X = width - Goal.Width, Y = 0},
                     new Goal {X = 0, Y = height - Goal.Height},
                     new Goal {X = width - Goal.Width, Y = height - Goal.Height}
-                }
+                },
+                
             };
 
             while (true)
