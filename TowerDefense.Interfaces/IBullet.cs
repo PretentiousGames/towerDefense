@@ -3,7 +3,7 @@
     public interface IBullet
     {
         double Range { get; }
-        double Damage { get; }
+        int Damage { get; }
         double ReloadTime { get; }
     }
 

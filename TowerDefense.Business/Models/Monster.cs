@@ -10,7 +10,7 @@ namespace TowerDefense.Business.Models
         private static int _id = 0;
         public const int Width = 16;
         public const int Height = 16;
-        public const int MonsterMaxHealth = 100;
+        public static int MonsterMaxHealth = 1;
 
         public Monster()
         {
@@ -87,20 +87,20 @@ namespace TowerDefense.Business.Models
             return InBounds(x, y, gameState);
         }
 
-        private bool NoObstacles(double x, double y, IGameState gameState)
-        {
-            foreach (var obstacle in gameState.Entities.Where(entity => this != entity))
-            {
-                if ((x < obstacle.X + obstacle.Size.Width) &&
-                    (x + Size.Width < obstacle.X) &&
-                    (y > obstacle.Y + obstacle.Size.Height) &&
-                    (y + Size.Height < obstacle.Y))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        //private bool NoObstacles(double x, double y, IGameState gameState)
+        //{
+        //    foreach (var obstacle in gameState.Entities.Where(entity => this != entity))
+        //    {
+        //        if ((x < obstacle.X + obstacle.Size.Width) &&
+        //            (x + Size.Width < obstacle.X) &&
+        //            (y > obstacle.Y + obstacle.Size.Height) &&
+        //            (y + Size.Height < obstacle.Y))
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
 
         private bool InBounds(double x, double y, IGameState gameState)
         {

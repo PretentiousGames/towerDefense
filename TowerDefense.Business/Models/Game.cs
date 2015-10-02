@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -41,17 +42,18 @@ namespace TowerDefense.Business.Models
             var game = (Game)gameObj;
             //Random r = new Random();
 
-            var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, gameObj);
+            var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, game);
 
             while (true)
             {
+                game.GameBroadcaster.BroadcastGameState(gameState);
+
                 if (gameState.Foes.Count < game._foeCount)
                 {
                     Monster m = new Monster { X = 400 - 8, Y = 400 - 8 };
                     gameState.Foes.Add(m);
                 }
 
-                game.GameBroadcaster.BroadcastGameState(gameState);
                 for (int j = 0; j < gameState.Foes.Count; j++)
                 {
                     var monster = (IMonster)gameState.Foes[j];
@@ -68,23 +70,41 @@ namespace TowerDefense.Business.Models
                         j--;
                     }
                 }
+
+                foreach (var gameTank in gameState.GameTanks)
+                {
+                    var tank = gameTank.Tank;
+                    if (gameTank.Heat <= 0)
+                    {
+                        var foe = (Monster)tank.Update(gameState);
+                        var bullet = gameTank.Bullet;
+
+                        gameTank.Heat += bullet.ReloadTime;
+                        foe.Health -= bullet.Damage;
+                    }
+                    else
+                    {
+                        gameTank.Heat--;
+                    }
+                }
                 Thread.Sleep(10);
             }
         }
 
-        private static GameState GenerateGameState(double height, double width, object gameObj)
+        private static GameState GenerateGameState(double height, double width, Game game)
         {
             return new GameState
             {
-                Foes = new List<IFoe>(),
                 Size = new Size { Height = height, Width = width },
+                Foes = new List<IFoe>(),
                 Goals = new List<IGoal>
                 {
                     new Goal {X = 0, Y = 0},
                     new Goal {X = width - Goal.Width, Y = 0},
                     new Goal {X = 0, Y = height - Goal.Height},
                     new Goal {X = width - Goal.Width, Y = height - Goal.Height}
-                }
+                },
+                GameTanks = game.Players.SelectMany(player => player.Tanks).Select(tank => (IGameTank)new GameTank(tank)).ToList()
             };
         }
         

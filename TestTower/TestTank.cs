@@ -10,8 +10,14 @@ namespace TestTower
 {
     public class TestTank : ITank
     {
+        public TestTank()
+        {
+            X = 50;
+            Y = 50;
+        }
         public double X { get; set; }
         public double Y { get; set; }
+        public Size Size { get; set; }
 
         public string Name{get{return "TestTank";}}
 
@@ -27,7 +33,7 @@ namespace TestTower
 
         public IBullet GetBullet()
         {
-            return new Bullet { Damage = 1, Range = 1 };
+            return new Bullet { Damage = 1, Range = 100 };
         }
     }
 }

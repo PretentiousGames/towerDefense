@@ -4,15 +4,31 @@ using TowerDefense.Interfaces;
 
 namespace TowerDefense.Business.Models
 {
-    public class GameState : IGameState
+    public struct GameState : IGameState
     {
         public List<IFoe> Foes { get; set; }
         public List<IGoal> Goals { get; set; }
-        public List<ITank> Tanks { get; set; }
+        public List<IGameTank> GameTanks { get; set; }
 
         public IEnumerable<IEntity> Entities
         {
-            get { return Foes.Select(foe => (IEntity)foe).Concat(Goals).Concat(Tanks); }
+            get
+            {
+                var entities = new List<IEntity>();
+                if (Foes != null)
+                {
+                    entities.Concat(Foes);
+                }
+                if (Goals != null)
+                {
+                    entities.Concat(Goals);
+                }
+                if (GameTanks != null)
+                {
+                    entities.Concat(GameTanks.Select(tank => tank.Tank));
+                }
+                return entities;
+            }
         }
 
         public Size Size { get; set; }

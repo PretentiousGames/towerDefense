@@ -48,7 +48,7 @@ namespace towerDefense.Controllers
 
                 if (player != null)
                 {
-                    player.Towers.Add(tower);
+                    player.Tanks.Add(tower);
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace towerDefense.Controllers
                     game.Players.Add(new Player
                     {
                         Name = playername,
-                        Towers = towers
+                        Tanks = towers
                     });
                 }
             }
