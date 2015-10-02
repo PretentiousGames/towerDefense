@@ -65,9 +65,14 @@
     }
 
     var foeImage = new Image();
-    //foeImage.addEventListener("load", renderLoop);
     foeImage.src = "../Sprites/jelly.png";
 
+    var tankTurretImage = new Image();
+    tankTurretImage.src = "../Sprites/tankTurret.png";
+
+    var tankBaseImage = new Image();
+    tankBaseImage.src = "../Sprites/tankBase.png";
+    
     var boomImage = new Image();
     boomImage.src = "../Sprites/boom.2.png";
 

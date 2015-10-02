@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNet.SignalR;
@@ -78,9 +79,15 @@ namespace TowerDefense.Business.Models
                     {
                         var foe = (Monster)tank.Update(gameState);
                         var bullet = gameTank.Bullet;
-
-                        gameTank.Heat += bullet.ReloadTime;
-                        foe.Health -= bullet.Damage;
+                        if (CanReach(tank, bullet, foe))
+                        {
+                            gameTank.Heat += bullet.ReloadTime;
+                            foe.Health -= bullet.Damage;
+                            if (foe.Health <= 0)
+                            {
+                                gameState.Foes.Remove(foe);
+                            }   
+                        }
                     }
                     else
                     {
@@ -89,6 +96,11 @@ namespace TowerDefense.Business.Models
                 }
                 Thread.Sleep(10);
             }
+        }
+
+        private static bool CanReach(IEntity shooter, Bullet bullet, IEntity target)
+        {
+            return ((Math.Pow(bullet.Range, 2) - (Math.Pow(shooter.X - target.X, 2) + Math.Pow(shooter.Y - target.Y, 2))) > 0);
         }
 
         private static GameState GenerateGameState(double height, double width, Game game)
