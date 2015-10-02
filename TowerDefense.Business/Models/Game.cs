@@ -41,21 +41,7 @@ namespace TowerDefense.Business.Models
             var game = (Game)gameObj;
             //Random r = new Random();
 
-            var height = DefaultSize.Height;
-            var width = DefaultSize.Width;
-            var gameState = new GameState
-            {
-                Size = new Size { Height = height, Width = width },
-                Foes = new List<IFoe>(),
-                Goals = new List<IGoal>
-                {
-                    new Goal {X = 0, Y = 0},
-                    new Goal {X = width - Goal.Width, Y = 0},
-                    new Goal {X = 0, Y = height - Goal.Height},
-                    new Goal {X = width - Goal.Width, Y = height - Goal.Height}
-                },
-                
-            };
+            var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, gameObj);
 
             while (true)
             {
@@ -84,6 +70,22 @@ namespace TowerDefense.Business.Models
                 }
                 Thread.Sleep(10);
             }
+        }
+
+        private static GameState GenerateGameState(double height, double width, object gameObj)
+        {
+            return new GameState
+            {
+                Foes = new List<IFoe>(),
+                Size = new Size { Height = height, Width = width },
+                Goals = new List<IGoal>
+                {
+                    new Goal {X = 0, Y = 0},
+                    new Goal {X = width - Goal.Width, Y = 0},
+                    new Goal {X = 0, Y = height - Goal.Height},
+                    new Goal {X = width - Goal.Width, Y = height - Goal.Height}
+                }
+            };
         }
         
         public static IGoal IsMonsterAtGoal(IFoe monster, List<IGoal> goals)

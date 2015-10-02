@@ -1,9 +1,7 @@
 ﻿namespace TowerDefense.Interfaces
 {
-    public interface ITank
+    public interface ITank : IEntity
     {
-        double X { get; }
-        double Y { get; }
         string Name { get; }
         IFoe Update(IGameState gameState);
         IBullet GetBullet();
