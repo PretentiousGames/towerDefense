@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using TestTower;
 using TowerDefense.Interfaces;
 
 namespace TowerDefense.Business.Models
@@ -33,7 +34,7 @@ namespace TowerDefense.Business.Models
                 Thread.Abort(gameBroadcaster);
             }
             Thread = new Thread(ThreadStart);
-            _foeCount = 10;
+            _foeCount = 20;
             GameBroadcaster = gameBroadcaster;
             Thread.Start(this);
         }
@@ -44,6 +45,7 @@ namespace TowerDefense.Business.Models
             //Random r = new Random();
 
             var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, game);
+            gameState.GameTanks.Add(new GameTank(new TestTank()));
 
             while (true)
             {
@@ -75,17 +77,19 @@ namespace TowerDefense.Business.Models
                 foreach (var gameTank in gameState.GameTanks)
                 {
                     var tank = gameTank.Tank;
+                    gameTank.Target = (Monster)tank.Update(gameState);
+                    gameTank.Shooting = false;
                     if (gameTank.Heat <= 0)
                     {
-                        var foe = (Monster)tank.Update(gameState);
                         var bullet = gameTank.Bullet;
-                        if (CanReach(tank, bullet, foe))
+                        if (CanReach(tank, bullet, gameTank.Target))
                         {
+                            gameTank.Shooting = true;
                             gameTank.Heat += bullet.ReloadTime;
-                            foe.Health -= bullet.Damage;
-                            if (foe.Health <= 0)
+                            gameTank.Target.Health -= bullet.Damage;
+                            if (gameTank.Target.Health <= 0)
                             {
-                                gameState.Foes.Remove(foe);
+                                gameState.Foes.Remove(gameTank.Target);
                             }   
                         }
                     }

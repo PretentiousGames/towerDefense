@@ -1,9 +1,18 @@
 ﻿(function () {
     var canvas, ctx;
     var foes = [];
+    var tanks = [];
     var goals = [];
     var booms = [];
     window.towerDefense = window.towerDefense || {};
+
+    var drawRotatedImage = function (image, x, y, angle) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.drawImage(image, -(image.width / 2), -(image.height / 2));
+        ctx.restore();
+    }
 
     var backgroundImage = new Image();
     var backgroundPattern;
@@ -18,12 +27,23 @@
 
     var spawnImage = new Image();
     spawnImage.src = "../Sprites/spawnPoint.png";
-    var drawSpawn = function () {
-        ctx.drawImage(spawnImage, 400-20, 400-20);
-    }
-
     var goalImage = new Image();
     goalImage.src = "../Sprites/tower.png";
+    var foeImage = new Image();
+    foeImage.src = "../Sprites/jelly.png";
+    var tankTurretImage = new Image();
+    tankTurretImage.src = "../Sprites/tankTurret.png";
+    var tankBaseImage = new Image();
+    tankBaseImage.src = "../Sprites/tankBase.png";
+    var boomImage = new Image();
+    boomImage.src = "../Sprites/boom.2.png";
+    var goalBoomImage = new Image();
+    goalBoomImage.src = "../Sprites/boom.4.png";
+
+    var drawSpawn = function () {
+        ctx.drawImage(spawnImage, 400 - 20, 400 - 20);
+    }
+
     var drawgoal = function (goal) {
         ctx.drawImage(goalImage, goal.x, goal.y, 38, 38);
 
@@ -35,7 +55,19 @@
         ctx.fillRect(goal.x, goal.y + yMod, (goal.health / goal.maxHealth) * 38, 5);
     }
 
-    var drawFoe = function(foe) {
+    var drawtank = function (tank) {
+        ctx.drawImage(tankBaseImage, tank.x, tank.y, 32, 32);
+        if (tank.shooting) {
+            ctx.beginPath();
+            ctx.moveTo(tank.x + 16, tank.y + 16);
+            ctx.lineTo(tank.target.x + 8, tank.target.y + 8);
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();
+        }
+        drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
+    }
+
+    var drawFoe = function (foe) {
         foe.sprite.render();
 
         var yMod = foe.y > canvas.height / 2 ? -6 : 20;
@@ -53,6 +85,9 @@
         }
         drawBackground();
         drawSpawn();
+        _.each(tanks, function (tank) {
+            drawtank(tank);
+        });
         _.each(foes, function (foe) {
             drawFoe(foe);
         });
@@ -63,21 +98,6 @@
             boom.sprite.render();
         });
     }
-
-    var foeImage = new Image();
-    foeImage.src = "../Sprites/jelly.png";
-
-    var tankTurretImage = new Image();
-    tankTurretImage.src = "../Sprites/tankTurret.png";
-
-    var tankBaseImage = new Image();
-    tankBaseImage.src = "../Sprites/tankBase.png";
-    
-    var boomImage = new Image();
-    boomImage.src = "../Sprites/boom.2.png";
-
-    var goalBoomImage = new Image();
-    goalBoomImage.src = "../Sprites/boom.4.png";
 
     var gameDrawer = {
         init: function (c) {
@@ -126,20 +146,47 @@
                     numberOfFrames: 40,
                     ticksPerFrame: 1,
                     loop: false,
-                    destroyCallback: function() {
-                        booms = _.filter(booms, function(boom) {
+                    destroyCallback: function () {
+                        booms = _.filter(booms, function (boom) {
                             return boom.id !== deadFoe.id;
                         });
                     }
                 });
-                deadFoe.sprite.x = Math.floor(deadFoe.x-32);
-                deadFoe.sprite.y = Math.floor(deadFoe.y-32);
+                deadFoe.sprite.x = Math.floor(deadFoe.x - 32);
+                deadFoe.sprite.y = Math.floor(deadFoe.y - 32);
                 booms.push(deadFoe);
             });
 
             foes = _.filter(foes, function (foe) {
                 return _.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
+
+            var calculateAngle = function (tank, foe) {
+                var xComponent = foe.x + foe.size.width / 2 - tank.x - 16;
+                var yComponent = foe.y + foe.size.height / 2 - tank.y - 16;
+                return Math.atan2(xComponent, -yComponent);
+            };
+
+            _.each(gameState.gameTanks, function (gameTank) {
+                var renderTank = _.find(tanks, function (f) {
+                    return f.id === gameTank.tank.id;
+                });
+                if (typeof renderTank === "undefined") {
+                    renderTank = _.extend({}, gameTank.tank);
+                    tanks.push(renderTank);
+                } else {
+                    _.extend(renderTank, gameTank.tank);
+                }
+                renderTank.angle = calculateAngle(renderTank, gameTank.target);
+                renderTank.shooting = gameTank.shooting;
+                if (renderTank.shooting) {
+                    renderTank.target = gameTank.target;
+                }
+            });
+            tanks = _.filter(tanks, function (tank) {
+                return _.find(gameState.gameTanks, function (f) { return f.tank.id === tank.id; });
+            });
+
 
             _.each(gameState.goals, function (goal) {
                 var rendergoal = _.find(goals, function (f) {

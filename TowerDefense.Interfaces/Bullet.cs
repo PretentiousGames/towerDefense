@@ -8,7 +8,7 @@ namespace TowerDefense.Business.Models
         public int Damage { get; set; }
         public double ReloadTime
         {
-            get { return Range * Damage; }
+            get { return Range * Damage / 1000; }
         }
     }
 }

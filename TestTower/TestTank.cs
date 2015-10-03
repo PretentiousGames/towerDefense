@@ -12,9 +12,12 @@ namespace TestTower
     {
         public TestTank()
         {
-            X = 50;
-            Y = 50;
+            X = 30;
+            Y = 30;
+            Id = 1;
+            Size = new Size(32);
         }
+        public int Id { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public Size Size { get; set; }
@@ -33,7 +36,7 @@ namespace TestTower
 
         public IBullet GetBullet()
         {
-            return new Bullet { Damage = 1, Range = 100 };
+            return new Bullet { Damage = 5, Range = 300 };
         }
     }
 }

@@ -11,6 +11,8 @@ namespace TowerDefense.Business.Models
         }
 
         public Bullet Bullet { get; set; }
+        public Monster Target { get; set; }
+        public bool Shooting { get; set; }
 
         public double Heat { get; set; }
         public ITank Tank { get; set; }

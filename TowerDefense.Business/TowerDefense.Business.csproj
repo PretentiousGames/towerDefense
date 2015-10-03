@@ -66,6 +66,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TestTower\TestTower.csproj">
+      <Project>{AEA12F27-EECB-412E-AE3D-52754B176699}</Project>
+      <Name>TestTower</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TowerDefense.Interfaces\TowerDefense.Interfaces.csproj">
       <Project>{13DF735F-B1EB-4B67-8A49-CD230B3E6F06}</Project>
       <Name>TowerDefense.Interfaces</Name>
