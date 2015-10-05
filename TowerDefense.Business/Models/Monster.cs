@@ -10,7 +10,7 @@ namespace TowerDefense.Business.Models
         private static int _id = 0;
         public const int Width = 16;
         public const int Height = 16;
-        public static int MonsterMaxHealth = 100;
+        public static int MonsterMaxHealth = 10;
 
         public Monster()
         {

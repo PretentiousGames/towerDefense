@@ -26,7 +26,11 @@ namespace TestTower
 
         public IFoe Update(IGameState gameState)
         {
-            return gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
+            if (gameState.Foes.Any())
+            {
+                return gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
+            }
+            return null;
         }
 
         private double GetDistance(IFoe foe)
@@ -36,7 +40,7 @@ namespace TestTower
 
         public IBullet GetBullet()
         {
-            return new Bullet { Damage = 5, Range = 300 };
+            return new Bullet { Damage = 1000 / 40, Range = 40 };
         }
     }
 }

@@ -34,7 +34,7 @@ namespace TowerDefense.Business.Models
                 Thread.Abort(gameBroadcaster);
             }
             Thread = new Thread(ThreadStart);
-            _foeCount = 20;
+            _foeCount = 1;
             GameBroadcaster = gameBroadcaster;
             Thread.Start(this);
         }
@@ -45,8 +45,16 @@ namespace TowerDefense.Business.Models
             //Random r = new Random();
 
             var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, game);
-            gameState.GameTanks.Add(new GameTank(new TestTank()));
+            ITank tt1 = new TestTank() { X = 33, Y = 33, Id = 0 };
+            ITank tt2 = new TestTank() { X = 733, Y = 33, Id = 1 };
+            ITank tt3 = new TestTank() { X = 33, Y = 733, Id = 2 };
+            ITank tt4 = new TestTank() { X = 733, Y = 733, Id = 3 };
+            gameState.GameTanks.Add(new GameTank(tt1));
+            gameState.GameTanks.Add(new GameTank(tt2));
+            gameState.GameTanks.Add(new GameTank(tt3));
+            gameState.GameTanks.Add(new GameTank(tt4));
 
+            var killed = 0;
             while (true)
             {
                 game.GameBroadcaster.BroadcastGameState(gameState);
@@ -69,6 +77,10 @@ namespace TowerDefense.Business.Models
                         if (goal.Health <= 0)
                         {
                             gameState.Goals.Remove(goal);
+                            if (!gameState.Goals.Any())
+                            {
+                                gameState.Lost = true;
+                            }
                         }
                         j--;
                     }
@@ -90,7 +102,19 @@ namespace TowerDefense.Business.Models
                             if (gameTank.Target.Health <= 0)
                             {
                                 gameState.Foes.Remove(gameTank.Target);
-                            }   
+                                if (!gameState.Lost)
+                                {
+                                    gameTank.Killed++;
+                                    killed++;
+                                    if (killed == game._foeCount)
+                                    {
+                                        killed = 0;
+                                        gameState.Wave++;
+                                        game._foeCount++;
+                                        Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.1);
+                                    }
+                                }
+                            }
                         }
                     }
                     else
@@ -104,7 +128,11 @@ namespace TowerDefense.Business.Models
 
         private static bool CanReach(IEntity shooter, Bullet bullet, IEntity target)
         {
-            return ((Math.Pow(bullet.Range, 2) - (Math.Pow(shooter.X - target.X, 2) + Math.Pow(shooter.Y - target.Y, 2))) > 0);
+            var xDistance = shooter.X - target.X + (shooter.Size.Width - target.Size.Width);
+            var yDistance = shooter.Y - target.Y + (shooter.Size.Height - target.Size.Height);
+            var distance = Math.Pow(bullet.Range, 2) - (Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+            var sizeOfThings = (shooter.Size.Height + shooter.Size.Width + target.Size.Height + target.Size.Width) / 2;
+            return target != null && (distance > -sizeOfThings);
         }
 
         private static GameState GenerateGameState(double height, double width, Game game)
@@ -123,7 +151,7 @@ namespace TowerDefense.Business.Models
                 GameTanks = game.Players.SelectMany(player => player.Tanks).Select(tank => (IGameTank)new GameTank(tank)).ToList()
             };
         }
-        
+
         public static IGoal IsMonsterAtGoal(IFoe monster, List<IGoal> goals)
         {
             foreach (var goal in goals)

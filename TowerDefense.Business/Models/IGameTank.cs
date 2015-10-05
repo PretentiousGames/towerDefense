@@ -9,5 +9,6 @@ namespace TowerDefense.Business.Models
         Bullet Bullet { get; set; }
         Monster Target { get; set; }
         bool Shooting { get; set; }
+        int Killed { get; set; }
     }
 }

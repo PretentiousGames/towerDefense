@@ -4,6 +4,8 @@
     var tanks = [];
     var goals = [];
     var booms = [];
+    var lost = false;
+    var wave = 0;
     window.towerDefense = window.towerDefense || {};
 
     var drawRotatedImage = function (image, x, y, angle) {
@@ -97,6 +99,37 @@
         _.each(booms, function (boom) {
             boom.sprite.render();
         });
+        if (lost) {
+            ctx.textAlign = "center";
+            ctx.font = '70pt Calibri';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+
+            ctx.fillRect(100, 100, 600, 600);
+            ctx.rect(100, 100, 600, 600);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255,0,0,0.4)';
+            var loser = "You Lost!";//"A Loser(s) Are You!";
+            ctx.fillText(loser, 400, 200);
+            ctx.strokeText(loser, 400, 200);
+
+            var y = 300;
+            _.chain(tanks)
+                .sortBy(function (tank) { return -tank.killed; })
+                .each(function (tank) {
+                    ctx.font = '25pt Calibri';
+                    var message = tank.name + " : " + tank.killed + " kills";
+                    ctx.strokeText(message, 400, y);
+                    ctx.fillText(message, 400, y);
+                    y += 30;
+                });
+
+            var killedAt = "Final Wave: " + wave;
+            ctx.fillText(killedAt, 400, y);
+            ctx.strokeText(killedAt, 400, y);
+        }
     }
 
     var gameDrawer = {
@@ -109,6 +142,8 @@
         },
         drawGame: function (gameState) {
             if (!ctx) { return; }
+            lost = gameState.lost;
+            wave = gameState.wave;
             _.each(gameState.foes, function (foe) {
                 var renderFoe = _.find(foes, function (f) {
                     return f.id === foe.id;
@@ -179,6 +214,7 @@
                 }
                 renderTank.angle = calculateAngle(renderTank, gameTank.target);
                 renderTank.shooting = gameTank.shooting;
+                renderTank.killed = gameTank.killed;
                 if (renderTank.shooting) {
                     renderTank.target = gameTank.target;
                 }
