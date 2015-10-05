@@ -111,7 +111,7 @@
             ctx.stroke();
 
             ctx.fillStyle = 'rgba(255,0,0,0.4)';
-            var loser = "You Lost!";//"A Loser(s) Are You!";
+            var loser = "A Loser(s) Are You!";
             ctx.fillText(loser, 400, 200);
             ctx.strokeText(loser, 400, 200);
 

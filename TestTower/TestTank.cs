@@ -40,7 +40,7 @@ namespace TestTower
 
         public IBullet GetBullet()
         {
-            return new Bullet { Damage = 1000 / 40, Range = 40 };
+            return new Bullet { Damage = 1000 / 40, Range = 400 };
         }
     }
 }

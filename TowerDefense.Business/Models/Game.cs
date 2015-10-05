@@ -91,7 +91,7 @@ namespace TowerDefense.Business.Models
                     var tank = gameTank.Tank;
                     gameTank.Target = (Monster)tank.Update(gameState);
                     gameTank.Shooting = false;
-                    if (gameTank.Heat <= 0)
+                    if (gameTank.Heat <= 0 && gameTank.Target != null)
                     {
                         var bullet = gameTank.Bullet;
                         if (CanReach(tank, bullet, gameTank.Target))
