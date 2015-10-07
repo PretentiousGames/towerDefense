@@ -3,7 +3,9 @@
     </style>
 
     <template>
-        <div hidden$="{{filled}}">Enter your name:<paper-input value="{{name}}" on-change="nameUpdated"></paper-input></div>
+        <div hidden$="{{filled}}">Enter your name:<paper-input value="{{name}}" on-change="nameUpdated"></paper-input>
+        </div>
+        <div hidden$="{{!filled}}">Hi <span>{{name}}</span>!</div>
     </template>
 
     <script>

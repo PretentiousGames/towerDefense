@@ -101,7 +101,7 @@
         });
         if (lost) {
             ctx.textAlign = "center";
-            ctx.font = '70pt Calibri';
+            ctx.font = '55pt Calibri';
             ctx.lineWidth = 3;
             ctx.fillStyle = 'rgba(255,255,255,0.4)';
             ctx.strokeStyle = 'rgba(0,0,0,0.7)';

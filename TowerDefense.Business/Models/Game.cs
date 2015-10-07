@@ -45,14 +45,14 @@ namespace TowerDefense.Business.Models
             //Random r = new Random();
 
             var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, game);
-            ITank tt1 = new TestTank() { X = 33, Y = 33, Id = 0 };
-            ITank tt2 = new TestTank() { X = 733, Y = 33, Id = 1 };
-            ITank tt3 = new TestTank() { X = 33, Y = 733, Id = 2 };
-            ITank tt4 = new TestTank() { X = 733, Y = 733, Id = 3 };
-            gameState.GameTanks.Add(new GameTank(tt1));
-            gameState.GameTanks.Add(new GameTank(tt2));
-            gameState.GameTanks.Add(new GameTank(tt3));
-            gameState.GameTanks.Add(new GameTank(tt4));
+            //ITank tt1 = new TestTank() { X = 33, Y = 33, Id = 0 };
+            //ITank tt2 = new TestTank() { X = 733, Y = 33, Id = 1 };
+            //ITank tt3 = new TestTank() { X = 33, Y = 733, Id = 2 };
+            //ITank tt4 = new TestTank() { X = 733, Y = 733, Id = 3 };
+            //gameState.GameTanks.Add(new GameTank(tt1));
+            //gameState.GameTanks.Add(new GameTank(tt2));
+            //gameState.GameTanks.Add(new GameTank(tt3));
+            //gameState.GameTanks.Add(new GameTank(tt4));
 
             var killed = 0;
             while (true)
