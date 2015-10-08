@@ -53,8 +53,9 @@
 
         ctx.fillStyle = "#000";
         ctx.fillRect(goal.x, goal.y + yMod, 38, 5);
-        ctx.fillStyle = "#F00";
-        ctx.fillRect(goal.x, goal.y + yMod, (goal.health / goal.maxHealth) * 38, 5);
+        var percent = (goal.health / goal.maxHealth);
+        ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
+        ctx.fillRect(goal.x, goal.y + yMod, percent * 38, 5);
     }
 
     var drawtank = function (tank) {
@@ -83,8 +84,10 @@
 
         ctx.fillStyle = "#000";
         ctx.fillRect(foe.x, foe.y + yMod, 16, 5);
-        ctx.fillStyle = "#F00";
-        ctx.fillRect(foe.x, foe.y + yMod, (foe.health / foe.maxHealth) * 16, 5);
+
+        var percent = (foe.health / foe.maxHealth);
+        ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
+        ctx.fillRect(foe.x, foe.y + yMod, percent * 16, 5);
     };
 
     var rendering = false;
