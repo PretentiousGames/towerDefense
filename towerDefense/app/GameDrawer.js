@@ -67,6 +67,13 @@
             ctx.stroke();
         }
         drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
+
+        var yMod = tank.y > canvas.height / 2 ? -6 : 36;
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(tank.x, tank.y + yMod, 32, 5);
+        ctx.fillStyle = "#F00";
+        ctx.fillRect(tank.x, tank.y + yMod, -500/(tank.heat + 16) + 32, 5);
     }
 
     var drawFoe = function (foe) {
@@ -220,6 +227,7 @@
                 renderTank.shooting = gameTank.shooting;
                 renderTank.killed = gameTank.killed;
                 renderTank.owner = gameTank.owner;
+                renderTank.heat = gameTank.heat;
                 if (renderTank.shooting) {
                     renderTank.target = gameTank.target;
                 }

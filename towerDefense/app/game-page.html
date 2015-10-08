@@ -30,7 +30,7 @@
                 </template>
             </div>
             <div>
-                <paper-button on-click="newGame">Stop Game</paper-button>
+                <paper-button on-click="stopGame">Stop Game</paper-button>
                 <paper-button on-click="start">Start Game</paper-button></div>
             <div>
                 <canvas id="gameCanvas"></canvas>
@@ -72,8 +72,8 @@
                 };
                 xhr.send(params);
             },
-            newGame: function () {
-                var url = "../Game/NewGame";
+            stopGame: function () {
+                var url = "../Game/StopGame";
                 var xhr = new XMLHttpRequest();
                 var callback = function () { };
                 var params = JSON.stringify({ gameName: this.gamename });

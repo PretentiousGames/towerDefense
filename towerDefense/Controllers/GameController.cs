@@ -81,7 +81,7 @@ namespace towerDefense.Controllers
         }
 
         [HttpPost]
-        public ActionResult NewGame(string gameName)
+        public ActionResult StopGame(string gameName)
         {
             var game = GameManager.GetGame(gameName);
 

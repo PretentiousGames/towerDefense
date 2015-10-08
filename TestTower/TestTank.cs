@@ -13,7 +13,7 @@ namespace TestTower
         public override string Name { get { return "TestTank"; } }
 
         public TestTank()
-            : base(30, 30)
+            : base(150, 150)
         {
         }
         public override IFoe Update(IGameState gameState)
@@ -32,7 +32,7 @@ namespace TestTower
 
         public override IBullet GetBullet()
         {
-            return new Bullet { Damage = 1000 / 40, Range = 400 };
+            return new Bullet { Damage = 1000 / 400, Range = 400 };
         }
     }
 }
