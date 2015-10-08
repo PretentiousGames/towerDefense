@@ -90,6 +90,13 @@
         ctx.fillRect(foe.x, foe.y + yMod, percent * 16, 5);
     };
 
+    var drawWave = function (wave) {
+        ctx.textAlign = "center";
+        ctx.font = '20pt Calibri';
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.fillText("Wave " + wave, 400, 25);
+    }
+
     var rendering = false;
     var renderLoop = function () {
         if (rendering) {
@@ -109,6 +116,9 @@
         _.each(booms, function (boom) {
             boom.sprite.render();
         });
+
+        drawWave(wave);
+
         if (lost) {
             ctx.beginPath();
             ctx.textAlign = "center";
