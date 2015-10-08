@@ -94,7 +94,7 @@ namespace TowerDefense.Business.Models
                     gameTank.Shooting = false;
                     if (gameTank.Heat <= 0 && gameTank.Target != null)
                     {
-                        var bullet = gameTank.Bullet;
+                        var bullet = (Bullet)tank.GetBullet();//gameTank.Bullet;
                         if (CanReach(tank, bullet, gameTank.Target))
                         {
                             gameTank.Shooting = true;

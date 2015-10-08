@@ -31,7 +31,8 @@
             </div>
 
             <div>
-                <paper-button on-click="start">Start</paper-button>
+                <paper-button on-click="newGame">New Game</paper-button>
+                <paper-button on-click="start">Restart</paper-button>
                 <canvas id="gameCanvas"></canvas>
             </div>
         </div>
@@ -56,6 +57,23 @@
             },
             start: function () {
                 var url = "/Game/Start";
+                var xhr = new XMLHttpRequest();
+                var callback = function () { };
+                var params = JSON.stringify({ gameName: this.gamename });
+                xhr.open('POST', url);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
+                        if (callback) {
+                            callback(response);
+                        }
+                    }
+                };
+                xhr.send(params);
+            },
+            newGame: function () {
+                var url = "/Game/NewGame";
                 var xhr = new XMLHttpRequest();
                 var callback = function () { };
                 var params = JSON.stringify({ gameName: this.gamename });

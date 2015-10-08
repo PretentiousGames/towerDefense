@@ -79,5 +79,23 @@ namespace towerDefense.Controllers
 
             return Json("start");
         }
+
+        [HttpPost]
+        public ActionResult NewGame(string gameName)
+        {
+            var game = GameManager.GetGame(gameName);
+
+            if (game == null)
+            {
+                return RedirectToAction("../Game/" + gameName);
+            }
+
+            game.Players.Clear();
+            IHubConnectionContext<dynamic> clients = GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients;
+            GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
+            game.StartNewGame(gameBroadcaster);
+
+            return Json("start");
+        }
     }
 }
