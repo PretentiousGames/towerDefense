@@ -55,6 +55,7 @@ namespace TowerDefense.Business.Models
             //gameState.GameTanks.Add(new GameTank(tt4));
 
             var killed = 0;
+            Monster.MonsterMaxHealth = 10;
             while (true)
             {
                 game.GameBroadcaster.BroadcastGameState(gameState);
