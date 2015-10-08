@@ -148,7 +148,7 @@ namespace TowerDefense.Business.Models
                     new Goal {X = 0, Y = height - Goal.Height},
                     new Goal {X = width - Goal.Width, Y = height - Goal.Height}
                 },
-                GameTanks = game.Players.SelectMany(player => player.Tanks).Select(tank => (IGameTank)new GameTank(tank)).ToList()
+                GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList()
             };
         }
 

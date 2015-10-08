@@ -100,6 +100,7 @@
             boom.sprite.render();
         });
         if (lost) {
+            ctx.beginPath();
             ctx.textAlign = "center";
             ctx.font = '55pt Calibri';
             ctx.lineWidth = 3;
@@ -120,7 +121,7 @@
                 .sortBy(function (tank) { return -tank.killed; })
                 .each(function (tank) {
                     ctx.font = '25pt Calibri';
-                    var message = tank.name + " : " + tank.killed + " kills";
+                    var message = tank.owner + " (" + tank.name + ") : " + tank.killed + " kills";
                     ctx.strokeText(message, 400, y);
                     ctx.fillText(message, 400, y);
                     y += 30;
@@ -197,9 +198,12 @@
             });
 
             var calculateAngle = function (tank, foe) {
-                var xComponent = foe.x + foe.size.width / 2 - tank.x - 16;
-                var yComponent = foe.y + foe.size.height / 2 - tank.y - 16;
-                return Math.atan2(xComponent, -yComponent);
+                if (foe) {
+                    var xComponent = foe.x + foe.size.width / 2 - tank.x - 16;
+                    var yComponent = foe.y + foe.size.height / 2 - tank.y - 16;
+                    return Math.atan2(xComponent, -yComponent);
+                }
+                return 0;
             };
 
             _.each(gameState.gameTanks, function (gameTank) {
@@ -215,6 +219,7 @@
                 renderTank.angle = calculateAngle(renderTank, gameTank.target);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.killed = gameTank.killed;
+                renderTank.owner = gameTank.owner;
                 if (renderTank.shooting) {
                     renderTank.target = gameTank.target;
                 }
