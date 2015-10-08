@@ -166,5 +166,11 @@ namespace TowerDefense.Business.Models
 
             return null;
         }
+
+        public void ClearGameOut(IGameBroadcaster gameBroadcaster)
+        {
+            Players.Clear();
+            Thread.Abort(gameBroadcaster);
+        }
     }
 }

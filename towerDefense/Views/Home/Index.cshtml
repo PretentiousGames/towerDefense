@@ -15,7 +15,7 @@
     <main-page>
         @foreach (var game in Model)
         {
-            <a href="/Game/@Html.Raw(game.Name)">@game.Name</a><br />
+            <a href="../Game/@Html.Raw(game.Name)">@game.Name</a><br />
         }
     </main-page>
 </body>

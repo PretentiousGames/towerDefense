@@ -90,10 +90,9 @@ namespace towerDefense.Controllers
                 return RedirectToAction("../Game/" + gameName);
             }
 
-            game.Players.Clear();
             IHubConnectionContext<dynamic> clients = GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients;
             GameBroadcaster gameBroadcaster = new GameBroadcaster(clients);
-            game.StartNewGame(gameBroadcaster);
+            game.ClearGameOut(gameBroadcaster);
 
             return Json("start");
         }
