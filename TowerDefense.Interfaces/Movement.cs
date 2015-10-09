@@ -7,10 +7,11 @@ namespace TowerDefense.Interfaces
 {
 	public enum Movement
 	{
+		
+		NONE,
 		NORTH,
 		SOUTH,
 		EAST,
-		WEST,
-		NONE
+		WEST
 	}
 }
