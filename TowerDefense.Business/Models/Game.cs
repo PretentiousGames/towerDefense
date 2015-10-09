@@ -84,7 +84,40 @@ namespace TowerDefense.Business.Models
                 foreach (var gameTank in gameState.GameTanks)
                 {
                     var tank = gameTank.Tank;
-                    gameTank.Target = (Monster)tank.Update(gameState);
+					TankUpdate tankUpdate = (TankUpdate) tank.Update(gameState);
+					gameTank.Target = (Monster) tankUpdate.Target;
+
+					switch (tankUpdate.MoveDirection)
+					{
+						case Movement.NORTH:
+							if (IsTankInBounds(tank, (int) tank.X, (int) tank.Y - 1, gameState))
+							{
+								tank.Y--;
+							}
+							break;
+
+						case Movement.SOUTH:
+							if (IsTankInBounds(tank, (int)tank.X, (int)tank.Y + 1, gameState))
+							{
+								tank.Y++;
+							}
+							break;
+
+						case Movement.EAST:
+							if (IsTankInBounds(tank, (int)tank.X + 1, (int)tank.Y, gameState))
+							{
+								tank.X++;
+							}
+							break;
+
+						case Movement.WEST:
+							if (IsTankInBounds(tank, (int)tank.X - 1, (int)tank.Y, gameState))
+							{
+								tank.X--;
+							}
+							break;
+					}
+
                     gameTank.Shooting = false;
                     if (gameTank.Heat <= 0 && gameTank.Target != null)
                     {
@@ -120,6 +153,12 @@ namespace TowerDefense.Business.Models
                 Thread.Sleep(10);
             }
         }
+
+		private static bool IsTankInBounds(ITank tank, int newX, int newY, IGameState gameState)
+		{
+			return newX + tank.Size.Width < gameState.Size.Width && newX > 0 &&
+				   newY + tank.Size.Height < gameState.Size.Height && newY > 0;
+		}
 
         private static bool CanReach(IEntity shooter, Bullet bullet, IEntity target)
         {

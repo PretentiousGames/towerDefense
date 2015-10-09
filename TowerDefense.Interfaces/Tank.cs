@@ -13,11 +13,11 @@ namespace TowerDefense.Interfaces
         }
         public Size Size { get; private set; }
         public int Id { get; private set; }
-        public double X { get; private set; }
-        public double Y { get; private set; }
+        public double X { get; set; }
+        public double Y { get; set; }
 
         public abstract string Name { get; }
-        public abstract IFoe Update(IGameState gameState);
+        public abstract TankUpdate Update(IGameState gameState);
         public abstract IBullet GetBullet();
     }
 }

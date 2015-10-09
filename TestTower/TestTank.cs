@@ -16,13 +16,17 @@ namespace TestTower
             : base(150, 150)
         {
         }
-        public override IFoe Update(IGameState gameState)
+        public override TankUpdate Update(IGameState gameState)
         {
+			TankUpdate tankUpdate = new TankUpdate();
+
             if (gameState.Foes.Any())
             {
-                return gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
+				tankUpdate.Target = gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
+				//tankUpdate.MoveDirection = Movement.EAST;
             }
-            return null;
+
+            return tankUpdate;
         }
 
         private double GetDistance(IFoe foe)
