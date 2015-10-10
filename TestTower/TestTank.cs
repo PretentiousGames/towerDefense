@@ -8,7 +8,7 @@ using TowerDefense.Interfaces;
 
 namespace TestTower
 {
-    public class TestTank : ITank
+    public class TestTank : Tank
     {
         public TestTank()
         {
