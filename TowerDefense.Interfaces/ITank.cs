@@ -3,7 +3,7 @@
     public interface ITank : IEntity
     {
         string Name { get; }
-        IFoe Update(IGameState gameState);
+        TankUpdate Update(IGameState gameState);
         IBullet GetBullet();
     }
 }

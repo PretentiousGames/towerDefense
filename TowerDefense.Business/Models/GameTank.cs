@@ -4,9 +4,10 @@ namespace TowerDefense.Business.Models
 {
     public class GameTank : IGameTank
     {
-        public GameTank(ITank tank)
+        public GameTank(ITank tank, string owner)
         {
             Tank = tank;
+            Owner = owner;
             Bullet = (Bullet)tank.GetBullet();
         }
 
@@ -16,6 +17,7 @@ namespace TowerDefense.Business.Models
         public int Killed { get; set; }
 
         public double Heat { get; set; }
+        public string Owner { get; set; }
         public ITank Tank { get; set; }
-        }
+    }
 }

@@ -45,16 +45,9 @@ namespace TowerDefense.Business.Models
             //Random r = new Random();
 
             var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, game);
-            ITank tt1 = new TestTank() { X = 33, Y = 33, Id = 0 };
-            ITank tt2 = new TestTank() { X = 733, Y = 33, Id = 1 };
-            ITank tt3 = new TestTank() { X = 33, Y = 733, Id = 2 };
-            ITank tt4 = new TestTank() { X = 733, Y = 733, Id = 3 };
-            gameState.GameTanks.Add(new GameTank(tt1));
-            gameState.GameTanks.Add(new GameTank(tt2));
-            gameState.GameTanks.Add(new GameTank(tt3));
-            gameState.GameTanks.Add(new GameTank(tt4));
 
             var killed = 0;
+            Monster.MonsterMaxHealth = 10;
             while (true)
             {
                 game.GameBroadcaster.BroadcastGameState(gameState);
@@ -77,6 +70,8 @@ namespace TowerDefense.Business.Models
                         if (goal.Health <= 0)
                         {
                             gameState.Goals.Remove(goal);
+                            Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.25);
+   
                             if (!gameState.Goals.Any())
                             {
                                 gameState.Lost = true;
@@ -89,11 +84,44 @@ namespace TowerDefense.Business.Models
                 foreach (var gameTank in gameState.GameTanks)
                 {
                     var tank = gameTank.Tank;
-                    gameTank.Target = (Monster)tank.Update(gameState);
+					TankUpdate tankUpdate = (TankUpdate) tank.Update(gameState);
+					gameTank.Target = (Monster) tankUpdate.Target;
+
+					switch (tankUpdate.MoveDirection)
+					{
+						case Movement.NORTH:
+							if (IsTankInBounds(tank, (int) tank.X, (int) tank.Y - 1, gameState))
+							{
+								tank.Y--;
+							}
+							break;
+
+						case Movement.SOUTH:
+							if (IsTankInBounds(tank, (int)tank.X, (int)tank.Y + 1, gameState))
+							{
+								tank.Y++;
+							}
+							break;
+
+						case Movement.EAST:
+							if (IsTankInBounds(tank, (int)tank.X + 1, (int)tank.Y, gameState))
+							{
+								tank.X++;
+							}
+							break;
+
+						case Movement.WEST:
+							if (IsTankInBounds(tank, (int)tank.X - 1, (int)tank.Y, gameState))
+							{
+								tank.X--;
+							}
+							break;
+					}
+
                     gameTank.Shooting = false;
-                    if (gameTank.Heat <= 0)
+                    if (gameTank.Heat <= 0 && gameTank.Target != null)
                     {
-                        var bullet = gameTank.Bullet;
+                        var bullet = (Bullet)tank.GetBullet();//gameTank.Bullet;
                         if (CanReach(tank, bullet, gameTank.Target))
                         {
                             gameTank.Shooting = true;
@@ -126,6 +154,12 @@ namespace TowerDefense.Business.Models
             }
         }
 
+		private static bool IsTankInBounds(ITank tank, int newX, int newY, IGameState gameState)
+		{
+			return newX + tank.Size.Width < gameState.Size.Width && newX > 0 &&
+				   newY + tank.Size.Height < gameState.Size.Height && newY > 0;
+		}
+
         private static bool CanReach(IEntity shooter, Bullet bullet, IEntity target)
         {
             var xDistance = shooter.X - target.X + (shooter.Size.Width - target.Size.Width);
@@ -148,7 +182,7 @@ namespace TowerDefense.Business.Models
                     new Goal {X = 0, Y = height - Goal.Height},
                     new Goal {X = width - Goal.Width, Y = height - Goal.Height}
                 },
-                GameTanks = game.Players.SelectMany(player => player.Tanks).Select(tank => (IGameTank)new GameTank(tank)).ToList()
+                GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList()
             };
         }
 
@@ -164,6 +198,12 @@ namespace TowerDefense.Business.Models
             }
 
             return null;
+        }
+
+        public void ClearGameOut(IGameBroadcaster gameBroadcaster)
+        {
+            Players.Clear();
+            Thread.Abort(gameBroadcaster);
         }
     }
 }

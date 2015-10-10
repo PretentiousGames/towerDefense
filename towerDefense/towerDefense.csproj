@@ -329,6 +329,8 @@
     <Content Include="bower_components\promise-polyfill\LICENSE" />
     <Content Include="bower_components\promise-polyfill\package.json" />
     <Content Include="bower_components\promise-polyfill\README.md" />
+    <None Include="Properties\PublishProfiles\dr-qaweb-01.pubxml" />
+    <None Include="Properties\PublishProfiles\towerDefense.pubxml" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />

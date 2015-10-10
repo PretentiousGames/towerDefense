@@ -4,12 +4,14 @@
 
     <template>
         <div>
-            Hi <span>{{playername}}</span>
+            <div>
+                <current-user name="{{name}}" filled="{{filled}}"/>
+            </div>
             <h1>{{gamename}}</h1>
 
             <div>
                 <h3>Upload a tower:</h3>
-                <form action="/Game/UploadFile" method="post" enctype="multipart/form-data">
+                <form action="../Game/UploadFile" method="post" enctype="multipart/form-data">
                     <input type="file" name="file" id="file" />
                     <input type="hidden" name="playername" value="{{playername}}" />
                     <input type="hidden" name="gamename" value="{{gamename}}" />
@@ -27,9 +29,10 @@
                     </template>
                 </template>
             </div>
-
             <div>
-                <paper-button on-click="start">Start</paper-button>
+                <paper-button on-click="stopGame">Stop Game</paper-button>
+                <paper-button on-click="start">Start Game</paper-button></div>
+            <div>
                 <canvas id="gameCanvas"></canvas>
             </div>
         </div>
@@ -53,7 +56,24 @@
                 towerDefense.gameDrawer.init(document.getElementById("gameCanvas"));
             },
             start: function () {
-                var url = "/Game/Start";
+                var url = "../Game/Start";
+                var xhr = new XMLHttpRequest();
+                var callback = function () { };
+                var params = JSON.stringify({ gameName: this.gamename });
+                xhr.open('POST', url);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
+                        if (callback) {
+                            callback(response);
+                        }
+                    }
+                };
+                xhr.send(params);
+            },
+            stopGame: function () {
+                var url = "../Game/StopGame";
                 var xhr = new XMLHttpRequest();
                 var callback = function () { };
                 var params = JSON.stringify({ gameName: this.gamename });

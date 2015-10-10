@@ -53,8 +53,9 @@
 
         ctx.fillStyle = "#000";
         ctx.fillRect(goal.x, goal.y + yMod, 38, 5);
-        ctx.fillStyle = "#F00";
-        ctx.fillRect(goal.x, goal.y + yMod, (goal.health / goal.maxHealth) * 38, 5);
+        var percent = (goal.health / goal.maxHealth);
+        ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
+        ctx.fillRect(goal.x, goal.y + yMod, percent * 38, 5);
     }
 
     var drawtank = function (tank) {
@@ -67,6 +68,13 @@
             ctx.stroke();
         }
         drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
+
+        var yMod = tank.y > canvas.height / 2 ? -6 : 36;
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(tank.x, tank.y + yMod, 32, 5);
+        ctx.fillStyle = "#F00";
+        ctx.fillRect(tank.x, tank.y + yMod, -500/(tank.heat + 16) + 32, 5);
     }
 
     var drawFoe = function (foe) {
@@ -76,9 +84,18 @@
 
         ctx.fillStyle = "#000";
         ctx.fillRect(foe.x, foe.y + yMod, 16, 5);
-        ctx.fillStyle = "#F00";
-        ctx.fillRect(foe.x, foe.y + yMod, (foe.health / foe.maxHealth) * 16, 5);
+
+        var percent = (foe.health / foe.maxHealth);
+        ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
+        ctx.fillRect(foe.x, foe.y + yMod, percent * 16, 5);
     };
+
+    var drawWave = function (wave) {
+        ctx.textAlign = "center";
+        ctx.font = '20pt Calibri';
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.fillText("Wave " + wave, 400, 25);
+    }
 
     var rendering = false;
     var renderLoop = function () {
@@ -99,9 +116,13 @@
         _.each(booms, function (boom) {
             boom.sprite.render();
         });
+
+        drawWave(wave);
+
         if (lost) {
+            ctx.beginPath();
             ctx.textAlign = "center";
-            ctx.font = '70pt Calibri';
+            ctx.font = '55pt Calibri';
             ctx.lineWidth = 3;
             ctx.fillStyle = 'rgba(255,255,255,0.4)';
             ctx.strokeStyle = 'rgba(0,0,0,0.7)';
@@ -111,7 +132,7 @@
             ctx.stroke();
 
             ctx.fillStyle = 'rgba(255,0,0,0.4)';
-            var loser = "You Lost!";//"A Loser(s) Are You!";
+            var loser = "A Loser(s) Are You!";
             ctx.fillText(loser, 400, 200);
             ctx.strokeText(loser, 400, 200);
 
@@ -120,7 +141,7 @@
                 .sortBy(function (tank) { return -tank.killed; })
                 .each(function (tank) {
                     ctx.font = '25pt Calibri';
-                    var message = tank.name + " : " + tank.killed + " kills";
+                    var message = tank.owner + " (" + tank.name + ") : " + tank.killed + " kills";
                     ctx.strokeText(message, 400, y);
                     ctx.fillText(message, 400, y);
                     y += 30;
@@ -197,9 +218,12 @@
             });
 
             var calculateAngle = function (tank, foe) {
-                var xComponent = foe.x + foe.size.width / 2 - tank.x - 16;
-                var yComponent = foe.y + foe.size.height / 2 - tank.y - 16;
-                return Math.atan2(xComponent, -yComponent);
+                if (foe) {
+                    var xComponent = foe.x + foe.size.width / 2 - tank.x - 16;
+                    var yComponent = foe.y + foe.size.height / 2 - tank.y - 16;
+                    return Math.atan2(xComponent, -yComponent);
+                }
+                return 0;
             };
 
             _.each(gameState.gameTanks, function (gameTank) {
@@ -215,6 +239,8 @@
                 renderTank.angle = calculateAngle(renderTank, gameTank.target);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.killed = gameTank.killed;
+                renderTank.owner = gameTank.owner;
+                renderTank.heat = gameTank.heat;
                 if (renderTank.shooting) {
                     renderTank.target = gameTank.target;
                 }
