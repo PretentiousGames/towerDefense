@@ -17,6 +17,7 @@ namespace TowerDefense.Business.Models
         {
             Players = new List<Player>();
             Size = DefaultSize;
+            Tank.SetLocationProvider(new LocationProvider());
         }
 
         public static Size DefaultSize = new Size(800, 800);
@@ -44,6 +45,15 @@ namespace TowerDefense.Business.Models
             var game = (Game)gameObj;
             //Random r = new Random();
 
+            if (game.Players.Count == 0)
+            {
+                game.Players.Add(new Player
+                {
+                    Name = "demo",
+                    Tanks = new List<Tank> { new TestTank() }
+                });
+            }
+
             var gameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, game);
 
             var killed = 0;
@@ -54,7 +64,7 @@ namespace TowerDefense.Business.Models
 
                 if (gameState.Foes.Count < game._foeCount)
                 {
-                    Monster m = new Monster { X = 400 - 8, Y = 400 - 8 };
+                    Monster m = new Monster { Location = new Location(400 - 8, 400 - 8) };
                     gameState.Foes.Add(m);
                 }
 
@@ -71,7 +81,7 @@ namespace TowerDefense.Business.Models
                         {
                             gameState.Goals.Remove(goal);
                             Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.25);
-   
+
                             if (!gameState.Goals.Any())
                             {
                                 gameState.Lost = true;
@@ -84,40 +94,38 @@ namespace TowerDefense.Business.Models
                 foreach (var gameTank in gameState.GameTanks)
                 {
                     var tank = gameTank.Tank;
-					TankUpdate tankUpdate = (TankUpdate) tank.Update(gameState);
-					gameTank.Target = (Monster) tankUpdate.Target;
+                    var tankUpdate = tank.Update(gameState);
 
-					switch (tankUpdate.MoveDirection)
-					{
-						case Movement.NORTH:
-							if (IsTankInBounds(tank, (int) tank.X, (int) tank.Y - 1, gameState))
-							{
-								tank.Y--;
-							}
-							break;
+                    if (tankUpdate.MovementTarget != null)
+                    {
+                        var V = new Vector(tankUpdate.MovementTarget.X - tank.X, tankUpdate.MovementTarget.Y - tank.Y);
+                        var angle = Math.Atan2(V.Y, V.X);
+                        var speed = Math.Min(tank.Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
+                        var xMovement = speed * Math.Cos(angle);
+                        var yMovement = speed * Math.Sin(angle);
 
-						case Movement.SOUTH:
-							if (IsTankInBounds(tank, (int)tank.X, (int)tank.Y + 1, gameState))
-							{
-								tank.Y++;
-							}
-							break;
+                        if (IsTankInBounds(tank, tank.X + xMovement, tank.Y, gameState))
+                        {
+                            ((Location)tank.Location).X += xMovement;
+                        }
+                        else
+                        {
+                            V.X /= 2;
+                        }
 
-						case Movement.EAST:
-							if (IsTankInBounds(tank, (int)tank.X + 1, (int)tank.Y, gameState))
-							{
-								tank.X++;
-							}
-							break;
+                        if (IsTankInBounds(tank, tank.X, tank.Y + yMovement, gameState))
+                        {
+                            ((Location)tank.Location).Y += yMovement;
+                        }
+                        else
+                        {
+                            V.Y /= 2;
+                        }
 
-						case Movement.WEST:
-							if (IsTankInBounds(tank, (int)tank.X - 1, (int)tank.Y, gameState))
-							{
-								tank.X--;
-							}
-							break;
-					}
 
+                    }
+
+                    gameTank.Target = (Monster)tankUpdate.Target;
                     gameTank.Shooting = false;
                     if (gameTank.Heat <= 0 && gameTank.Target != null)
                     {
@@ -154,17 +162,17 @@ namespace TowerDefense.Business.Models
             }
         }
 
-		private static bool IsTankInBounds(ITank tank, int newX, int newY, IGameState gameState)
-		{
-			return newX + tank.Size.Width < gameState.Size.Width && newX > 0 &&
-				   newY + tank.Size.Height < gameState.Size.Height && newY > 0;
-		}
+        private static bool IsTankInBounds(ITank tank, double newX, double newY, IGameState gameState)
+        {
+            return newX + tank.Size.Width < gameState.Size.Width && newX > 0 &&
+                   newY + tank.Size.Height < gameState.Size.Height && newY > 0;
+        }
 
         private static bool CanReach(IEntity shooter, Bullet bullet, IEntity target)
         {
-            var xDistance = shooter.X - target.X + (shooter.Size.Width - target.Size.Width);
-            var yDistance = shooter.Y - target.Y + (shooter.Size.Height - target.Size.Height);
-            var distance = Math.Pow(bullet.Range, 2) - (Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+            var xDistance = (shooter.X + shooter.Size.Width) - (target.X + target.Size.Width);
+            var yDistance = (shooter.Y + shooter.Size.Height) - (target.Y + target.Size.Height);
+            var distance = bullet.Range - Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
             var sizeOfThings = (shooter.Size.Height + shooter.Size.Width + target.Size.Height + target.Size.Width) / 2;
             return target != null && (distance > -sizeOfThings);
         }
@@ -177,10 +185,10 @@ namespace TowerDefense.Business.Models
                 Foes = new List<IFoe>(),
                 Goals = new List<IGoal>
                 {
-                    new Goal {X = 0, Y = 0},
-                    new Goal {X = width - Goal.Width, Y = 0},
-                    new Goal {X = 0, Y = height - Goal.Height},
-                    new Goal {X = width - Goal.Width, Y = height - Goal.Height}
+                    new Goal {Location = new Location(0,0)},
+                    new Goal {Location = new Location(width - Goal.Width, 0)},
+                    new Goal {Location = new Location(0, height - Goal.Height)},
+                    new Goal {Location = new Location(width - Goal.Width, height - Goal.Height)}
                 },
                 GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList()
             };

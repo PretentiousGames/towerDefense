@@ -14,7 +14,7 @@ namespace towerDefense.Hubs
     {
         public GameState getGameState()
         {
-            return new GameState { Foes = new List<IFoe> { new Monster { X = 400, Y = 400 } }, Goals = new List<IGoal> { new Goal { X = 0, Y = 0 } } };
+            return new GameState { };
         }
     }
 }

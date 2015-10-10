@@ -9,6 +9,6 @@ namespace TowerDefense.Interfaces
 	public class TankUpdate : ITankUpdate
 	{
 		public IFoe Target { get; set; }
-		public Movement MoveDirection { get; set; }
+        public ILocation MovementTarget { get; set; }
 	}
 }

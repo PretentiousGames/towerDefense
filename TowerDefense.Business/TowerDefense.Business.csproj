@@ -61,6 +61,8 @@
     <Compile Include="Models\Goal.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\IGameTank.cs" />
+    <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\LocationProvider.cs" />
     <Compile Include="Models\Monster.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

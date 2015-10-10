@@ -16,8 +16,9 @@ namespace TowerDefense.Business.Models
             Health = MaxHealth = GoalMaxHealth;
         }
 
-        public double X { get; set; }
-        public double Y { get; set; }
+        public ILocation Location { get; set; }
+        public double X { get { return Location.X; } }
+        public double Y { get { return Location.Y; } }
         public Size Size { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; private set; }

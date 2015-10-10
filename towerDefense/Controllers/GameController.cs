@@ -39,7 +39,7 @@ namespace towerDefense.Controllers
 
             var constructor = type.GetConstructor(new Type[] { });
 
-            var tower = (ITank)constructor.Invoke(new object[] { });
+            var tower = (Tank)constructor.Invoke(new object[] { });
 
             var game = GameManager.GetGame(gamename);
             if (game != null)
@@ -52,7 +52,7 @@ namespace towerDefense.Controllers
                 }
                 else
                 {
-                    List<ITank> towers = new List<ITank> { tower };
+                    List<Tank> towers = new List<Tank> { tower };
                     game.Players.Add(new Player
                     {
                         Name = playername,
