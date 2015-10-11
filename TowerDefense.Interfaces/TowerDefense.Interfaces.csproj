@@ -44,6 +44,7 @@
     <Compile Include="IBullet.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IFoe.cs" />
+    <Compile Include="IGameBroadcaster.cs" />
     <Compile Include="IGameState.cs" />
     <Compile Include="IGoal.cs" />
     <Compile Include="IKillable.cs" />

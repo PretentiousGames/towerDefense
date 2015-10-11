@@ -45,7 +45,14 @@ namespace TestTower
         {
             var range = GetDistance(foe) + 1;
             var damage = (int)(1000 / range);
-            Bullet = new Bullet { Damage = damage, Range = range };
+            var freeze = 0;
+            if (damage < foe.Health)
+            {
+                damage /= 2;
+                freeze = damage;
+                //damage = 1;
+            }
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze };
         }
 
         public override IBullet GetBullet()

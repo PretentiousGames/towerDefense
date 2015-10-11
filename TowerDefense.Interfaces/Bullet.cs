@@ -6,9 +6,11 @@ namespace TowerDefense.Business.Models
     {
         public double Range { get; set; }
         public int Damage { get; set; }
+        public int Freeze { get; set; }
+
         public double ReloadTime
         {
-            get { return Range * Damage / 1000; }
+            get { return Range * (Damage + Freeze) / 1000; }
         }
     }
 }

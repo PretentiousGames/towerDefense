@@ -4,11 +4,7 @@
     {
         double Range { get; }
         int Damage { get; }
+        int Freeze { get; }
         double ReloadTime { get; }
-    }
-
-    public interface IGameBroadcaster
-    {
-        void BroadcastGameState(IGameState gameState);
     }
 }

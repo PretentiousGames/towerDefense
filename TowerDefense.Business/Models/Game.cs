@@ -135,6 +135,7 @@ namespace TowerDefense.Business.Models
                             gameTank.Shooting = true;
                             gameTank.Heat += bullet.ReloadTime;
                             gameTank.Target.Health -= bullet.Damage;
+                            gameTank.Target.Speed *= gameTank.Target.MaxHealth / (double)(bullet.Freeze + gameTank.Target.MaxHealth);
                             if (gameTank.Target.Health <= 0)
                             {
                                 gameState.Foes.Remove(gameTank.Target);
