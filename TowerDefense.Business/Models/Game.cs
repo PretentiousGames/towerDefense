@@ -81,7 +81,7 @@ namespace TowerDefense.Business.Models
                         {
                             gameState.Goals.Remove(goal);
                             Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.25);
-
+   
                             if (!gameState.Goals.Any())
                             {
                                 gameState.Lost = true;
