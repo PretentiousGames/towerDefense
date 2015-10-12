@@ -6,8 +6,8 @@ namespace TowerDefense.Business.Models
     {
         double Heat { get; set; }
         string Owner { get; set; }
-        ITank Tank { get; set; }
-        Bullet Bullet { get; set; }
+        Tank Tank { get; set; }
+        Location Location { get; set; }
         Monster Target { get; set; }
         bool Shooting { get; set; }
         int Killed { get; set; }

@@ -18,16 +18,18 @@ namespace TowerDefense.Business.Models
             Size = new Size(Width, Height);
             Id = _id++;
             Health = MaxHealth = MonsterMaxHealth;
+            Speed = 1;
         }
 
         private static Random _random = new Random();
         private int _gravityConstant = 500;
 
-        public int Id { get; private set; }
-        public double X { get; set; }
-        public double Y { get; set; }
+        public int Id { get; }
+        public double X { get { return Location.X; } }
+        public double Y { get { return Location.Y; } }
+        public ILocation Location { get; set; }
         public Vector V { get; set; }
-        public int MaxHealth { get; private set; }
+        public int MaxHealth { get; }
         public int Health { get; set; }
         public double Speed { get; set; }
         public Size Size { get; set; }
@@ -38,12 +40,14 @@ namespace TowerDefense.Business.Models
             var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
             pull += randomComponent;
             V += pull;
-            var xMovement = Math.Max(Math.Min(V.X, 1), -1);
-            var yMovement = Math.Max(Math.Min(V.Y, 1), -1);
+            var angle = Math.Atan2(V.Y, V.X);
+            var speed = Math.Min(Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
+            var xMovement = speed * Math.Cos(angle);
+            var yMovement = speed * Math.Sin(angle);
 
             if (CanMove(X + xMovement, Y, gameState))
             {
-                X += xMovement;
+                ((Location)Location).X += xMovement;
             }
             else
             {
@@ -52,7 +56,7 @@ namespace TowerDefense.Business.Models
 
             if (CanMove(X, Y + yMovement, gameState))
             {
-                Y += yMovement;
+                ((Location)Location).Y += yMovement;
             }
             else
             {
