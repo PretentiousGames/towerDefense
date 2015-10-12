@@ -22,9 +22,9 @@ namespace towerDefense
 
 
             routes.MapRoute(
-                name: "New",
-                url: "Game/NewGame",
-                defaults: new { controller = "Game", action = "NewGame" }
+                name: "Stop",
+                url: "Game/StopGame",
+                defaults: new { controller = "Game", action = "StopGame" }
             );
 
 

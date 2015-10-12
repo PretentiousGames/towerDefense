@@ -84,7 +84,14 @@ namespace TowerDefense.Business.Models
                 foreach (var gameTank in gameState.GameTanks)
                 {
                     var tank = gameTank.Tank;
-                    gameTank.Target = (Monster)tank.Update(gameState);
+                    try
+                    {
+                        gameTank.Target = (Monster) tank.Update(gameState);
+                    }
+                    catch
+                    {
+
+                    }
                     gameTank.Shooting = false;
                     if (gameTank.Heat <= 0 && gameTank.Target != null)
                     {
