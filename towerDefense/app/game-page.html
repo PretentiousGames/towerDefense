@@ -24,8 +24,8 @@
                 <template is="dom-repeat" items="{{players}}" as="player">
                     <div><span>{{getPlayerNumber(index)}}</span>. <span>{{player.name}}</span></div>
 
-                    <template is="dom-repeat" items="{{player.towers}}" as="tower">
-                        <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tower.Name}}</span></div>
+                    <template is="dom-repeat" items="{{player.tanks}}" as="tank">
+                        <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tank.name}}</span></div>
                     </template>
                 </template>
             </div>

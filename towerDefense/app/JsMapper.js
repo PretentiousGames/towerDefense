@@ -19,8 +19,7 @@
                 });
                 child = mappedChild;
             }
-
-            if (_.isObject(child)) {
+            else if (_.isObject(child)) {
                 child = mapToJsObject(child);
             }
 
