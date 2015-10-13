@@ -70,8 +70,9 @@ namespace TowerDefense.Business.Models
 
                 for (int j = 0; j < gameState.Foes.Count; j++)
                 {
-                    var monster = (IMonster)gameState.Foes[j];
+                    var monster = (Monster)gameState.Foes[j];
                     monster.Update(gameState);
+                    monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
                     var goal = IsMonsterAtGoal(monster, gameState.Goals);
                     if (goal != null)
                     {
@@ -135,7 +136,7 @@ namespace TowerDefense.Business.Models
                             gameTank.Shooting = true;
                             gameTank.Heat += bullet.ReloadTime;
                             gameTank.Target.Health -= bullet.Damage;
-                            gameTank.Target.Speed *= gameTank.Target.MaxHealth / (double)(bullet.Freeze + gameTank.Target.MaxHealth);
+                            gameTank.Target.Speed *= gameTank.Target.Health / (double)(2 * bullet.Freeze + gameTank.Target.Health);
                             if (gameTank.Target.Health <= 0)
                             {
                                 gameState.Foes.Remove(gameTank.Target);

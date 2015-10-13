@@ -18,7 +18,7 @@ namespace TowerDefense.Business.Models
             Size = new Size(Width, Height);
             Id = _id++;
             Health = MaxHealth = MonsterMaxHealth;
-            Speed = 1;
+            Speed = MaxSpeed = 1;
         }
 
         private static Random _random = new Random();
@@ -32,6 +32,7 @@ namespace TowerDefense.Business.Models
         public int MaxHealth { get; }
         public int Health { get; set; }
         public double Speed { get; set; }
+        public double MaxSpeed { get; set; }
         public Size Size { get; set; }
 
         public IFoe Update(IGameState gameState)

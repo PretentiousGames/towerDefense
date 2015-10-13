@@ -24,8 +24,15 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.Target = gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
-                ChangeBulletPower(tankUpdate.Target);
+                tankUpdate.Target = gameState.Foes
+                    .Where(foe => 1000 / GetDistance(foe) >= 2)
+                    .OrderBy(foe => GetDistanceToGoal(foe, gameState.Goals) + GetTimeToGoal(foe, gameState.Goals) + GetDistance(foe))
+                    .FirstOrDefault();
+
+                if (tankUpdate.Target != null)
+                {
+                    ChangeBulletPower(tankUpdate.Target);
+                }
 
                 var x = (gameState.Foes.Average(foe => foe.X) + 99 * gameState.Goals.Average(goal => goal.X)) / 100;
                 var y = (gameState.Foes.Average(foe => foe.Y) + 99 * gameState.Goals.Average(goal => goal.Y)) / 100;
@@ -33,6 +40,32 @@ namespace TestTower
             }
 
             return tankUpdate;
+        }
+
+        private double GetDistanceToGoal(IFoe foe, List<IGoal> goals)
+        {
+            var minDistance = double.MaxValue;
+            var goal = goals.Last();
+            //foreach (var goal in goals)
+            {
+                var xDistance = (goal.X + goal.Size.Width) - (foe.X + foe.Size.Width);
+                var yDistance = (goal.Y + goal.Size.Height) - (foe.Y + foe.Size.Height);
+                minDistance = Math.Min(Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2)), minDistance);
+            }
+            return minDistance;
+        }
+
+        private double GetTimeToGoal(IFoe foe, List<IGoal> goals)
+        {
+            var minDistance = double.MaxValue;
+            var goal = goals.Last();
+            //foreach (var goal in goals)
+            {
+                var xDistance = (goal.X + goal.Size.Width) - (foe.X + foe.Size.Width);
+                var yDistance = (goal.Y + goal.Size.Height) - (foe.Y + foe.Size.Height);
+                minDistance = Math.Min(Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2)) / foe.Speed, minDistance);
+            }
+            return minDistance;
         }
 
         private double GetDistance(IFoe foe)
@@ -48,9 +81,10 @@ namespace TestTower
             var freeze = 0;
             if (damage < foe.Health)
             {
-                damage /= 2;
-                freeze = damage;
-                //damage = 1;
+                //damage /= 2;
+                //freeze = damage;
+                freeze = damage - 1;
+                damage = 1;
             }
             Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze };
         }
