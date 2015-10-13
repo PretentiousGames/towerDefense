@@ -35,6 +35,12 @@ namespace towerDefense
             );
 
             routes.MapRoute(
+                name: "DeleteTank",
+                url: "Game/DeleteTank",
+                defaults: new { controller = "Game", action = "DeleteTank" }
+            );
+
+            routes.MapRoute(
                 name: "GameName",
                 url: "Game/{gameName}",
                 defaults: new { controller = "Game", action = "Index" }
