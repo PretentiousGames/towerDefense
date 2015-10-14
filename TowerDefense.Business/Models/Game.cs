@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using TestTower;
 using TowerDefense.Interfaces;
+using Size = TowerDefense.Interfaces.Size;
 
 namespace TowerDefense.Business.Models
 {
@@ -121,8 +123,6 @@ namespace TowerDefense.Business.Models
                         {
                             V.Y /= 2;
                         }
-
-
                     }
 
                     gameTank.Target = (Monster)tankUpdate.Target;
@@ -136,6 +136,34 @@ namespace TowerDefense.Business.Models
                             gameTank.Heat += bullet.ReloadTime;
                             gameTank.Target.Health -= bullet.Damage;
                             gameTank.Target.Speed *= gameTank.Target.MaxHealth / (double)(bullet.Freeze + gameTank.Target.MaxHealth);
+
+	                        if (bullet.SplashDamage > 0 && bullet.SplashRange > 0)
+	                        {
+		                        List<Monster> foesInRange = GetFoesInRange(gameState.Foes, (int)gameTank.Target.Location.X, (int)gameTank.Target.Location.Y, bullet.SplashRange);
+
+	                            foreach (var monster in foesInRange) //TODO: Remove repeated code (modularize this somehow)
+                                {
+	                                monster.Health -= bullet.SplashDamage;
+
+                                    if (monster.Health <= 0)
+                                    {
+                                        gameState.Foes.Remove(monster);
+                                        if (!gameState.Lost)
+                                        {
+                                            gameTank.Killed++;
+                                            killed++;
+                                            if (killed == game._foeCount)
+                                            {
+                                                killed = 0;
+                                                gameState.Wave++;
+                                                game._foeCount++;
+                                                Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.1);
+                                            }
+                                        }
+                                    }
+                                }
+	                        }
+
                             if (gameTank.Target.Health <= 0)
                             {
                                 gameState.Foes.Remove(gameTank.Target);
@@ -162,6 +190,29 @@ namespace TowerDefense.Business.Models
                 Thread.Sleep(10);
             }
         }
+        
+		private static List<Monster> GetFoesInRange(List<IFoe> foes, int x, int y, int radius)
+	    {
+			List<Monster> foesInRange = new List<Monster>();
+
+		    int foeWidth = 16;
+		    int foeHeight = 16;
+
+		    Rectangle rect = new Rectangle(x - radius / 2, y - radius / 2, radius, radius);
+
+		    foreach (var foe in foes)
+		    {
+			    int foeCenterX = (int)foe.Location.X + (foeWidth/2);
+			    int foeCenterY = (int)foe.Location.Y + (foeHeight/2);
+
+			    if (rect.Contains(foeCenterX, foeCenterY))
+			    {
+					foesInRange.Add((Monster) foe);
+			    }
+		    }
+
+			return foesInRange;
+	    } 
 
         private static bool IsTankInBounds(ITank tank, double newX, double newY, IGameState gameState)
         {

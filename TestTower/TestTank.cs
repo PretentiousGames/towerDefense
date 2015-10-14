@@ -29,7 +29,7 @@ namespace TestTower
 
                 var x = (gameState.Foes.Average(foe => foe.X) + 99 * gameState.Goals.Average(goal => goal.X)) / 100;
                 var y = (gameState.Foes.Average(foe => foe.Y) + 99 * gameState.Goals.Average(goal => goal.Y)) / 100;
-                tankUpdate.MovementTarget = LocationProvider.GetLocation(x, y);
+                //tankUpdate.MovementTarget = LocationProvider.GetLocation(x, y);
             }
 
             return tankUpdate;
@@ -46,13 +46,15 @@ namespace TestTower
             var range = GetDistance(foe) + 1;
             var damage = (int)(1000 / range);
             var freeze = 0;
+	        var splashDamage = 10;
+	        var splashRange = 100;
             if (damage < foe.Health)
             {
                 damage /= 2;
                 freeze = damage;
                 //damage = 1;
             }
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze };
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze, SplashDamage = splashDamage, SplashRange = splashRange };
         }
 
         public override IBullet GetBullet()
