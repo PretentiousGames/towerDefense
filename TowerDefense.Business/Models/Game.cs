@@ -138,15 +138,14 @@ namespace TowerDefense.Business.Models
                             gameTank.Target.Health -= bullet.Damage;
                             gameTank.Target.Speed *= gameTank.Target.Health / (double)(2 * bullet.Freeze + gameTank.Target.Health);
                             gameTank.Target.Speed *= gameTank.Target.MaxHealth / (double)(bullet.Freeze + gameTank.Target.MaxHealth);
-
-                            var splash = bullet.Splash;
-	                        if (splash != null)
+                            
+	                        if (bullet.SplashRange != 0)
 	                        {
-		                        List<Monster> foesInRange = GetFoesInRange(gameState.Foes, splash.Target.X, splash.Target.Y, splash.Range);
+		                        List<Monster> foesInRange = GetFoesInRange(gameState.Foes, gameTank.Target.X, gameTank.Target.Y, bullet.SplashRange);
 
 	                            foreach (var monster in foesInRange) //TODO: Remove repeated code (modularize this somehow)
                                 {
-	                                monster.Health -= splash.Damage;
+	                                monster.Health -= bullet.Damage;
 
                                     if (monster.Health <= 0)
                                     {
@@ -194,14 +193,14 @@ namespace TowerDefense.Business.Models
             }
         }
         
-		private static List<Monster> GetFoesInRange(List<IFoe> foes, int x, int y, int radius)
+		private static List<Monster> GetFoesInRange(List<IFoe> foes, double x, double y, double radius)
 	    {
 			List<Monster> foesInRange = new List<Monster>();
 
 		    int foeWidth = 16;
 		    int foeHeight = 16;
 
-		    Rectangle rect = new Rectangle(x - radius / 2, y - radius / 2, radius, radius);
+		    Rectangle rect = new Rectangle((int)(x - radius / 2), (int)(y - radius / 2), (int)radius, (int)radius);
 
 		    foreach (var foe in foes)
 		    {
