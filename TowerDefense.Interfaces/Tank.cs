@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace TowerDefense.Interfaces
@@ -41,5 +43,47 @@ namespace TowerDefense.Interfaces
 
         public abstract TankUpdate Update(IGameState gameState);
         public abstract IBullet GetBullet();
+        
+        protected double GetDistanceToGoal(IFoe foe, List<IGoal> goals)
+        {
+            var minDistance = double.MaxValue;
+            foreach (var goal in goals)
+            {
+                var xDistance = (goal.X + goal.Size.Width) - (foe.X + foe.Size.Width);
+                var yDistance = (goal.Y + goal.Size.Height) - (foe.Y + foe.Size.Height);
+                minDistance = Math.Min(Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2)), minDistance);
+            }
+            return minDistance;
+        }
+
+        protected double GetTimeToGoal(IFoe foe, List<IGoal> goals)
+        {
+            var minDistance = double.MaxValue;
+            foreach (var goal in goals)
+            {
+                var xDistance = (goal.X + goal.Size.Width) - (foe.X + foe.Size.Width);
+                var yDistance = (goal.Y + goal.Size.Height) - (foe.Y + foe.Size.Height);
+                minDistance = Math.Min(Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2)) / foe.Speed, minDistance);
+            }
+            return minDistance;
+        }
+
+        protected static double GetDistance(IEntity entity1, double x, double y)
+        {
+            var xDistance = (entity1.X + entity1.Size.Width) - (x);
+            var yDistance = (entity1.Y + entity1.Size.Height) - (y);
+            return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+        }
+        protected static double GetDistance(IEntity entity1, IEntity entity2)
+        {
+            var xDistance = (entity1.X + entity1.Size.Width) - (entity2.X + entity2.Size.Width);
+            var yDistance = (entity1.Y + entity1.Size.Height) - (entity2.Y + entity2.Size.Height);
+            return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+        }
+
+        protected double GetDistanceFromTank(IEntity entity)
+        {
+            return GetDistance(this, entity);
+        }
     }
 }

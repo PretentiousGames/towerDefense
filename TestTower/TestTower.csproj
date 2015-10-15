@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FreezeTank.cs" />
     <Compile Include="TestTank.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
