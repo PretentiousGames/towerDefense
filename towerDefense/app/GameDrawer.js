@@ -217,10 +217,10 @@
                 return _.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
 
-            var calculateAngle = function (tank, foe) {
-                if (foe) {
-                    var xComponent = foe.x + foe.size.width / 2 - tank.x - 16;
-                    var yComponent = foe.y + foe.size.height / 2 - tank.y - 16;
+            var calculateAngle = function (tank, target) {
+                if (target) {
+                    var xComponent = target.x - tank.x - 16;
+                    var yComponent = target.y - tank.y - 16;
                     return Math.atan2(xComponent, -yComponent);
                 }
                 return 0;
@@ -236,13 +236,13 @@
                 } else {
                     _.extend(renderTank, gameTank.tank);
                 }
-                renderTank.angle = calculateAngle(renderTank, gameTank.target);
+                renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.killed = gameTank.killed;
                 renderTank.owner = gameTank.owner;
                 renderTank.heat = gameTank.heat;
                 if (renderTank.shooting) {
-                    renderTank.target = gameTank.target;
+                    renderTank.target = gameTank.shotTarget;
                 }
             });
             tanks = _.filter(tanks, function (tank) {
