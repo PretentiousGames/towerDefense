@@ -7,7 +7,7 @@ namespace TowerDefense.Interfaces
         double Range { get; }
         int Damage { get; }
         int Freeze { get; }
-        double SplashRange { get; }
+        SplashBullet Splash { get; set; }
         double ReloadTime { get; }
     }
 }

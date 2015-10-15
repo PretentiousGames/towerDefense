@@ -37,7 +37,7 @@ namespace TowerDefense.Business.Models
                 Players.Add(new Player
                 {
                     Name = "demo",
-                    Tanks = new List<Tank> { new TestTank() }
+                    Tanks = new List<Tank> { new TestTank(), new FreezeTank() }
                 });
             }
 

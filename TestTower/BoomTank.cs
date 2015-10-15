@@ -42,8 +42,14 @@ namespace TestTower
         {
             var range = GetDistance(foe) + 1;
             var damage = (int)(1000 / range);
+
+            var splash = new SplashBullet
+            {
+                Range = 1,
+                Target = new Point((int) foe.Location.X, (int) foe.Location.Y)
+            };
            
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, SplashRange = 100 };
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, Splash = splash };
         }
 
         public override IBullet GetBullet()
