@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
-using Microsoft.AspNet.SignalR.Infrastructure;
-using Newtonsoft.Json.Serialization;
-using Ninject;
 using towerDefense.Hubs;
 using TowerDefense.Business;
 using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
-using Size = TowerDefense.Interfaces.Size;
 
 namespace towerDefense.Controllers
 {
@@ -26,6 +20,36 @@ namespace towerDefense.Controllers
         {
             var game = GameManager.GetGame(gameName);
             return game == null ? (ActionResult)RedirectToAction("Index", "Home") : View("Index", game);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteTank(string gamename, string playername, string tankname)
+        {
+            var game = GameManager.GetGame(gamename);
+
+            if (game != null)
+            {
+                Player player = game.Players.FirstOrDefault(x => x.Name == playername);
+
+                if (player != null)
+                {
+                    var tank = player.Tanks.Find(t => t.Name == tankname);
+
+                    if (tank != null)
+                    {
+                        if (player.Tanks.Count == 1)
+                        {
+                            game.Players.Remove(player);
+                        }
+                        else
+                        {
+                           player.Tanks.Remove(tank); 
+                        }
+                    }
+                }
+            }
+
+            return RedirectToAction("../Game/" + gamename);
         }
 
         [HttpPost]
@@ -48,6 +72,13 @@ namespace towerDefense.Controllers
 
                 if (player != null)
                 {
+                    var tank = player.Tanks.Find(t => t.Name == tower.Name);
+
+                    if (tank != null)
+                    {
+                        player.Tanks.Remove(tank);
+                    }
+
                     player.Tanks.Add(tower);
                 }
                 else

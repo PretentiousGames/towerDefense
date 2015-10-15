@@ -1,5 +1,8 @@
 ﻿<dom-module id="game-page">
-    <style>
+    <style scope="iron-icon">
+        iron-icon:hover {
+            fill: gray;
+        }
     </style>
 
     <template>
@@ -25,7 +28,9 @@
                     <div><span>{{getPlayerNumber(index)}}</span>. <span>{{player.name}}</span></div>
 
                     <template is="dom-repeat" items="{{player.tanks}}" as="tank">
-                        <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tank.name}}</span></div>
+                        <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tank.name}}</span>
+                            <iron-icon id="{{tank.name}}" icon="delete" on-click="_deleteTank"></iron-icon>
+                        </div>
                     </template>
                 </template>
             </div>
@@ -53,7 +58,25 @@
                 this.playername = localStorage.name;
                 this.players = towerDefense.game.players;
 
-                towerDefense.gameDrawer.init(document.getElementById("gameCanvas"));
+                var canvas = document.getElementById("gameCanvas");
+                towerDefense.gameDrawer.init(canvas);
+
+                var proxy = $.connection.gameHub;
+
+                //var tankTurretImage = new Image();
+                //tankTurretImage.src = "../Sprites/tankTurret.png";
+                //var tankBaseImage = new Image();
+                //tankBaseImage.src = "../Sprites/tankBase.png";
+
+                //var ctx = canvas.getContext("2d");
+
+                //_.each(this.players, function (player) {
+                //    _.each(player.tanks, function (tank) {
+                //        ctx.drawImage(tankBaseImage, tank.x, tank.y, 32, 32);
+                //        ctx.translate(tank.x + 16, tank.y + 16);
+                //        ctx.drawImage(tankTurretImage, -(tankTurretImage.width / 2), -(tankTurretImage.height / 2));
+                //    });
+                //});
             },
             start: function () {
                 var url = "../Game/Start";
@@ -85,6 +108,21 @@
                         if (callback) {
                             callback(response);
                         }
+                    }
+                };
+                xhr.send(params);
+            },
+            _deleteTank: function(e) {
+                var url = "../Game/DeleteTank";
+                var xhr = new XMLHttpRequest();
+                var params = JSON.stringify({ gameName: this.gamename, playername: this.playername, tankname: e.currentTarget.id });
+                xhr.open('POST', url);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        //var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
+
+                        location.reload();
                     }
                 };
                 xhr.send(params);

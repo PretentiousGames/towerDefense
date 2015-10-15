@@ -1,4 +1,5 @@
-﻿using TowerDefense.Interfaces;
+﻿using System.Drawing;
+using TowerDefense.Interfaces;
 
 namespace TowerDefense.Business.Models
 {
@@ -7,10 +8,16 @@ namespace TowerDefense.Business.Models
         public double Range { get; set; }
         public int Damage { get; set; }
         public int Freeze { get; set; }
+	    public SplashBullet Splash { get; set; }
 
-        public double ReloadTime
+	    public double ReloadTime
         {
-            get { return Range * (Damage + Freeze) / 1000; }
+	        get
+	        {
+	            int splashRange = Splash != null ? Splash.Range <= 0 ? 1 : Splash.Range : 1;
+
+                return Range * ((Damage + Freeze) * splashRange) / 1000;
+	        }
         }
     }
 }
