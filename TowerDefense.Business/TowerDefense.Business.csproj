@@ -59,6 +59,7 @@
     <Compile Include="GameManager.cs" />
     <Compile Include="Models\GameState.cs" />
     <Compile Include="Models\GameTank.cs" />
+    <Compile Include="Models\GameThread.cs" />
     <Compile Include="Models\Goal.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\IGameTank.cs" />

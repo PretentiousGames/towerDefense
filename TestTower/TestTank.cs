@@ -50,7 +50,6 @@ namespace TestTower
 
             var splash = new SplashBullet
             {
-                Damage = 10,
                 Range = 100,
                 Target = new Point((int)foe.Location.X, (int)foe.Location.Y)
             };

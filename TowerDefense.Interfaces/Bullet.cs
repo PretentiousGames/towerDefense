@@ -12,7 +12,12 @@ namespace TowerDefense.Business.Models
 
 	    public double ReloadTime
         {
-			get { return Range * (Damage + Freeze + ((Splash.Damage * Splash.Range) * Splash.HeatMultiplier)) / 1000; }
+	        get
+	        {
+	            int splashRange = Splash.Range <= 0 ? 1 : Splash.Range;
+
+                return Range * ((Damage + Freeze) * splashRange) / 1000;
+	        }
         }
     }
 }
