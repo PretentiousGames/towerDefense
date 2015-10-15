@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,16 +12,12 @@ namespace TestTower
     public class TestTank : Tank
     {
         public Bullet Bullet { get; set; }
-        public override string Name { get { return "Mr. Shooty"; } }
-        private double _xTarget;
-        private double _yTarget;
-        
+        public override string Name { get { return "TestTank"; } }
+
         public TestTank()
-            : base(400, 400)
+            : base(500, 500)
         {
             this.Speed = 1;
-            _xTarget = 400;
-            _yTarget = 400;
         }
         public override TankUpdate Update(IGameState gameState)
         {
@@ -28,42 +25,43 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.Target = gameState.Foes
-                    .Where(foe => 1000 / GetDistanceFromTank(foe) >= 1)
-                    .OrderBy(GetDistanceFromTank)
-                    .FirstOrDefault();
+                tankUpdate.Target = gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
+                ChangeBulletPower(tankUpdate.Target);
 
-                if (tankUpdate.Target != null)
-                {
-                    ChangeBulletPower(tankUpdate.Target);
-                }
-                
-                UpdateMovementTarget(tankUpdate, gameState);
+                var x = (gameState.Foes.Average(foe => foe.X) + 99 * gameState.Goals.Average(goal => goal.X)) / 100;
+                var y = (gameState.Foes.Average(foe => foe.Y) + 99 * gameState.Goals.Average(goal => goal.Y)) / 100;
+                //tankUpdate.MovementTarget = LocationProvider.GetLocation(x, y);
             }
 
             return tankUpdate;
         }
 
-        private void UpdateMovementTarget(TankUpdate tankUpdate, IGameState gameState)
+        private double GetDistance(IFoe foe)
         {
-            int maxFoes = GetFoesInRange(_xTarget, _yTarget, gameState);
-
-            tankUpdate.MovementTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
+            var xDistance = (this.X + this.Size.Width) - (foe.X + foe.Size.Width);
+            var yDistance = (this.Y + this.Size.Height) - (foe.Y + foe.Size.Height);
+            return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
         }
-
-        private int GetFoesInRange(double xTarget, double yTarget, IGameState gameState)
-        {
-            foreach (var foe in gameState.Foes)
-            {
-                if (foe.X)
-            }
-        }
-
         private void ChangeBulletPower(IFoe foe)
         {
-            var range = GetDistanceFromTank(foe) + 1;
+            var range = GetDistance(foe) + 1;
             var damage = (int)(1000 / range);
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0 };
+            var freeze = 0;
+
+            var splash = new SplashBullet
+            {
+                Damage = 10,
+                Range = 100,
+                Target = new Point((int)foe.Location.X, (int)foe.Location.Y)
+            };
+            
+            if (damage < foe.Health)
+            {
+                damage /= 2;
+                freeze = damage;
+                //damage = 1;
+            }
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze, Splash = splash };
         }
 
         public override IBullet GetBullet()
