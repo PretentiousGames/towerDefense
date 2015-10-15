@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoomTank.cs" />
+    <Compile Include="FreezeTank.cs" />
     <Compile Include="TestTank.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

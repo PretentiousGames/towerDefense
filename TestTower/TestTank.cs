@@ -1,4 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TowerDefense.Business.Models;
+using TowerDefense.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,13 +17,18 @@ namespace TestTower
 {
     public class TestTank : Tank
     {
+        private Random _rng = new Random();
         public Bullet Bullet { get; set; }
-        public override string Name { get { return "TestTank"; } }
+        public override string Name { get { return "Mr. Shooty"; } }
+        private double _xTarget;
+        private double _yTarget;
 
         public TestTank()
-            : base(500, 500)
+            : base(400, 400)
         {
             this.Speed = 1;
+            _xTarget = 400;
+            _yTarget = 400;
         }
         public override TankUpdate Update(IGameState gameState)
         {
@@ -25,42 +36,66 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.Target = gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
-                ChangeBulletPower(tankUpdate.Target);
+                tankUpdate.Target = gameState.Foes
+                    .Where(foe => 1000 / GetDistanceFromTank(foe) >= 1)
+                    .OrderBy(GetDistanceFromTank)
+                    .FirstOrDefault();
 
-                var x = (gameState.Foes.Average(foe => foe.X) + 99 * gameState.Goals.Average(goal => goal.X)) / 100;
-                var y = (gameState.Foes.Average(foe => foe.Y) + 99 * gameState.Goals.Average(goal => goal.Y)) / 100;
-                //tankUpdate.MovementTarget = LocationProvider.GetLocation(x, y);
+                if (tankUpdate.Target != null)
+                {
+                    ChangeBulletPower(tankUpdate.Target);
+                }
+
+                UpdateMovementTarget(tankUpdate, gameState);
             }
 
             return tankUpdate;
         }
 
-        private double GetDistance(IFoe foe)
+        private void UpdateMovementTarget(TankUpdate tankUpdate, IGameState gameState)
         {
-            var xDistance = (this.X + this.Size.Width) - (foe.X + foe.Size.Width);
-            var yDistance = (this.Y + this.Size.Height) - (foe.Y + foe.Size.Height);
-            return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+            int maxFoes = GetFoesInRange(_xTarget, _yTarget, gameState);
+
+            for (int i = 0; i < 20; i++)
+            {
+                var y = _rng.NextDouble() * gameState.Size.Height;
+                var x = _rng.NextDouble() * gameState.Size.Width;
+                var f = GetFoesInRange(x, y, gameState);
+                if (f > maxFoes)
+                {
+                    maxFoes = f;
+                    _xTarget = x;
+                    _yTarget = y;
+                }
+            }
+
+            tankUpdate.MovementTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
         }
+
+        private int GetFoesInRange(double xTarget, double yTarget, IGameState gameState)
+        {
+            var foes = 0;
+            var range = 50;
+            foreach (var foe in gameState.Foes)
+            {
+                if (Math.Abs(foe.X - xTarget) < range && Math.Abs(foe.Y - yTarget) < range)
+                {
+                    foes++;
+                }
+            }
+            return foes;
+        }
+
         private void ChangeBulletPower(IFoe foe)
         {
-            var range = GetDistance(foe) + 1;
+            var range = GetDistanceFromTank(foe) + 1;
             var damage = (int)(1000 / range);
-            var freeze = 0;
-
             var splash = new SplashBullet
             {
                 Range = 100,
                 Target = new Point((int)foe.Location.X, (int)foe.Location.Y)
             };
-            
-            if (damage < foe.Health)
-            {
-                damage /= 2;
-                freeze = damage;
-                //damage = 1;
-            }
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze, Splash = splash };
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, Splash = splash };
         }
 
         public override IBullet GetBullet()
