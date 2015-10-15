@@ -90,11 +90,7 @@ namespace TestTower
         {
             var range = GetDistanceFromTank(foe) + 1;
             var damage = (int)(1000 / range);
-            var splash = new SplashBullet
-            {
-                Range = 1
-            };
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, Splash = splash };
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, SplashRange = 0 };
         }
 
         public override IBullet GetBullet()

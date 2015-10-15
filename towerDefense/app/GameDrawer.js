@@ -64,7 +64,20 @@
             ctx.beginPath();
             ctx.moveTo(tank.x + 16, tank.y + 16);
             ctx.lineTo(tank.target.x, tank.target.y);
-            ctx.strokeStyle = '#ff0000';
+
+            var getLaserColor = function (bullet) {
+                var damageRatio = (bullet.damage) / (bullet.freeze + bullet.damage);
+                var freezeRatio = (bullet.freeze) / (bullet.freeze + bullet.damage);
+                var fractionToHex = function (ratio) { return ('0' + Math.round(ratio * 255).toString(16)).substr(-2); };
+                return '#' + fractionToHex(damageRatio) + '00' + fractionToHex(freezeRatio);
+            };
+
+            var getLaserWidth = function(bullet) {
+                return Math.round(Math.log2(bullet.damage + bullet.freeze));
+            };
+
+            ctx.strokeStyle = getLaserColor(tank.bullet);
+            ctx.lineWidth = getLaserWidth(tank.bullet);
             ctx.stroke();
         }
         drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
@@ -74,7 +87,7 @@
         ctx.fillStyle = "#000";
         ctx.fillRect(tank.x, tank.y + yMod, 32, 5);
         ctx.fillStyle = "#F00";
-        ctx.fillRect(tank.x, tank.y + yMod, -500/(tank.heat + 16) + 32, 5);
+        ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 5);
     }
 
     var drawFoe = function (foe) {
@@ -238,6 +251,7 @@
                 }
                 renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
                 renderTank.shooting = gameTank.shooting;
+                renderTank.bullet = gameTank.bullet;
                 renderTank.killed = gameTank.killed;
                 renderTank.owner = gameTank.owner;
                 renderTank.heat = gameTank.heat;

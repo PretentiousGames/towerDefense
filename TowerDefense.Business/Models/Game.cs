@@ -38,14 +38,15 @@ namespace TowerDefense.Business.Models
                 Players.Add(new Player
                 {
                     Name = "demo",
-                    Tanks = new List<Tank> { new TestTank(), new FreezeTank(), new BoomTank() }
+                    Tanks = new List<Tank> { new BoomTank() }//new TestTank() , new FreezeTank(), new BoomTank() }
                 });
             }
 
             GameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, this);
 
-            NewWave();
             MonsterStartHealth = 10;
+            FoeCount = 0;
+            NewWave();
         }
 
         public void StartNewGame(IGameBroadcaster gameBroadcaster)
@@ -70,17 +71,20 @@ namespace TowerDefense.Business.Models
 
             foreach (var foe in GameState.Foes)
             {
-                var totalWidth = radius + foe.Size.Width;
-                var totalHeight = radius + foe.Size.Height;
-                Rectangle rect = new Rectangle(x - totalWidth / 2, y - totalHeight / 2, totalWidth, totalHeight);
-
-                if (rect.Contains(foe.Center.X, foe.Center.Y))
+                var distance = GetDistance(foe, x, y);
+                if (distance <= radius + (foe.Size.Height + foe.Size.Width) / 8.0)
                 {
                     foesInRange.Add((Monster)foe);
                 }
             }
 
             return foesInRange;
+        }
+        protected static double GetDistance(IEntity entity1, double x, double y)
+        {
+            var xDistance = entity1.Center.X - x;
+            var yDistance = entity1.Center.Y - y;
+            return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
         }
 
         public bool IsTankInBounds(ITank tank, double newX, double newY, IGameState gameState)

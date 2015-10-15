@@ -10,6 +10,7 @@ namespace TowerDefense.Business.Models
         ILocation Location { get; set; }
         ILocation ShotTarget { get; set; }
         bool Shooting { get; set; }
+        Bullet Bullet { get; set; }
         int Killed { get; set; }
     }
 }

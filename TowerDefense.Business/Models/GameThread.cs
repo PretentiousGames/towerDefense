@@ -48,7 +48,7 @@ namespace TowerDefense.Business.Models
                     MoveTank(tankUpdate, tank);
                     DoTankAttack(gameTank, tankUpdate, tank);
                 }
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
         }
 
@@ -81,14 +81,10 @@ namespace TowerDefense.Business.Models
                 if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
                 {
                     gameTank.Shooting = true;
+                    gameTank.Bullet = bullet;
                     gameTank.Heat += bullet.ReloadTime;
 
-                    var splash = bullet.Splash ?? new SplashBullet
-                    {
-                        Range = 1
-                    };
-
-                    List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y, splash.Range);
+                    List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y, bullet.SplashRange);
 
                     ApplyDamage(gameTank, bullet, foesInRange);
                     ApplyFreeze(gameTank, bullet, foesInRange);
@@ -136,7 +132,7 @@ namespace TowerDefense.Business.Models
         {
             foreach (var monster in foesInRange)
             {
-                monster.Speed *= monster.MaxHealth / (double)(bullet.Freeze + monster.MaxHealth);
+                monster.Speed *= monster.Health / (double)(bullet.Freeze * 1.5 + monster.Health);
             }
         }
 

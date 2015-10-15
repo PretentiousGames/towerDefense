@@ -14,7 +14,7 @@ namespace TowerDefense.Business.Models
 
         public Monster(int MonsterMaxHealth)
         {
-            V = new Vector(GetRandomVDelta() * 10, GetRandomVDelta() * 10);
+            V = new Vector(GetRandomVDelta() * 20, GetRandomVDelta() * 20);
             Size = new Size(Width, Height);
             Id = _id++;
             Health = MaxHealth = MonsterMaxHealth;
