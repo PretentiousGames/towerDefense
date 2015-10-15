@@ -66,14 +66,13 @@ namespace TowerDefense.Business.Models
         {
             List<Monster> foesInRange = new List<Monster>();
 
-            Rectangle rect = new Rectangle(x - radius / 2, y - radius / 2, radius, radius);
-
             foreach (var foe in GameState.Foes)
             {
-                double foeCenterX = foe.Location.X + (foe.Size.Width / 2);
-                double foeCenterY = foe.Location.Y + (foe.Size.Height / 2);
+                var totalWidth = radius + foe.Size.Width;
+                var totalHeight = radius + foe.Size.Height;
+                Rectangle rect = new Rectangle(x - totalWidth / 2, y - totalHeight / 2, totalWidth, totalHeight);
 
-                if (rect.Contains(foeCenterX, foeCenterY))
+                if (rect.Contains(foe.Center.X, foe.Center.Y))
                 {
                     foesInRange.Add((Monster)foe);
                 }
@@ -90,8 +89,8 @@ namespace TowerDefense.Business.Models
 
         public bool CanReach(IEntity shooter, Bullet bullet, ILocation target)
         {
-            var xDistance = (shooter.X + shooter.Size.Width) / 2 - (target.X);
-            var yDistance = (shooter.Y + shooter.Size.Height) / 2 - (target.Y);
+            var xDistance = shooter.X + (shooter.Size.Width / 2) - (target.X);
+            var yDistance = shooter.Y + (shooter.Size.Height / 2) - (target.Y);
             var shooterSize = (shooter.Size.Width + shooter.Size.Height) / 2;
             var distance = bullet.Range + shooterSize - Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
             return target != null && (distance > 0);
@@ -132,11 +131,6 @@ namespace TowerDefense.Business.Models
         {
             Players.Clear();
             _thread.Abort(gameBroadcaster);
-        }
-
-        public void AttackFoe()
-        {
-
         }
     }
 }

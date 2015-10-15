@@ -9,5 +9,6 @@ namespace TowerDefense.Interfaces
         double X { get; }
         double Y { get; }
         Size Size { get; }
+        ILocation Center { get; }
     }
 }

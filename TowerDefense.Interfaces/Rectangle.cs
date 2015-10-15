@@ -18,7 +18,7 @@ namespace TowerDefense.Interfaces
         public bool Contains(double x, double y)
         {
             return x <= _x + _width && x >= _x &&
-                   y <= _y + _height && y <= _y;
+                   y <= _y + _height && y >= _y;
         }
     }
 }

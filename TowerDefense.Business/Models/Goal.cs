@@ -23,5 +23,9 @@ namespace TowerDefense.Business.Models
         public int Health { get; set; }
         public int MaxHealth { get; private set; }
         public int Id { get; set; }
+        public ILocation Center
+        {
+            get { return new Location(X + Size.Width / 2, Y + Size.Height / 2); }
+        }
     }
 }

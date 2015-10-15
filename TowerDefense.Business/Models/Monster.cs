@@ -28,6 +28,10 @@ namespace TowerDefense.Business.Models
         public double X { get { return Location.X; } }
         public double Y { get { return Location.Y; } }
         public ILocation Location { get; set; }
+        public ILocation Center
+        {
+            get { return new Location(X + Size.Width / 2, Y + Size.Height / 2); }
+        }
         public Vector V { get; set; }
         public int MaxHealth { get; }
         public int Health { get; set; }

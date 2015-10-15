@@ -17,7 +17,7 @@ namespace TowerDefense.Business.Models
         }
 
         public void Run(object caller)
-        {    
+        {
             var gameState = _game.GameState;
 
             while (true)
@@ -34,8 +34,9 @@ namespace TowerDefense.Business.Models
                 {
                     var monster = (Monster)gameState.Foes[j];
                     monster.Update(gameState);
-                    monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
 
+                    //Thaw out monsters
+                    monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
 
                     if (MonsterAtGoal(monster, gameState))
                     {
@@ -49,7 +50,6 @@ namespace TowerDefense.Business.Models
                     var tankUpdate = tank.Update(gameState);
 
                     MoveTank(tankUpdate, tank, gameState);
-
                     DoTankAttack(gameTank, tankUpdate, tank, gameState);
                 }
                 Thread.Sleep(10);
@@ -60,11 +60,10 @@ namespace TowerDefense.Business.Models
         {
             gameTank.ShotTarget = tankUpdate.ShotTarget;
             gameTank.Shooting = false;
-            
+
             if (gameTank.Heat <= 0 && gameTank.ShotTarget != null)
             {
-                var bullet = (Bullet) tank.GetBullet(); //gameTank.Bullet
-
+                var bullet = (Bullet)tank.GetBullet();
                 if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
                 {
                     gameTank.Shooting = true;
@@ -83,7 +82,7 @@ namespace TowerDefense.Business.Models
             }
             else
             {
-                gameTank.Heat--;
+                gameTank.Heat = Math.Max(gameTank.Heat - 1, 0);
             }
         }
 
@@ -126,13 +125,13 @@ namespace TowerDefense.Business.Models
             {
                 var V = new Vector(tankUpdate.MovementTarget.X - tank.X, tankUpdate.MovementTarget.Y - tank.Y);
                 var angle = Math.Atan2(V.Y, V.X);
-                var speed = Math.Min(tank.Speed, Math.Sqrt(V.X*V.X + V.Y*V.Y));
-                var xMovement = speed*Math.Cos(angle);
-                var yMovement = speed*Math.Sin(angle);
+                var speed = Math.Min(tank.Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
+                var xMovement = speed * Math.Cos(angle);
+                var yMovement = speed * Math.Sin(angle);
 
                 if (_game.IsTankInBounds(tank, tank.X + xMovement, tank.Y, gameState))
                 {
-                    ((Location) tank.Location).X += xMovement;
+                    ((Location)tank.Location).X += xMovement;
                 }
                 else
                 {
@@ -141,7 +140,7 @@ namespace TowerDefense.Business.Models
 
                 if (_game.IsTankInBounds(tank, tank.X, tank.Y + yMovement, gameState))
                 {
-                    ((Location) tank.Location).Y += yMovement;
+                    ((Location)tank.Location).Y += yMovement;
                 }
                 else
                 {
@@ -156,11 +155,11 @@ namespace TowerDefense.Business.Models
             if (goal != null)
             {
                 gameState.Foes.Remove(monster);
-                ((Goal) goal).Health -= 1;
+                ((Goal)goal).Health -= 1;
                 if (goal.Health <= 0)
                 {
                     gameState.Goals.Remove(goal);
-                    Monster.MonsterMaxHealth = (int) (Monster.MonsterMaxHealth*1.25);
+                    Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.25);
 
                     if (!gameState.Goals.Any())
                     {

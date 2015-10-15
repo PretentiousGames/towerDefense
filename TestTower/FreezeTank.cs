@@ -29,7 +29,7 @@ namespace TestTower
 
                 if (target != null)
                 {
-                    tankUpdate.ShotTarget = target.Location;
+                    tankUpdate.ShotTarget = target.Center;
                     ChangeBulletPower(target);
                 }
 

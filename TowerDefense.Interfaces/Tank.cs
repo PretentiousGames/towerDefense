@@ -18,7 +18,7 @@ namespace TowerDefense.Interfaces
             }
         }
         public static ILocationProvider LocationProvider { get; set; }
-        
+
         public Tank(double x, double y)
         {
             Id = _id++;
@@ -31,6 +31,10 @@ namespace TowerDefense.Interfaces
         public double X { get { return Location.X; } }
         public double Y { get { return Location.Y; } }
         public Size Size { get; }
+        public ILocation Center
+        {
+            get { return LocationProvider.GetLocation(X + Size.Width / 2, Y + Size.Height / 2); }
+        }
         public int Id { get; }
 
         public abstract string Name { get; }
@@ -43,7 +47,7 @@ namespace TowerDefense.Interfaces
 
         public abstract TankUpdate Update(IGameState gameState);
         public abstract IBullet GetBullet();
-        
+
         protected double GetDistanceToGoal(IFoe foe, List<IGoal> goals)
         {
             var minDistance = double.MaxValue;
