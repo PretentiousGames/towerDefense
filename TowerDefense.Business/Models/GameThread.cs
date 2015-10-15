@@ -24,11 +24,7 @@ namespace TowerDefense.Business.Models
             {
                 _game.GameBroadcaster.BroadcastGameState(gameState);
 
-                if (gameState.Foes.Count < _game.FoeCount)
-                {
-                    Monster m = new Monster { Location = new Location(400 - 8, 400 - 8) };
-                    gameState.Foes.Add(m);
-                }
+                SpawnFoes(gameState);
 
                 for (int j = 0; j < gameState.Foes.Count; j++)
                 {
@@ -38,7 +34,7 @@ namespace TowerDefense.Business.Models
                     //Thaw out monsters
                     monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
 
-                    if (MonsterAtGoal(monster, gameState))
+                    if (MonsterAtGoal(monster))
                     {
                         j--;
                     }
@@ -49,14 +45,32 @@ namespace TowerDefense.Business.Models
                     var tank = gameTank.Tank;
                     var tankUpdate = tank.Update(gameState);
 
-                    MoveTank(tankUpdate, tank, gameState);
-                    DoTankAttack(gameTank, tankUpdate, tank, gameState);
+                    MoveTank(tankUpdate, tank);
+                    DoTankAttack(gameTank, tankUpdate, tank);
                 }
                 Thread.Sleep(10);
             }
         }
 
-        private void DoTankAttack(IGameTank gameTank, TankUpdate tankUpdate, Tank tank, GameState gameState)
+        private void SpawnFoes(GameState gameState)
+        {
+            CheckForNewWave();
+
+            int foesToSpawnLog = _game.FoesToSpawn;
+            while (foesToSpawnLog > 0)
+            {
+                _game.FoesToSpawn--;
+                foesToSpawnLog /= 10;
+                Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
+                {
+                    Location =
+                        new Location(gameState.Size.Width / 2 - Monster.Width / 2.0, gameState.Size.Height / 2 - Monster.Height / 2.0),
+                };
+                gameState.Foes.Add(m);
+            }
+        }
+
+        private void DoTankAttack(IGameTank gameTank, TankUpdate tankUpdate, Tank tank)
         {
             gameTank.ShotTarget = tankUpdate.ShotTarget;
             gameTank.Shooting = false;
@@ -76,7 +90,7 @@ namespace TowerDefense.Business.Models
 
                     List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y, splash.Range);
 
-                    ApplyDamage(gameTank, bullet, foesInRange, gameState);
+                    ApplyDamage(gameTank, bullet, foesInRange);
                     ApplyFreeze(gameTank, bullet, foesInRange);
                 }
             }
@@ -86,7 +100,7 @@ namespace TowerDefense.Business.Models
             }
         }
 
-        private void ApplyDamage(IGameTank gameTank, Bullet bullet, List<Monster> foesInRange, GameState gameState)
+        private void ApplyDamage(IGameTank gameTank, Bullet bullet, List<Monster> foesInRange)
         {
             foreach (var monster in foesInRange)
             {
@@ -94,20 +108,27 @@ namespace TowerDefense.Business.Models
 
                 if (monster.Health <= 0)
                 {
-                    gameState.Foes.Remove(monster);
-                    if (!gameState.Lost)
-                    {
-                        gameTank.Killed++;
-                        _game.Killed++;
-                        if (_game.Killed == _game.FoeCount)
-                        {
-                            _game.Killed = 0;
-                            gameState.Wave++;
-                            _game.FoeCount++;
-                            Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.1);
-                        }
-                    }
+                    KilledMonster(gameTank, monster);
                 }
+            }
+        }
+
+        private void KilledMonster(IGameTank gameTank, Monster monster)
+        {
+            var gameState = _game.GameState;
+            gameState.Foes.Remove(monster);
+            if (!gameState.Lost)
+            {
+                gameTank.Killed++;
+            }
+        }
+
+        private void CheckForNewWave()
+        {
+            var gameState = _game.GameState;
+            if (!gameState.Foes.Any())
+            {
+                _game.NewWave();
             }
         }
 
@@ -119,8 +140,9 @@ namespace TowerDefense.Business.Models
             }
         }
 
-        private void MoveTank(TankUpdate tankUpdate, Tank tank, GameState gameState)
+        private void MoveTank(TankUpdate tankUpdate, Tank tank)
         {
+            var gameState = _game.GameState;
             if (tankUpdate.MovementTarget != null)
             {
                 var V = new Vector(tankUpdate.MovementTarget.X - tank.X, tankUpdate.MovementTarget.Y - tank.Y);
@@ -149,8 +171,9 @@ namespace TowerDefense.Business.Models
             }
         }
 
-        private bool MonsterAtGoal(IMonster monster, GameState gameState)
+        private bool MonsterAtGoal(IMonster monster)
         {
+            var gameState = _game.GameState;
             var goal = _game.IsMonsterAtGoal(monster, gameState.Goals);
             if (goal != null)
             {
@@ -159,7 +182,7 @@ namespace TowerDefense.Business.Models
                 if (goal.Health <= 0)
                 {
                     gameState.Goals.Remove(goal);
-                    Monster.MonsterMaxHealth = (int)(Monster.MonsterMaxHealth * 1.25);
+                    _game.MonsterStartHealth = (int)(_game.MonsterStartHealth * 1.25);
 
                     if (!gameState.Goals.Any())
                     {

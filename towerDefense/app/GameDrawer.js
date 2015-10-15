@@ -63,7 +63,7 @@
         if (tank.shooting) {
             ctx.beginPath();
             ctx.moveTo(tank.x + 16, tank.y + 16);
-            ctx.lineTo(tank.target.x + 8, tank.target.y + 8);
+            ctx.lineTo(tank.target.x, tank.target.y);
             ctx.strokeStyle = '#ff0000';
             ctx.stroke();
         }

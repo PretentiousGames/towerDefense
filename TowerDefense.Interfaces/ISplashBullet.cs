@@ -6,6 +6,5 @@ namespace TowerDefense.Business.Models
     public interface ISplashBullet
     {
         int Range { get; set; }
-        double HeatMultiplier { get; }
     }
 }

@@ -12,7 +12,6 @@ namespace TowerDefense.Business.Models
     {
         private Thread _thread;
         private GameThread _gameThread;
-        public int FoeCount { get; set; }
 
         public int Killed { get; set; }
         public GameState GameState { get; private set; }
@@ -21,6 +20,9 @@ namespace TowerDefense.Business.Models
         public Size DefaultSize = new Size(800, 800);
         public Size Size { get; set; }
         public IGameBroadcaster GameBroadcaster { get; set; }
+        public int FoeCount { get; set; }
+        public int FoesToSpawn { get; set; }
+        public int MonsterStartHealth { get; set; }
 
         public Game()
         {
@@ -36,13 +38,14 @@ namespace TowerDefense.Business.Models
                 Players.Add(new Player
                 {
                     Name = "demo",
-                    Tanks = new List<Tank> { new TestTank(), new FreezeTank() }
+                    Tanks = new List<Tank> { new TestTank(), new FreezeTank(), new BoomTank() }
                 });
             }
 
             GameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, this);
 
-            Monster.MonsterMaxHealth = 10;
+            NewWave();
+            MonsterStartHealth = 10;
         }
 
         public void StartNewGame(IGameBroadcaster gameBroadcaster)
@@ -57,7 +60,6 @@ namespace TowerDefense.Business.Models
             GameBroadcaster = gameBroadcaster;
 
             _gameThread = new GameThread(this);
-            FoeCount = 1;
             _thread = new Thread(_gameThread.Run);
             _thread.Start(this);
         }
@@ -109,7 +111,9 @@ namespace TowerDefense.Business.Models
                     new Goal {Location = new Location(0, height - Goal.Height)},
                     new Goal {Location = new Location(width - Goal.Width, height - Goal.Height)}
                 },
-                GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList()
+                GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList(),
+                Wave = 0,
+                Lost = false
             };
         }
 
@@ -131,6 +135,13 @@ namespace TowerDefense.Business.Models
         {
             Players.Clear();
             _thread.Abort(gameBroadcaster);
+        }
+
+        public void NewWave()
+        {
+            GameState.Wave++;
+            FoeCount++;
+            FoesToSpawn = FoeCount;
         }
     }
 }

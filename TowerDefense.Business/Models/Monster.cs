@@ -10,9 +10,9 @@ namespace TowerDefense.Business.Models
         private static int _id = 0;
         public const int Width = 16;
         public const int Height = 16;
-        public static int MonsterMaxHealth = 10;
+        //public static int MonsterMaxHealth = 10;
 
-        public Monster()
+        public Monster(int MonsterMaxHealth)
         {
             V = new Vector(GetRandomVDelta() * 10, GetRandomVDelta() * 10);
             Size = new Size(Width, Height);

@@ -16,7 +16,7 @@ namespace TowerDefense.Business.Models
 	        {
 	            int splashRange = Splash != null ? Splash.Range <= 0 ? 1 : Splash.Range : 1;
 
-                return Range * ((Damage + Freeze) * splashRange) / 1000;
+                return Range * ((Damage + Freeze) * (splashRange * SplashBullet.HeatMultiplier)) / 1000;
 	        }
         }
     }

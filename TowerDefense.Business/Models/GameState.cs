@@ -4,7 +4,7 @@ using TowerDefense.Interfaces;
 
 namespace TowerDefense.Business.Models
 {
-    public struct GameState : IGameState
+    public class GameState : IGameState
     {
         public List<IFoe> Foes { get; set; }
         public List<IGoal> Goals { get; set; }

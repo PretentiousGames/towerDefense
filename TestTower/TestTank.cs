@@ -26,7 +26,6 @@ namespace TestTower
         public TestTank()
             : base(400, 400)
         {
-            this.Speed = 1;
             _xTarget = 400;
             _yTarget = 400;
         }

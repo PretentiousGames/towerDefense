@@ -14,7 +14,6 @@ namespace TestTower
         public FreezeTank()
             : base(500, 500)
         {
-            this.Speed = 1;
         }
         public override TankUpdate Update(IGameState gameState)
         {

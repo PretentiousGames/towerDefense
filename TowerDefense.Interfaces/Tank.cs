@@ -74,8 +74,8 @@ namespace TowerDefense.Interfaces
 
         protected static double GetDistance(IEntity entity1, double x, double y)
         {
-            var xDistance = (entity1.X + entity1.Size.Width) - (x);
-            var yDistance = (entity1.Y + entity1.Size.Height) - (y);
+            var xDistance = (entity1.X + (entity1.Size.Width / 2)) - (x);
+            var yDistance = (entity1.Y + (entity1.Size.Height / 2)) - (y);
             return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
         }
         protected static double GetDistance(IEntity entity1, IEntity entity2)
