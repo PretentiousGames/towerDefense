@@ -22,14 +22,15 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.Target = gameState.Foes
+                var target = gameState.Foes
                     .Where(foe => 1000 / GetDistanceFromTank(foe) >= 2)
                     .OrderBy(foe => GetDistanceToGoal(foe, gameState.Goals) + GetTimeToGoal(foe, gameState.Goals) + GetDistanceFromTank(foe))
                     .FirstOrDefault();
 
-                if (tankUpdate.Target != null)
+                if (target != null)
                 {
-                    ChangeBulletPower(tankUpdate.Target);
+                    tankUpdate.ShotTarget = target.Location;
+                    ChangeBulletPower(target);
                 }
 
                 var x = (gameState.Foes.Max(foe => foe.X) + 9 * gameState.Goals.Last().X) / 10;

@@ -11,8 +11,8 @@ namespace TowerDefense.Business.Models
             Location = (Location)tank.Location;
         }
 
-        public Location Location { get; set; }
-        public Monster Target { get; set; }
+        public ILocation Location { get; set; }
+        public ILocation ShotTarget { get; set; }
         public bool Shooting { get; set; }
         public int Killed { get; set; }
 

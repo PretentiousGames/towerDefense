@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 using TestTower;
@@ -15,7 +14,7 @@ namespace TowerDefense.Business.Models
         private GameThread _gameThread;
         public int FoeCount { get; set; }
 
-        public int Killed {get; set; }
+        public int Killed { get; set; }
         public GameState GameState { get; private set; }
         public string Name { get; set; }
         public List<Player> Players { get; set; }
@@ -63,28 +62,25 @@ namespace TowerDefense.Business.Models
             _thread.Start(this);
         }
 
-        public List<Monster> GetFoesInRange(int x, int y, int radius)
-	    {
-			List<Monster> foesInRange = new List<Monster>();
+        public List<Monster> GetFoesInRange(double x, double y, double radius)
+        {
+            List<Monster> foesInRange = new List<Monster>();
 
-		    int foeWidth = 16;
-		    int foeHeight = 16;
+            Rectangle rect = new Rectangle(x - radius / 2, y - radius / 2, radius, radius);
 
-		    Rectangle rect = new Rectangle(x - radius / 2, y - radius / 2, radius, radius);
+            foreach (var foe in GameState.Foes)
+            {
+                double foeCenterX = foe.Location.X + (foe.Size.Width / 2);
+                double foeCenterY = foe.Location.Y + (foe.Size.Height / 2);
 
-		    foreach (var foe in GameState.Foes)
-		    {
-			    int foeCenterX = (int)foe.Location.X + (foeWidth/2);
-			    int foeCenterY = (int)foe.Location.Y + (foeHeight/2);
+                if (rect.Contains(foeCenterX, foeCenterY))
+                {
+                    foesInRange.Add((Monster)foe);
+                }
+            }
 
-			    if (rect.Contains(foeCenterX, foeCenterY))
-			    {
-					foesInRange.Add((Monster) foe);
-			    }
-		    }
-
-			return foesInRange;
-	    }
+            return foesInRange;
+        }
 
         public bool IsTankInBounds(ITank tank, double newX, double newY, IGameState gameState)
         {
@@ -92,13 +88,13 @@ namespace TowerDefense.Business.Models
                    newY + tank.Size.Height < gameState.Size.Height && newY > 0;
         }
 
-        public bool CanReach(IEntity shooter, Bullet bullet, IEntity target)
+        public bool CanReach(IEntity shooter, Bullet bullet, ILocation target)
         {
-            var xDistance = (shooter.X + shooter.Size.Width) - (target.X + target.Size.Width);
-            var yDistance = (shooter.Y + shooter.Size.Height) - (target.Y + target.Size.Height);
-            var distance = bullet.Range - Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
-            var sizeOfThings = (shooter.Size.Height + shooter.Size.Width + target.Size.Height + target.Size.Width) / 2;
-            return target != null && (distance > -sizeOfThings);
+            var xDistance = (shooter.X + shooter.Size.Width) / 2 - (target.X);
+            var yDistance = (shooter.Y + shooter.Size.Height) / 2 - (target.Y);
+            var shooterSize = (shooter.Size.Width + shooter.Size.Height) / 2;
+            var distance = bullet.Range + shooterSize - Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+            return target != null && (distance > 0);
         }
 
         private static GameState GenerateGameState(double height, double width, Game game)
@@ -140,7 +136,7 @@ namespace TowerDefense.Business.Models
 
         public void AttackFoe()
         {
-            
+
         }
     }
 }

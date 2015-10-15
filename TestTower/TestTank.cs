@@ -36,14 +36,15 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.Target = gameState.Foes
+                var target = gameState.Foes
                     .Where(foe => 1000 / GetDistanceFromTank(foe) >= 1)
                     .OrderBy(GetDistanceFromTank)
                     .FirstOrDefault();
 
-                if (tankUpdate.Target != null)
+                if (target != null)
                 {
-                    ChangeBulletPower(tankUpdate.Target);
+                    tankUpdate.ShotTarget = target.Location;
+                    ChangeBulletPower(target);
                 }
 
                 UpdateMovementTarget(tankUpdate, gameState);
@@ -92,8 +93,7 @@ namespace TestTower
             var damage = (int)(1000 / range);
             var splash = new SplashBullet
             {
-                Range = 100,
-                Target = new Point((int)foe.Location.X, (int)foe.Location.Y)
+                Range = 1
             };
             Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, Splash = splash };
         }

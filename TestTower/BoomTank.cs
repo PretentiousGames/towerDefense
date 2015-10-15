@@ -22,8 +22,8 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.Target = gameState.Foes.OrderBy(foe => GetDistance(foe)).First();
-                ChangeBulletPower(tankUpdate.Target);
+                tankUpdate.ShotTarget = gameState.Foes.OrderBy(foe => GetDistance(foe)).First().Location;
+                ChangeBulletPower(tankUpdate.ShotTarget);
 
                 var x = (gameState.Foes.Average(foe => foe.X) + 99 * gameState.Goals.Average(goal => goal.X)) / 100;
                 var y = (gameState.Foes.Average(foe => foe.Y) + 99 * gameState.Goals.Average(goal => goal.Y)) / 100;
@@ -38,17 +38,14 @@ namespace TestTower
             var yDistance = (this.Y + this.Size.Height) - (foe.Y + foe.Size.Height);
             return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
         }
-        private void ChangeBulletPower(IFoe foe)
+        private void ChangeBulletPower(ILocation target)
         {
-            var range = GetDistance(foe) + 1;
+            var range = GetDistanceFromTank(target) + 1;
             var damage = (int)(1000 / range);
-
             var splash = new SplashBullet
             {
-                Range = 1,
-                Target = new Point((int) foe.Location.X, (int) foe.Location.Y)
+                Range = 100
             };
-           
             Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, Splash = splash };
         }
 

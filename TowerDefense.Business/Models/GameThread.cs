@@ -58,25 +58,24 @@ namespace TowerDefense.Business.Models
 
         private void DoTankAttack(IGameTank gameTank, TankUpdate tankUpdate, Tank tank, GameState gameState)
         {
-            gameTank.Target = (Monster) tankUpdate.Target;
+            gameTank.ShotTarget = tankUpdate.ShotTarget;
             gameTank.Shooting = false;
             
-            if (gameTank.Heat <= 0 && gameTank.Target != null)
+            if (gameTank.Heat <= 0 && gameTank.ShotTarget != null)
             {
                 var bullet = (Bullet) tank.GetBullet(); //gameTank.Bullet
 
-                if (_game.CanReach(tank, bullet, gameTank.Target))
+                if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
                 {
                     gameTank.Shooting = true;
                     gameTank.Heat += bullet.ReloadTime;
 
                     var splash = bullet.Splash ?? new SplashBullet
                     {
-                        Range = 1,
-                        Target = new Point((int) gameTank.Target.Location.X, (int) gameTank.Target.Location.Y)
+                        Range = 1
                     };
 
-                    List<Monster> foesInRange = _game.GetFoesInRange(splash.Target.X, splash.Target.Y, splash.Range);
+                    List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y, splash.Range);
 
                     ApplyDamage(gameTank, bullet, foesInRange, gameState);
                     ApplyFreeze(gameTank, bullet, foesInRange);

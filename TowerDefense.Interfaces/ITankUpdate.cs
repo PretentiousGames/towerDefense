@@ -4,6 +4,6 @@ namespace TowerDefense.Interfaces
 	interface ITankUpdate
 	{
 	    ILocation MovementTarget { get; }
-	    IFoe Target { get; }
+		ILocation ShotTarget { get; }
 	}
 }

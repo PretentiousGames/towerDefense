@@ -85,5 +85,9 @@ namespace TowerDefense.Interfaces
         {
             return GetDistance(this, entity);
         }
+        protected double GetDistanceFromTank(ILocation location)
+        {
+            return GetDistance(this, location.X, location.Y);
+        }
     }
 }
