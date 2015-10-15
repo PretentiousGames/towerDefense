@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,15 +47,21 @@ namespace TestTower
             var range = GetDistance(foe) + 1;
             var damage = (int)(1000 / range);
             var freeze = 0;
-	        var splashDamage = 10;
-	        var splashRange = 100;
+
+            var splash = new SplashBullet
+            {
+                Damage = 10,
+                Range = 100,
+                Target = new Point((int)foe.Location.X, (int)foe.Location.Y)
+            };
+            
             if (damage < foe.Health)
             {
                 damage /= 2;
                 freeze = damage;
                 //damage = 1;
             }
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze, SplashDamage = splashDamage, SplashRange = splashRange };
+            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze, Splash = splash };
         }
 
         public override IBullet GetBullet()

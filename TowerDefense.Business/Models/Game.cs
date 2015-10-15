@@ -137,13 +137,14 @@ namespace TowerDefense.Business.Models
                             gameTank.Target.Health -= bullet.Damage;
                             gameTank.Target.Speed *= gameTank.Target.MaxHealth / (double)(bullet.Freeze + gameTank.Target.MaxHealth);
 
-	                        if (bullet.SplashDamage > 0 && bullet.SplashRange > 0)
+                            var splash = bullet.Splash;
+	                        if (splash != null)
 	                        {
-		                        List<Monster> foesInRange = GetFoesInRange(gameState.Foes, (int)gameTank.Target.Location.X, (int)gameTank.Target.Location.Y, bullet.SplashRange);
+		                        List<Monster> foesInRange = GetFoesInRange(gameState.Foes, splash.Target.X, splash.Target.Y, splash.Range);
 
 	                            foreach (var monster in foesInRange) //TODO: Remove repeated code (modularize this somehow)
                                 {
-	                                monster.Health -= bullet.SplashDamage;
+	                                monster.Health -= splash.Damage;
 
                                     if (monster.Health <= 0)
                                     {
