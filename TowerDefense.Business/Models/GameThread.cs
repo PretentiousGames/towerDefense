@@ -48,7 +48,7 @@ namespace TowerDefense.Business.Models
                     MoveTank(tankUpdate, tank);
                     DoTankAttack(gameTank, tankUpdate, tank);
                 }
-                //Thread.Sleep(10);
+                Thread.Sleep(10);
             }
         }
 
@@ -132,7 +132,7 @@ namespace TowerDefense.Business.Models
         {
             foreach (var monster in foesInRange)
             {
-                monster.Speed *= monster.Health / (double)(bullet.Freeze * 1.5 + monster.Health);
+                monster.Speed *= monster.Health / (double)(bullet.Freeze * 3 + monster.Health);
             }
         }
 
