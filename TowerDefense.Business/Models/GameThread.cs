@@ -48,7 +48,7 @@ namespace TowerDefense.Business.Models
                     MoveTank(tankUpdate, tank);
                     DoTankAttack(gameTank, tankUpdate, tank);
                 }
-                //Thread.Sleep(10);
+                Thread.Sleep(10);
             }
         }
 

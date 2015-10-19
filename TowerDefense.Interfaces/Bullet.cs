@@ -10,13 +10,14 @@ namespace TowerDefense.Business.Models
         public int Freeze { get; set; }
 	    public double SplashRange { get; set; }
 
-        public double SplashHeatMultiplier => 4;
+        public double SplashHeatMultiplier => 2;
+        public double FreezeHeatMultiplier => .5;
 
         public double ReloadTime
         {
 	        get
 	        {
-                return Range * ((Damage + Freeze) * (SplashRange * SplashHeatMultiplier)) / 1000;
+                return Range * ((Damage + (Freeze * FreezeHeatMultiplier)) * (SplashRange * SplashHeatMultiplier)) / 1000;
 	        }
         }
     }

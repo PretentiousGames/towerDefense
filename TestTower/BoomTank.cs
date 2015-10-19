@@ -41,21 +41,23 @@ namespace TestTower
 
         private void UpdateMovementTarget(TankUpdate tankUpdate, IGameState gameState)
         {
-            int maxFoes = GetFoesInRange(_xTarget, _yTarget, gameState);
+            //int maxFoes = GetFoesInRange(_xTarget, _yTarget, gameState);
 
-            for (int i = 0; i < 20; i++)
-            {
-                var y = _rng.NextDouble() * gameState.Size.Height;
-                var x = _rng.NextDouble() * gameState.Size.Width;
-                var f = GetFoesInRange(x, y, gameState);
-                if (f > maxFoes)
-                {
-                    maxFoes = f;
-                    _xTarget = x;
-                    _yTarget = y;
-                }
-            }
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    var y = _rng.NextDouble() * gameState.Size.Height;
+            //    var x = _rng.NextDouble() * gameState.Size.Width;
+            //    var f = GetFoesInRange(x, y, gameState);
+            //    if (f > maxFoes)
+            //    {
+            //        maxFoes = f;
+            //        _xTarget = x;
+            //        _yTarget = y;
+            //    }
+            //}
 
+            _xTarget = 375;
+            _yTarget = 375;
             tankUpdate.MovementTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
         }
 
@@ -76,7 +78,7 @@ namespace TestTower
         private void ChangeBulletPower(ILocation target)
         {
             var range = GetDistanceFromTank(target) + 1;
-            var damage = (int)(5 / range);
+            var damage = 5;
             Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, SplashRange = 100 };
         }
 

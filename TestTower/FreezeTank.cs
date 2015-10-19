@@ -43,7 +43,7 @@ namespace TestTower
         private void ChangeBulletPower(IFoe foe)
         {
             var range = GetDistanceFromTank(foe) + 1;
-            var damage = (int)(1000 / range);
+            var damage = (int)(2000 / range);
             var freeze = 0;
             if (damage < foe.Health)
             {
