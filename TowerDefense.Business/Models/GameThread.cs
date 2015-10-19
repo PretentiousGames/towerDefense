@@ -173,6 +173,7 @@ namespace TowerDefense.Business.Models
             var goal = _game.IsMonsterAtGoal(monster, gameState.Goals);
             if (goal != null)
             {
+                ((Monster)monster).Health = 0;
                 gameState.Foes.Remove(monster);
                 ((Goal)goal).Health -= 1;
                 if (goal.Health <= 0)

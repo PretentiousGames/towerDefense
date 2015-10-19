@@ -17,7 +17,10 @@ namespace TowerDefense.Business.Models
         {
 	        get
 	        {
-                return Range * ((Damage + (Freeze * FreezeHeatMultiplier)) * (SplashRange * SplashHeatMultiplier)) / 1000;
+	            var splash = (SplashRange * SplashHeatMultiplier) + 1; // MUST have +1 or reload time will become 0 if SplashRange is 0
+	            var freeze = (Freeze * FreezeHeatMultiplier);
+
+                return Range * ((Damage + freeze) * splash) / 1000;
 	        }
         }
     }
