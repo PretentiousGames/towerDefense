@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bullet.cs" />
+    <Compile Include="FoeType.cs" />
     <Compile Include="IBullet.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IFoe.cs" />

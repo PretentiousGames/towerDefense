@@ -33,6 +33,8 @@
     goalImage.src = "../Sprites/tower.png";
     var foeImage = new Image();
     foeImage.src = "../Sprites/jelly.png";
+    var bossImage = new Image();
+    bossImage.src = "../Sprites/boss.png";
     var tankTurretImage = new Image();
     tankTurretImage.src = "../Sprites/tankTurret.png";
     var tankBaseImage = new Image();
@@ -93,14 +95,14 @@
     var drawFoe = function (foe) {
         foe.sprite.render();
 
-        var yMod = foe.y > canvas.height / 2 ? -6 : 20;
+        var yMod = foe.y > canvas.height / 2 ? -6 : foe.size.height + 4;
 
         ctx.fillStyle = "#000";
-        ctx.fillRect(foe.x, foe.y + yMod, 16, 5);
+        ctx.fillRect(foe.x, foe.y + yMod, foe.size.width, 5);
 
         var percent = (foe.health / foe.maxHealth);
         ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
-        ctx.fillRect(foe.x, foe.y + yMod, percent * 16, 5);
+        ctx.fillRect(foe.x, foe.y + yMod, percent * foe.size.width, 5);
     };
 
     var drawWave = function (wave) {
@@ -117,14 +119,14 @@
         }
         drawBackground();
         drawSpawn();
+        _.each(goals, function (goal) {
+            drawgoal(goal);
+        });
         _.each(tanks, function (tank) {
             drawtank(tank);
         });
         _.each(foes, function (foe) {
             drawFoe(foe);
-        });
-        _.each(goals, function (goal) {
-            drawgoal(goal);
         });
         _.each(booms, function (boom) {
             boom.sprite.render();
@@ -184,13 +186,19 @@
                 });
                 if (typeof renderFoe === "undefined") {
                     renderFoe = _.extend({}, foe);
+                    var image = foe.foeType === 1 ? bossImage : 
+                                foeImage;
+                    var width = foe.foeType === 1 ? 111 : 48;
+                    var height = foe.foeType === 1 ? 36 : 16;
                     renderFoe.sprite = window.towerDefense.makeSprite({
                         context: ctx,
-                        width: 48,
-                        height: 16,
-                        image: foeImage,
+                        width: width,
+                        height: height,
+                        image: image,
                         numberOfFrames: 3,
-                        ticksPerFrame: 5
+                        ticksPerFrame: 5,
+                        renderWidth: foe.size.width,
+                        renderHeight: foe.size.height
                     });
                     renderFoe.sprite.x = Math.floor(renderFoe.x);
                     renderFoe.sprite.y = Math.floor(renderFoe.y);

@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameManager.cs" />
+    <Compile Include="Models\BossMonster.cs" />
     <Compile Include="Models\GameState.cs" />
     <Compile Include="Models\GameTank.cs" />
     <Compile Include="Models\GameThread.cs" />

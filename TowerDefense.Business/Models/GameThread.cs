@@ -59,14 +59,30 @@ namespace TowerDefense.Business.Models
             int foesToSpawnLog = _game.FoesToSpawn;
             while (foesToSpawnLog > 0)
             {
-                _game.FoesToSpawn--;
-                foesToSpawnLog /= 10;
-                Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
+                if (_game.GameState.Wave % 2 == 0)
                 {
-                    Location =
-                        new Location(gameState.Size.Width / 2 - Monster.Width / 2.0, gameState.Size.Height / 2 - Monster.Height / 2.0),
-                };
-                gameState.Foes.Add(m);
+                    _game.FoesToSpawn = 0;
+                    BossMonster m = new BossMonster(foesToSpawnLog * (int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
+                    {
+                        Location =
+                            new Location(gameState.Size.Width / 2 - BossMonster.Width / 2.0,
+                                gameState.Size.Height / 2 - BossMonster.Height / 2.0),
+                    };
+                    foesToSpawnLog = 0;
+                    gameState.Foes.Add(m);
+                }
+                else
+                {
+                    _game.FoesToSpawn--;
+                    foesToSpawnLog /= 10;
+                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
+                    {
+                        Location =
+                            new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,
+                                gameState.Size.Height / 2 - Monster.Height / 2.0),
+                    };
+                    gameState.Foes.Add(m);
+                }
             }
         }
 
@@ -173,8 +189,15 @@ namespace TowerDefense.Business.Models
             var goal = _game.IsMonsterAtGoal(monster, gameState.Goals);
             if (goal != null)
             {
-                ((Monster)monster).Health = 0;
-                gameState.Foes.Remove(monster);
+                if (monster is BossMonster)
+                {
+                    ((Monster)monster).Health /= 2;
+                }
+                else
+                {
+                    ((Monster)monster).Health = 0;
+                    gameState.Foes.Remove(monster);
+                }
                 ((Goal)goal).Health -= 1;
                 if (goal.Health <= 0)
                 {

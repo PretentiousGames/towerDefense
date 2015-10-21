@@ -10,6 +10,8 @@
         sprite.context = options.context;
         sprite.width = options.width;
         sprite.height = options.height;
+        sprite.renderWidth = options.renderWidth || sprite.width / numberOfFrames;
+        sprite.renderHeight = options.renderHeight || sprite.height;
         sprite.image = options.image;
         sprite.x = options.x || 0;
         sprite.y = options.y || 0;
@@ -42,8 +44,8 @@
                 sprite.height,
                 sprite.x,
                 sprite.y,
-                sprite.width / numberOfFrames,
-                sprite.height);
+                sprite.renderWidth,
+                sprite.renderHeight);
         };
 
         return sprite;

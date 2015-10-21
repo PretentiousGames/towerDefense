@@ -10,6 +10,7 @@ namespace TowerDefense.Business.Models
         private static int _id = 0;
         public const int Width = 16;
         public const int Height = 16;
+        protected int _heat = 0;
         //public static int MonsterMaxHealth = 10;
 
         public Monster(int MonsterMaxHealth)
@@ -19,10 +20,11 @@ namespace TowerDefense.Business.Models
             Id = _id++;
             Health = MaxHealth = MonsterMaxHealth;
             Speed = MaxSpeed = 1;
+            Ability = state => int.MaxValue;
         }
 
         private static Random _random = new Random();
-        private int _gravityConstant = 500;
+        protected int _gravityConstant = 500;
 
         public int Id { get; }
         public double X { get { return Location.X; } }
@@ -35,6 +37,7 @@ namespace TowerDefense.Business.Models
         public Vector V { get; set; }
         public int MaxHealth { get; }
         public int Health { get; set; }
+        public FoeType FoeType { get; protected set; }
         public double Speed { get; set; }
         public double MaxSpeed { get; set; }
         public Size Size { get; set; }
@@ -68,8 +71,19 @@ namespace TowerDefense.Business.Models
                 V.Y /= 2;
             }
 
+            if (_heat <= 0)
+            {
+                _heat += ExecuteAbility(gameState);
+            }
+            else
+            {
+                _heat--;
+            }
+
             return this;
         }
+
+        public Func<IGameState, int> Ability { get; protected set; }
 
         private static double GetRandomVDelta()
         {
@@ -116,5 +130,15 @@ namespace TowerDefense.Business.Models
             return x + Size.Width < gameState.Size.Width && x > 0 &&
                    y + Size.Height < gameState.Size.Height && y > 0;
         }
+
+        public int ExecuteAbility(IGameState gameState)
+        {
+            return Ability(gameState);
+        }
+        protected bool IsTankInRange(int range, ITank tank)
+        {
+            return Math.Abs(tank.Center.X - Center.X) < range && Math.Abs(tank.Center.Y - Center.Y) < range;
+        }
+
     }
 }
