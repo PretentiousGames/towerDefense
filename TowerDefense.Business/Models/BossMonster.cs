@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using TowerDefense.Interfaces;
 
 namespace TowerDefense.Business.Models
@@ -16,26 +17,8 @@ namespace TowerDefense.Business.Models
             Speed = MaxSpeed = 0.75;
             _gravityConstant = 400;
             FoeType = FoeType.Boss;
-            Ability = gameState =>
-            {
-                var goal = IsAtGoal(gameState.Goals);
-                if (goal != null)
-                {
-                    Health /= 2;
-                    ((Goal)goal).Health -= 1;
-                    return 10;
-                }
-                
-                foreach (var tank in ((GameState)gameState).GameTanks)
-                {
-                    if (IsTankInRange(250, tank.Tank))
-                    {
-                        tank.Heat += 1;
-                    }
-                }
-
-                return 2;
-            };
+            AbilityType = AbilityType.RangedHeat;
+            Ability = AbilitiesDictionary[AbilityType];
         }
     }
 }

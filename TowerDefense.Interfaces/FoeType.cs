@@ -8,4 +8,12 @@ namespace TowerDefense.Interfaces
         Monster = 0,
         Boss = 1,
     }
+
+    [Flags]
+    public enum AbilityType
+    {
+        None = 0,
+        Kamakaze = 1,
+        RangedHeat = 2,
+    }
 }
