@@ -8,16 +8,13 @@ namespace TowerDefense.Business.Models
 {
     public class BossMonster : Monster
     {
-        public new const int Width = 30;
-        public new const int Height = 36;
-
         public BossMonster(int monsterMaxHealth) : base(monsterMaxHealth)
         {
-            Size = new Size(Width, Height);
+            Size = new Size((int)(Width * 1.5), (int)(Height * 1.5));
             Speed = MaxSpeed = 0.75;
             _gravityConstant = 400;
             FoeType = FoeType.Boss;
-            AbilityType = AbilityType.RangedHeat;
+            AbilityType = _random.Next(0, 2) == 0 ? AbilityType.RangedHeat : AbilityType.Kamakaze;
             Ability = AbilitiesDictionary[AbilityType];
         }
     }

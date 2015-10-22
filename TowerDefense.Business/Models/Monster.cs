@@ -13,11 +13,11 @@ namespace TowerDefense.Business.Models
         public const int Height = 16;
         protected int _heat = 0;
         public AbilityType AbilityType { get; protected set; }
-        private static Random _random = new Random();
+        protected static Random _random = new Random();
         protected int _gravityConstant = 500;
 
         [JsonIgnore]
-        public Dictionary<AbilityType, Func<IGameState, int>> AbilitiesDictionary { get; set; }
+        public Dictionary<AbilityType, Func<IGameState, AbilityResult>> AbilitiesDictionary { get; set; }
 
         public int Id { get; }
         public double X { get { return Location.X; } }
@@ -36,7 +36,11 @@ namespace TowerDefense.Business.Models
         public Size Size { get; set; }
 
 
-        public Monster(int MonsterMaxHealth)
+        public Monster(int MonsterMaxHealth) : this(MonsterMaxHealth, AbilityType.Kamakaze)
+        {
+        }
+
+        public Monster(int MonsterMaxHealth, AbilityType abilityType)
         {
             V = new Vector(GetRandomVDelta() * 20, GetRandomVDelta() * 20);
             Size = new Size(Width, Height);
@@ -44,14 +48,14 @@ namespace TowerDefense.Business.Models
             Health = MaxHealth = MonsterMaxHealth;
             Speed = MaxSpeed = 1;
             CreateAbilities();
-            AbilityType = AbilityType.Kamakaze;
+            AbilityType = abilityType;
             Ability = AbilitiesDictionary[AbilityType];
         }
 
 
         private void CreateAbilities()
         {
-            AbilitiesDictionary = new Dictionary<AbilityType, Func<IGameState, int>>
+            AbilitiesDictionary = new Dictionary<AbilityType, Func<IGameState, AbilityResult>>
             {
                 {
                     AbilityType.Kamakaze,
@@ -59,34 +63,35 @@ namespace TowerDefense.Business.Models
                         var goal = IsAtGoal(gameState.Goals);
                         if (goal != null)
                         {
-                            ((Goal)goal).Health -= (Health / 2);
+                            ((Goal)goal).Health -= (Health / 10);
                             Health = 0;
                         }
 
-                        return 0;
+                        return new AbilityResult() {Heat = 0, AbilityType = AbilityType.Kamakaze};
                     }
                 },
                 {
                     AbilityType.RangedHeat,
                     gameState => {
+                        var range = (int)Math.Log(Health, 2);
                         foreach (var tank in ((GameState)gameState).GameTanks)
                         {
-                            if (IsEntityInRange(Health, tank.Tank))
+                            if (IsEntityInRange(range, tank.Tank))
                             {
-                                tank.Heat += 1;
+                                tank.Heat += 10;
                             }
                         }
 
                         foreach (var g in ((GameState)gameState).Goals)
                         {
                             var goal = (Goal) g;
-                            if (IsEntityInRange(Health, goal))
+                            if (IsEntityInRange(range, goal))
                             {
                                 goal.Health -= 1;
                             }
                         }
 
-                        return 2;
+                        return  new AbilityResult() {Heat = 2, AbilityType = AbilityType.RangedHeat, Range=range};
                     }
                 },
             };
@@ -123,7 +128,7 @@ namespace TowerDefense.Business.Models
 
             if (_heat <= 0)
             {
-                _heat += ExecuteAbility(gameState);
+                _heat += ExecuteAbility(gameState).Heat;
             }
             else
             {
@@ -134,7 +139,7 @@ namespace TowerDefense.Business.Models
         }
 
         [JsonIgnore]
-        public Func<IGameState, int> Ability { get; protected set; }
+        public Func<IGameState, AbilityResult> Ability { get; protected set; }
 
         private static double GetRandomVDelta()
         {
@@ -167,7 +172,7 @@ namespace TowerDefense.Business.Models
                    y + Size.Height < gameState.Size.Height && y > 0;
         }
 
-        public int ExecuteAbility(IGameState gameState)
+        public AbilityResult ExecuteAbility(IGameState gameState)
         {
             return Ability(gameState);
         }

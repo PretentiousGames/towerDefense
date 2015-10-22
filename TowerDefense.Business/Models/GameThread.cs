@@ -79,12 +79,11 @@ namespace TowerDefense.Business.Models
                 if (_game.GameState.Wave % 10 == 0)
                 {
                     _game.FoesToSpawn = 0;
-                    BossMonster m = new BossMonster(foesToSpawnLog * (int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
-                    {
-                        Location =
-                            new Location(gameState.Size.Width / 2 - BossMonster.Width / 2.0,
-                                gameState.Size.Height / 2 - BossMonster.Height / 2.0),
-                    };
+                    BossMonster m =
+                        new BossMonster(foesToSpawnLog *
+                                        (int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1));
+                    m.Location = new Location(gameState.Size.Width / 2 - m.Size.Width / 2.0,
+                                gameState.Size.Height / 2 - m.Size.Height / 2.0);
                     foesToSpawnLog = 0;
                     gameState.Foes.Add(m);
                 }
@@ -92,7 +91,7 @@ namespace TowerDefense.Business.Models
                 {
                     _game.FoesToSpawn--;
                     foesToSpawnLog /= 10;
-                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
+                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), gameState.Wave % 2 == 0 ? AbilityType.Kamakaze : AbilityType.RangedHeat)
                     {
                         Location =
                             new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,

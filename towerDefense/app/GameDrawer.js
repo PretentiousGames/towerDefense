@@ -31,10 +31,10 @@
     spawnImage.src = "../Sprites/spawnPoint.png";
     var goalImage = new Image();
     goalImage.src = "../Sprites/tower.png";
-    var foeImage = new Image();
-    foeImage.src = "../Sprites/jelly.png";
-    var bossImage = new Image();
-    bossImage.src = "../Sprites/flame.png";
+    var jellyImage = new Image();
+    jellyImage.src = "../Sprites/jelly.png";
+    var flameImage = new Image();
+    flameImage.src = "../Sprites/flame.png";
     var tankTurretImage = new Image();
     tankTurretImage.src = "../Sprites/tankTurret.png";
     var tankBaseImage = new Image();
@@ -199,15 +199,15 @@
                 });
                 if (typeof renderFoe === "undefined") {
                     renderFoe = _.extend({}, foe);
-                    var image = foe.foeType === 1 ? bossImage :
-                                foeImage;
-                    var width = foe.foeType === 1 ? 80 : 48;
-                    var height = foe.foeType === 1 ? 36 : 16;
-                    var frameCount = foe.foeType === 1 ? 4 : 3;
+                    var image = foe.abilityType === 2 ? flameImage :
+                                jellyImage;
+                    var imageWidth = foe.abilityType === 2 ? 80 : 48;
+                    var imageHeight = foe.abilityType === 2 ? 36 : 16;
+                    var frameCount = foe.abilityType === 2 ? 4 : 3;
                     renderFoe.sprite = window.towerDefense.makeSprite({
                         context: ctx,
-                        width: width,
-                        height: height,
+                        width: imageWidth,
+                        height: imageHeight,
                         image: image,
                         numberOfFrames: frameCount,
                         ticksPerFrame: 5,

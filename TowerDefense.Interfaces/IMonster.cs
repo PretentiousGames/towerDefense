@@ -1,4 +1,5 @@
 using System;
+using TowerDefense.Business.Models;
 
 namespace TowerDefense.Interfaces
 {
@@ -6,6 +7,6 @@ namespace TowerDefense.Interfaces
     {
         IFoe Update(IGameState gameState);
 
-        Func<IGameState, int> Ability { get; }
+        Func<IGameState, AbilityResult> Ability { get; }
     }
 }
