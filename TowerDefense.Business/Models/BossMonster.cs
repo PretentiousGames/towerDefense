@@ -16,21 +16,21 @@ namespace TowerDefense.Business.Models
             Speed = MaxSpeed = 0.5;
             _gravityConstant = 200;
             FoeType = FoeType.Boss;
-            Ability = state =>
-            {
-                int cooldown = 500; // ticks
-                int range = 250;
+            //Ability = state =>
+            //{
+            //    int cooldown = 500; // ticks
+            //    int range = 250;
 
-                foreach (var tank in ((GameState)state).GameTanks)
-                {
-                    if (IsTankInRange(range, tank.Tank))
-                    {
-                        tank.Heat += 100;
-                    }
-                }
+            //    foreach (var tank in ((GameState)state).GameTanks)
+            //    {
+            //        if (IsTankInRange(range, tank.Tank))
+            //        {
+            //            tank.Heat += 100;
+            //        }
+            //    }
 
-                return cooldown;
-            };
+            //    return cooldown;
+            //};
         }
     }
 }

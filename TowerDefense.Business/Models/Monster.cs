@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using TowerDefense.Interfaces;
 
 namespace TowerDefense.Business.Models
@@ -83,6 +84,7 @@ namespace TowerDefense.Business.Models
             return this;
         }
 
+        [JsonIgnore]
         public Func<IGameState, int> Ability { get; protected set; }
 
         private static double GetRandomVDelta()
@@ -134,6 +136,7 @@ namespace TowerDefense.Business.Models
         public int ExecuteAbility(IGameState gameState)
         {
             return Ability(gameState);
+            return 0;
         }
         protected bool IsTankInRange(int range, ITank tank)
         {

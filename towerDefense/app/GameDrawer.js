@@ -74,12 +74,25 @@
                 return '#' + fractionToHex(damageRatio) + '00' + fractionToHex(freezeRatio);
             };
 
-            var getLaserWidth = function(bullet) {
+            var getSplashColor = function (bullet) {
+                var damageRatio = (bullet.damage) / (bullet.freeze + bullet.damage);
+                var freezeRatio = (bullet.freeze) / (bullet.freeze + bullet.damage);
+                var f = function (r) { return Math.round(r * 255); };
+                return 'rgba(' + f(damageRatio) + ', 0, ' + f(freezeRatio) + ', 0.5)';
+            };
+
+            var getLaserWidth = function (bullet) {
                 return Math.round(Math.log2(bullet.damage + bullet.freeze));
             };
 
             ctx.strokeStyle = getLaserColor(tank.bullet);
             ctx.lineWidth = getLaserWidth(tank.bullet);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(tank.target.x, tank.target.y, tank.bullet.splashRange, 0, 2 * Math.PI, false);
+            ctx.fillStyle = getSplashColor(tank.bullet);
+            ctx.fill();
             ctx.stroke();
         }
         drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
@@ -186,7 +199,7 @@
                 });
                 if (typeof renderFoe === "undefined") {
                     renderFoe = _.extend({}, foe);
-                    var image = foe.foeType === 1 ? bossImage : 
+                    var image = foe.foeType === 1 ? bossImage :
                                 foeImage;
                     var width = foe.foeType === 1 ? 111 : 48;
                     var height = foe.foeType === 1 ? 36 : 16;
