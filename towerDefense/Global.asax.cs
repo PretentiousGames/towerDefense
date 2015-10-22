@@ -17,6 +17,12 @@ namespace towerDefense
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+ 
+            var serializer = JsonSerializer.Create(serializerSettings);
+            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
         }
     }
 }
