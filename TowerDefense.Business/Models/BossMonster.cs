@@ -7,29 +7,34 @@ namespace TowerDefense.Business.Models
 {
     public class BossMonster : Monster
     {
-        public new const int Width = 32;
-        public new const int Height = 32;
+        public new const int Width = 30;
+        public new const int Height = 36;
 
         public BossMonster(int monsterMaxHealth) : base(monsterMaxHealth)
         {
             Size = new Size(Width, Height);
-            Speed = MaxSpeed = 0.5;
-            _gravityConstant = 200;
+            Speed = MaxSpeed = 0.75;
+            _gravityConstant = 400;
             FoeType = FoeType.Boss;
-            Ability = state =>
+            Ability = gameState =>
             {
-                int cooldown = 500; // ticks
-                int range = 250;
-
-                foreach (var tank in ((GameState)state).GameTanks)
+                var goal = IsAtGoal(gameState.Goals);
+                if (goal != null)
                 {
-                    if (IsTankInRange(range, tank.Tank))
+                    Health /= 2;
+                    ((Goal)goal).Health -= 1;
+                    return 10;
+                }
+                
+                foreach (var tank in ((GameState)gameState).GameTanks)
+                {
+                    if (IsTankInRange(250, tank.Tank))
                     {
-                        tank.Heat += 100;
+                        tank.Heat += 1;
                     }
                 }
 
-                return cooldown;
+                return 2;
             };
         }
     }

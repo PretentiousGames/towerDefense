@@ -21,7 +21,17 @@ namespace TowerDefense.Business.Models
             Id = _id++;
             Health = MaxHealth = MonsterMaxHealth;
             Speed = MaxSpeed = 1;
-            Ability = state => int.MaxValue;
+            Ability = gameState =>
+            {
+                var goal = IsAtGoal(gameState.Goals);
+                if (goal != null)
+                {
+                    Health = 0;
+                    ((Goal)goal).Health -= 1;
+                }
+
+                return 0;
+            };
         }
 
         private static Random _random = new Random();
@@ -112,21 +122,6 @@ namespace TowerDefense.Business.Models
             return InBounds(x, y, gameState);
         }
 
-        //private bool NoObstacles(double x, double y, IGameState gameState)
-        //{
-        //    foreach (var obstacle in gameState.Entities.Where(entity => this != entity))
-        //    {
-        //        if ((x < obstacle.X + obstacle.Size.Width) &&
-        //            (x + Size.Width < obstacle.X) &&
-        //            (y > obstacle.Y + obstacle.Size.Height) &&
-        //            (y + Size.Height < obstacle.Y))
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //    return true;
-        //}
-
         private bool InBounds(double x, double y, IGameState gameState)
         {
             return x + Size.Width < gameState.Size.Width && x > 0 &&
@@ -136,11 +131,23 @@ namespace TowerDefense.Business.Models
         public int ExecuteAbility(IGameState gameState)
         {
             return Ability(gameState);
-            return 0;
         }
         protected bool IsTankInRange(int range, ITank tank)
         {
             return Math.Abs(tank.Center.X - Center.X) < range && Math.Abs(tank.Center.Y - Center.Y) < range;
+        }
+        public IGoal IsAtGoal(List<IGoal> goals)
+        {
+            foreach (var goal in goals)
+            {
+                if (((Center.X) > goal.X) && (Center.X < (goal.X + goal.Size.Width)) &&
+                    ((Center.Y) > goal.Y) && (Center.Y < (goal.Y + goal.Size.Height)))
+                {
+                    return goal;
+                }
+            }
+
+            return null;
         }
 
     }

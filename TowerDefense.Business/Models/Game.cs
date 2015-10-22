@@ -38,7 +38,7 @@ namespace TowerDefense.Business.Models
                 Players.Add(new Player
                 {
                     Name = "demo",
-                    Tanks = new List<Tank> { new BaseTank(), new TestTank() , new FreezeTank(), new BoomTank() }
+                    Tanks = new List<Tank> { new BaseTank(), new TestTank(), new FreezeTank(), new BoomTank() }
                 });
             }
 
@@ -119,20 +119,6 @@ namespace TowerDefense.Business.Models
                 Wave = 0,
                 Lost = false
             };
-        }
-
-        public IGoal IsMonsterAtGoal(IFoe monster, List<IGoal> goals)
-        {
-            foreach (var goal in goals)
-            {
-                if (((monster.Center.X) > goal.X) && (monster.Center.X < (goal.X + goal.Size.Width)) &&
-                    ((monster.Center.Y) > goal.Y) && (monster.Center.Y < (goal.Y + goal.Size.Height)))
-                {
-                    return goal;
-                }
-            }
-
-            return null;
         }
 
         public void ClearGameOut(IGameBroadcaster gameBroadcaster)

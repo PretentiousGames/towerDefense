@@ -23,33 +23,50 @@ namespace TowerDefense.Business.Models
             while (true)
             {
                 _game.GameBroadcaster.BroadcastGameState(gameState);
-
                 SpawnFoes(gameState);
-
-                for (int j = 0; j < gameState.Foes.Count; j++)
-                {
-                    var monster = (Monster)gameState.Foes[j];
-                    monster.Update(gameState);
-
-                    //Thaw out monsters
-                    monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
-
-                    if (MonsterAtGoal(monster))
-                    {
-                        j--;
-                    }
-                }
-
-                foreach (var gameTank in gameState.GameTanks)
-                {
-                    var tank = gameTank.Tank;
-                    var tankUpdate = tank.Update(gameState);
-
-                    MoveTank(tankUpdate, tank);
-                    DoTankAttack(gameTank, tankUpdate, tank);
-                }
+                UpdateAllMonsters(gameState);
+                UpdateAllTanks(gameState);
+                KillDeadGoals(gameState);
                 Thread.Sleep(10);
             }
+        }
+
+        private void KillDeadGoals(GameState gameState)
+        {
+            var deadGoals = gameState.Goals.Where(goal => goal.Health <= 0);
+
+            gameState.Goals.RemoveAll(goal => deadGoals.Contains(goal));
+            _game.MonsterStartHealth = (int)(_game.MonsterStartHealth * Math.Pow(1.25, deadGoals.Count()));
+
+            if (!gameState.Goals.Any())
+            {
+                gameState.Lost = true;
+            }
+        }
+
+        private void UpdateAllTanks(GameState gameState)
+        {
+            foreach (var gameTank in gameState.GameTanks)
+            {
+                var tank = gameTank.Tank;
+                var tankUpdate = tank.Update(gameState);
+
+                MoveTank(tankUpdate, tank);
+                DoTankAttack(gameTank, tankUpdate, tank);
+            }
+        }
+
+        private void UpdateAllMonsters(GameState gameState)
+        {
+            foreach (IFoe foe in gameState.Foes)
+            {
+                var monster = (Monster)foe;
+                monster.Update(gameState);
+
+                //Thaw out monsters
+                monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
+            }
+            gameState.Foes.RemoveAll(foe => foe.Health == 0);
         }
 
         private void SpawnFoes(GameState gameState)
@@ -59,7 +76,7 @@ namespace TowerDefense.Business.Models
             int foesToSpawnLog = _game.FoesToSpawn;
             while (foesToSpawnLog > 0)
             {
-                if (_game.GameState.Wave % 2 == 0)
+                if (_game.GameState.Wave % 10 == 0)
                 {
                     _game.FoesToSpawn = 0;
                     BossMonster m = new BossMonster(foesToSpawnLog * (int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1))
@@ -181,39 +198,6 @@ namespace TowerDefense.Business.Models
                     V.Y /= 2;
                 }
             }
-        }
-
-        private bool MonsterAtGoal(IMonster monster)
-        {
-            var gameState = _game.GameState;
-            var goal = _game.IsMonsterAtGoal(monster, gameState.Goals);
-            if (goal != null)
-            {
-                if (monster is BossMonster)
-                {
-                    ((Monster)monster).Health /= 2;
-                }
-                else
-                {
-                    ((Monster)monster).Health = 0;
-                    gameState.Foes.Remove(monster);
-                }
-                ((Goal)goal).Health -= 1;
-                if (goal.Health <= 0)
-                {
-                    gameState.Goals.Remove(goal);
-                    _game.MonsterStartHealth = (int)(_game.MonsterStartHealth * 1.25);
-
-                    if (!gameState.Goals.Any())
-                    {
-                        gameState.Lost = true;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
         }
     }
 }

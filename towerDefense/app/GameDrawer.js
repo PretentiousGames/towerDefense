@@ -34,7 +34,7 @@
     var foeImage = new Image();
     foeImage.src = "../Sprites/jelly.png";
     var bossImage = new Image();
-    bossImage.src = "../Sprites/boss.png";
+    bossImage.src = "../Sprites/flame.png";
     var tankTurretImage = new Image();
     tankTurretImage.src = "../Sprites/tankTurret.png";
     var tankBaseImage = new Image();
@@ -201,14 +201,15 @@
                     renderFoe = _.extend({}, foe);
                     var image = foe.foeType === 1 ? bossImage :
                                 foeImage;
-                    var width = foe.foeType === 1 ? 111 : 48;
+                    var width = foe.foeType === 1 ? 80 : 48;
                     var height = foe.foeType === 1 ? 36 : 16;
+                    var frameCount = foe.foeType === 1 ? 4 : 3;
                     renderFoe.sprite = window.towerDefense.makeSprite({
                         context: ctx,
                         width: width,
                         height: height,
                         image: image,
-                        numberOfFrames: 3,
+                        numberOfFrames: frameCount,
                         ticksPerFrame: 5,
                         renderWidth: foe.size.width,
                         renderHeight: foe.size.height
