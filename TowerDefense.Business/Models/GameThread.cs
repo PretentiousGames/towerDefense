@@ -76,7 +76,7 @@ namespace TowerDefense.Business.Models
             int foesToSpawnLog = _game.FoesToSpawn;
             while (foesToSpawnLog > 0)
             {
-                if (_game.GameState.Wave % 10 == 0)
+                if (_game.GameState.Wave % 2 == 0)
                 {
                     _game.FoesToSpawn = 0;
                     BossMonster m =

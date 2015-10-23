@@ -5,7 +5,7 @@ namespace TowerDefense.Interfaces
 {
     public interface IMonster : IFoe
     {
-        IFoe Update(IGameState gameState);
+        void Update(IGameState gameState);
 
         Func<IGameState, AbilityResult> Ability { get; }
     }

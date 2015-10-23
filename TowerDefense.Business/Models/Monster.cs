@@ -18,7 +18,8 @@ namespace TowerDefense.Business.Models
 
         [JsonIgnore]
         public Dictionary<AbilityType, Func<IGameState, AbilityResult>> AbilitiesDictionary { get; set; }
-
+        
+        public AbilityResult AbilityResult { get; set; }
         public int Id { get; }
         public double X { get { return Location.X; } }
         public double Y { get { return Location.Y; } }
@@ -73,7 +74,7 @@ namespace TowerDefense.Business.Models
                 {
                     AbilityType.RangedHeat,
                     gameState => {
-                        var range = (int)Math.Log(Health, 2);
+                        var range = (int)Math.Log(Health, 1.5);
                         foreach (var tank in ((GameState)gameState).GameTanks)
                         {
                             if (IsEntityInRange(range, tank.Tank))
@@ -97,7 +98,7 @@ namespace TowerDefense.Business.Models
             };
         }
 
-        public IFoe Update(IGameState gameState)
+        public void Update(IGameState gameState)
         {
             var pull = GeneratePull(gameState.Goals);
             var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
@@ -128,16 +129,15 @@ namespace TowerDefense.Business.Models
 
             if (_heat <= 0)
             {
-                _heat += ExecuteAbility(gameState).Heat;
+                var abilityResult = ExecuteAbility(gameState);
+                _heat += abilityResult.Heat;
+                AbilityResult = abilityResult;
             }
             else
             {
                 _heat--;
             }
-
-            return this;
         }
-
         [JsonIgnore]
         public Func<IGameState, AbilityResult> Ability { get; protected set; }
 

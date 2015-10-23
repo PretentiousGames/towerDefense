@@ -116,6 +116,18 @@
         var percent = (foe.health / foe.maxHealth);
         ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
         ctx.fillRect(foe.x, foe.y + yMod, percent * foe.size.width, 5);
+
+        if (foe.abilityResult.abilityType === 1) {
+            ///kamakaze
+        } else if (foe.abilityResult.abilityType === 2) {
+            ctx.beginPath();
+            ctx.arc(foe.x + foe.size.width / 2, foe.y + foe.size.height / 2, foe.abilityResult.range, 0, 2 * Math.PI, false);
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.fill();
+            ctx.stroke();
+        }
     };
 
     var drawWave = function (wave) {
@@ -220,11 +232,14 @@
                     });
                     renderFoe.sprite.x = Math.floor(renderFoe.x);
                     renderFoe.sprite.y = Math.floor(renderFoe.y);
+                    renderFoe.abilityResult = foe.abilityResult;
+
                     foes.push(renderFoe);
                 } else {
                     _.extend(renderFoe, foe);
                     renderFoe.sprite.x = Math.floor(renderFoe.x);
                     renderFoe.sprite.y = Math.floor(renderFoe.y);
+                    renderFoe.abilityResult = foe.abilityResult;
                 }
             });
 

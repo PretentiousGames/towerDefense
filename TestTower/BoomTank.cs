@@ -15,7 +15,7 @@ namespace TestTower
         private double _yTarget;
 
         public BoomTank()
-            : base(700, 700)
+            : base(300, 300)
         {
             _xTarget = 400;
             _yTarget = 400;
