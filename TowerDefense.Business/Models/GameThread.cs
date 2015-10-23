@@ -113,6 +113,7 @@ namespace TowerDefense.Business.Models
                 if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
                 {
                     gameTank.Shooting = true;
+                    gameTank.Shots++;
                     gameTank.Bullet = bullet;
                     gameTank.Heat += bullet.ReloadTime;
 
@@ -133,6 +134,8 @@ namespace TowerDefense.Business.Models
             foreach (var monster in foesInRange)
             {
                 monster.Health -= bullet.Damage;
+                gameTank.Damage += bullet.Damage;
+                gameTank.MaxDamageDealt = Math.Max(bullet.Damage, gameTank.MaxDamageDealt);
 
                 if (monster.Health <= 0)
                 {
@@ -148,6 +151,10 @@ namespace TowerDefense.Business.Models
             if (!gameState.Lost)
             {
                 gameTank.Killed++;
+                if (monster is BossMonster)
+                {
+                    gameTank.BossesKilled++;
+                }
             }
         }
 
@@ -165,6 +172,8 @@ namespace TowerDefense.Business.Models
             foreach (var monster in foesInRange)
             {
                 monster.Speed *= monster.Health / (double)(bullet.Freeze * 3 + monster.Health);
+
+                gameTank.Freeze += bullet.Freeze;
             }
         }
 

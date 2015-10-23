@@ -15,7 +15,12 @@ namespace TowerDefense.Business.Models
         public ILocation ShotTarget { get; set; }
         public bool Shooting { get; set; }
         public Bullet Bullet { get; set; }
+        public int BossesKilled { get; set; }
         public int Killed { get; set; }
+        public int Damage { get; set; }
+        public int Freeze { get; set; }
+        public int Shots { get; set; }
+        public int MaxDamageDealt { get; set; }
 
         public double Heat { get; set; }
         public string Owner { get; set; }

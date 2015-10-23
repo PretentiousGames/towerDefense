@@ -168,8 +168,12 @@
             _.chain(tanks)
                 .sortBy(function (tank) { return -tank.killed; })
                 .each(function (tank) {
-                    ctx.font = '25pt Calibri';
-                    var message = tank.owner + " (" + tank.name + ") : " + tank.killed + " kills";
+                    ctx.font = '16pt Calibri';
+                    var message = tank.owner + " (" + tank.name + ") : " + tank.killed + " kills, " + tank.damage + " damage, " + tank.freeze + " freeze, ";
+                    ctx.strokeText(message, 400, y);
+                    ctx.fillText(message, 400, y);
+                    y += 30;
+                    var message = tank.bossesKilled + " boss kills, " + tank.shots + " shots, " + tank.maxDamageDealt + " max damage.";
                     ctx.strokeText(message, 400, y);
                     ctx.fillText(message, 400, y);
                     y += 30;
@@ -274,7 +278,16 @@
                 renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.bullet = gameTank.bullet;
+
+
                 renderTank.killed = gameTank.killed;
+                renderTank.damage = gameTank.damage;
+                renderTank.freeze = gameTank.freeze;
+                renderTank.bossesKilled = gameTank.bossesKilled;
+                renderTank.shots = gameTank.shots;
+                renderTank.maxDamageDealt = gameTank.maxDamageDealt;
+
+
                 renderTank.owner = gameTank.owner;
                 renderTank.heat = gameTank.heat;
                 if (renderTank.shooting) {
