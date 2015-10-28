@@ -8,5 +8,6 @@ namespace TowerDefense.Interfaces
         IEnumerable<IEntity> Entities { get; }
         Size Size { get; }
         List<IGoal> Goals { get; }
+        List<IGravityEntity> GravityEntities { get; set; }
     }
 }

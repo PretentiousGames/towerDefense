@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using TowerDefense.Interfaces;
+using Size = TowerDefense.Interfaces.Size;
 
 namespace TowerDefense.Business.Models
 {
@@ -24,6 +25,7 @@ namespace TowerDefense.Business.Models
             {
                 _game.GameBroadcaster.BroadcastGameState(gameState);
                 SpawnFoes(gameState);
+                UpdateGravityEntities(gameState);
                 UpdateAllMonsters(gameState);
                 UpdateAllTanks(gameState);
                 KillDeadGoals(gameState);
@@ -67,6 +69,32 @@ namespace TowerDefense.Business.Models
                 monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
             }
             gameState.Foes.RemoveAll(foe => foe.Health == 0);
+        }
+
+        private void UpdateGravityEntities(GameState gameState)
+        {
+            // Update existing gravity bullets
+            foreach (GravityEntity gravityEntity in gameState.GravityEntities)
+            {
+                gravityEntity.LifeSpan -= .01; //TODO: WHY does this have to be .01 instead of .1? Shouldn't it be .1 to subtract 1/10 of a second every tick?
+            }
+            
+            gameState.GravityEntities.RemoveAll(x => x.LifeSpan <= 0);
+
+            // Add new gravity bullets
+            gameState.GameTanks.ForEach((gameTank) =>
+            {
+                if (gameTank.Shooting && gameTank.Bullet.Gravity > 0)
+                {
+                    gameState.GravityEntities.Add(new GravityEntity
+                    {
+                        LifeSpan = gameTank.Bullet.Gravity,
+                        Size = new Size(1, 1),
+                        X = gameTank.ShotTarget.X,
+                        Y = gameTank.ShotTarget.Y
+                    });
+                }
+            });
         }
 
         private void SpawnFoes(GameState gameState)

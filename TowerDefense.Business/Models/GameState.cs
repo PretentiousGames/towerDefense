@@ -8,6 +8,7 @@ namespace TowerDefense.Business.Models
     {
         public List<IFoe> Foes { get; set; }
         public List<IGoal> Goals { get; set; }
+        public List<IGravityEntity> GravityEntities { get; set; }
         public List<IGameTank> GameTanks { get; set; }
 
         public IEnumerable<IEntity> Entities
@@ -26,6 +27,10 @@ namespace TowerDefense.Business.Models
                 if (GameTanks != null)
                 {
                     entities.Concat(GameTanks.Select(tank => tank.Tank));
+                }
+                if (GravityEntities != null)
+                {
+                    entities.Concat(GravityEntities);
                 }
                 return entities;
             }

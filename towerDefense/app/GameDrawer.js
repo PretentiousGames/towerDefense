@@ -4,6 +4,7 @@
     var tanks = [];
     var goals = [];
     var booms = [];
+    var gravities = [];
     var lost = false;
     var wave = 0;
     window.towerDefense = window.towerDefense || {};
@@ -137,6 +138,16 @@
         ctx.fillText("Wave " + wave, 400, 25);
     }
 
+    var drawGravity = function(gravity) {
+        ctx.beginPath();
+        ctx.arc(gravity.x + 5, gravity.y + 5, 10, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
+        ctx.strokeStyle = 'rgba(255, 255, 0, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.fill();
+        ctx.stroke();
+    }
+
     var rendering = false;
     var renderLoop = function () {
         if (rendering) {
@@ -146,6 +157,9 @@
         drawSpawn();
         _.each(goals, function (goal) {
             drawgoal(goal);
+        });
+        _.each(gravities, function(gravity) {
+            drawGravity(gravity);
         });
         _.each(tanks, function (tank) {
             drawtank(tank);
@@ -209,6 +223,9 @@
             if (!ctx) { return; }
             lost = gameState.lost;
             wave = gameState.wave;
+
+            gravities = gameState.gravityEntities;
+
             _.each(gameState.foes, function (foe) {
                 var renderFoe = _.find(foes, function (f) {
                     return f.id === foe.id;
