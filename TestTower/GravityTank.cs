@@ -51,7 +51,8 @@ namespace TestTower
                         Range = GetDistanceFromTank(target),
                         Freeze = 0,
                         SplashRange = 0,
-                        Gravity = 2
+                        GravityDuration = 1,
+                        GravityStrength = 10
                     };
                 }
             }

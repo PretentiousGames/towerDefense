@@ -2,6 +2,7 @@
 {
     public interface IGravityEntity : IEntity
     {
-        double LifeSpan { get; }
+        double Duration { get; }
+        double Strength { get; }
     }
 }

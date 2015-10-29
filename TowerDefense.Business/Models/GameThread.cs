@@ -76,22 +76,23 @@ namespace TowerDefense.Business.Models
             // Update existing gravity bullets
             foreach (GravityEntity gravityEntity in gameState.GravityEntities)
             {
-                gravityEntity.LifeSpan -= .01; //TODO: WHY does this have to be .01 instead of .1? Shouldn't it be .1 to subtract 1/10 of a second every tick?
+                gravityEntity.Duration -= .01;
             }
             
-            gameState.GravityEntities.RemoveAll(x => x.LifeSpan <= 0);
+            gameState.GravityEntities.RemoveAll(x => x.Duration <= 0);
 
             // Add new gravity bullets
             gameState.GameTanks.ForEach((gameTank) =>
             {
-                if (gameTank.Shooting && gameTank.Bullet.Gravity > 0)
+                if (gameTank.Shooting && gameTank.Bullet.GravityDuration > 0)
                 {
                     gameState.GravityEntities.Add(new GravityEntity
                     {
-                        LifeSpan = gameTank.Bullet.Gravity,
+                        Duration = gameTank.Bullet.GravityDuration,
                         Size = new Size(1, 1),
                         X = gameTank.ShotTarget.X,
-                        Y = gameTank.ShotTarget.Y
+                        Y = gameTank.ShotTarget.Y,
+                        Strength = gameTank.Bullet.GravityStrength
                     });
                 }
             });

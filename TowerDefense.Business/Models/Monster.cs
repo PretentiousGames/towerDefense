@@ -166,6 +166,7 @@ namespace TowerDefense.Business.Models
                 var distanceSquared = xComponent * xComponent + yComponent * yComponent;
                 var angle = Math.Atan2(yComponent, xComponent);
                 var magnitude = _gravityConstant / distanceSquared;
+                magnitude *= gravityEntity.Strength;
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
 

@@ -9,6 +9,7 @@ namespace TowerDefense.Interfaces
         int Freeze { get; }
         double SplashRange { get; }
         double ReloadTime { get; }
-        double Gravity { get; }
+        double GravityDuration { get; }
+        double GravityStrength { get; }
     }
 }
