@@ -101,9 +101,14 @@
         var yMod = tank.y > canvas.height / 2 ? -6 : 36;
 
         ctx.fillStyle = "#000";
-        ctx.fillRect(tank.x, tank.y + yMod, 32, 5);
+        ctx.fillRect(tank.x, tank.y + yMod, 32, 9);
         ctx.fillStyle = "#F00";
-        ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 5);
+        ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 9);
+        
+        ctx.textAlign = "center";
+        ctx.font = '7pt Calibri';
+        ctx.fillStyle = 'rgba(255,255,255,1)';
+        ctx.fillText(Math.round(tank.heat), tank.center.x, tank.y + yMod + 7, 32);
     }
 
     var drawFoe = function (foe) {
