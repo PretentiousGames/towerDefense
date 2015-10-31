@@ -98,7 +98,8 @@
         }
         drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
 
-        var yMod = tank.y > canvas.height / 2 ? -6 : 36;
+        var yMod = tank.y > canvas.height / 2 ? -10 : 34;
+        var yNameMod = tank.y > canvas.height / 2 ? -14 : 54;
 
         ctx.fillStyle = "#000";
         ctx.fillRect(tank.x, tank.y + yMod, 32, 9);
@@ -109,6 +110,11 @@
         ctx.font = '7pt Calibri';
         ctx.fillStyle = 'rgba(255,255,255,1)';
         ctx.fillText(Math.round(tank.heat), tank.center.x, tank.y + yMod + 7, 32);
+
+        ctx.textAlign = "center";
+        ctx.font = '10pt Calibri';
+        ctx.fillStyle = 'rgba(255,255,255,1)';
+        ctx.fillText(tank.name, tank.center.x, tank.y + yNameMod, 100);
     }
 
     var drawFoe = function (foe) {
