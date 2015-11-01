@@ -53,7 +53,7 @@ namespace TowerDefense.Business.Models
                 var tank = gameTank.Tank;
                 var tankUpdate = tank.Update(gameState);
 
-                MoveTank(tankUpdate, tank);
+                MoveTank(gameTank, tankUpdate, tank);
                 DoTankAttack(gameTank, tankUpdate, tank);
             }
         }
@@ -206,17 +206,19 @@ namespace TowerDefense.Business.Models
             }
         }
 
-        private void MoveTank(TankUpdate tankUpdate, Tank tank)
+        private void MoveTank(IGameTank gameTank, TankUpdate tankUpdate, Tank tank)
         {
             var gameState = _game.GameState;
             if (tankUpdate.MovementTarget != null)
             {
+                gameTank.MovementTarget = tankUpdate.MovementTarget;
+
                 var V = new Vector(tankUpdate.MovementTarget.X - tank.X, tankUpdate.MovementTarget.Y - tank.Y);
                 var angle = Math.Atan2(V.Y, V.X);
                 var speed = Math.Min(tank.Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
                 var xMovement = speed * Math.Cos(angle);
                 var yMovement = speed * Math.Sin(angle);
-
+                
                 if (_game.IsTankInBounds(tank, tank.X + xMovement, tank.Y, gameState))
                 {
                     ((Location)tank.Location).X += xMovement;

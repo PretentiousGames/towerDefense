@@ -62,7 +62,7 @@
     }
 
     var drawtank = function (tank) {
-        ctx.drawImage(tankBaseImage, tank.x, tank.y, 32, 32);
+        drawRotatedImage(tankBaseImage, tank.x + 16, tank.y + 16, tank.movementAngle);
         if (tank.shooting) {
             ctx.beginPath();
             ctx.moveTo(tank.x + 16, tank.y + 16);
@@ -318,10 +318,11 @@
                 } else {
                     _.extend(renderTank, gameTank.tank);
                 }
+
                 renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
+                renderTank.movementAngle = calculateAngle(renderTank, gameTank.movementTarget);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.bullet = gameTank.bullet;
-
 
                 renderTank.killed = gameTank.killed;
                 renderTank.damage = gameTank.damage;

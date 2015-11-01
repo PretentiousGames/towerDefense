@@ -9,6 +9,7 @@ namespace TowerDefense.Business.Models
         Tank Tank { get; set; }
         ILocation Location { get; set; }
         ILocation ShotTarget { get; set; }
+        ILocation MovementTarget { get; set; }
         bool Shooting { get; set; }
         Bullet Bullet { get; set; }
         int BossesKilled { get; set; }
