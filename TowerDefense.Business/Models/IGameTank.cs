@@ -18,5 +18,6 @@ namespace TowerDefense.Business.Models
         int Freeze { get; set; }
         int Shots { get; set; }
         int MaxDamageDealt { get; set; }
+        string TankColor { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
@@ -23,6 +24,8 @@ namespace TestTower
         public override TankUpdate Update(IGameState gameState)
         {
             TankUpdate tankUpdate = new TankUpdate();
+
+            tankUpdate.TankColor = GetRandomColor();
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
@@ -63,6 +66,12 @@ namespace TestTower
         public override IBullet GetBullet()
         {
             return Bullet;
+        }
+
+        private string GetRandomColor()
+        {
+            Color c = Color.FromArgb(_rng.Next(0, 255), _rng.Next(0, 255), _rng.Next(0, 255));
+            return ConvertColorToHexString(c);
         }
     }
 }

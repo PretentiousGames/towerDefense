@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
@@ -18,6 +19,7 @@ namespace TestTower
         public override TankUpdate Update(IGameState gameState)
         {
             TankUpdate tankUpdate = new TankUpdate();
+            tankUpdate.TankColor = ConvertColorToHexString(Color.Blue);
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {

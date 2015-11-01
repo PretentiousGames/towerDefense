@@ -53,6 +53,7 @@ namespace TowerDefense.Business.Models
                 var tank = gameTank.Tank;
                 var tankUpdate = tank.Update(gameState);
 
+                gameTank.TankColor = tankUpdate.TankColor;
                 MoveTank(gameTank, tankUpdate, tank);
                 DoTankAttack(gameTank, tankUpdate, tank);
             }

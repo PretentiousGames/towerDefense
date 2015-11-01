@@ -10,5 +10,9 @@ namespace TowerDefense.Interfaces
 	{
 		public ILocation ShotTarget { get; set; }
         public ILocation MovementTarget { get; set; }
+        /// <summary>
+        /// Tank color as a hex value (i.e. '#0000ff')
+        /// </summary>
+        public string TankColor { get; set; }
 	}
 }

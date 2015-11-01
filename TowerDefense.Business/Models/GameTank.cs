@@ -26,5 +26,6 @@ namespace TowerDefense.Business.Models
         public double Heat { get; set; }
         public string Owner { get; set; }
         public Tank Tank { get; set; }
+        public string TankColor { get; set; }
     }
 }

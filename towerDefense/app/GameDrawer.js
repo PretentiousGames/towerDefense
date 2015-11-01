@@ -9,6 +9,32 @@
     var wave = 0;
     window.towerDefense = window.towerDefense || {};
 
+    var drawColoredRotatedImage = function(image, x, y, angle, color) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        
+        var tintCanvas = document.createElement('canvas');
+        tintCanvas.width = image.width;
+        tintCanvas.height = image.height;
+        var tintCtx = tintCanvas.getContext('2d');
+
+        if (color) {
+            // this will draw the tint on top of the image
+            tintCtx.fillStyle = color;
+            tintCtx.fillRect(0, 0, image.width, image.height); // destination image
+            tintCtx.globalCompositeOperation = "destination-atop"; // Displays the destination image on top of the source image. The part of the destination image that is outside the source image is not shown
+            tintCtx.drawImage(image, 0, 0); // source image
+        }
+
+        ctx.drawImage(image, -(image.width / 2), -(image.height / 2));
+        ctx.globalAlpha = 0.5;
+        ctx.drawImage(tintCanvas, -(image.width / 2), -(image.height / 2));
+        ctx.globalAlpha = 1;
+
+        ctx.restore();
+    }
+
     var drawRotatedImage = function (image, x, y, angle) {
         ctx.save();
         ctx.translate(x, y);
@@ -62,7 +88,7 @@
     }
 
     var drawtank = function (tank) {
-        drawRotatedImage(tankBaseImage, tank.x + 16, tank.y + 16, tank.movementAngle);
+        drawColoredRotatedImage(tankBaseImage, tank.x + 16, tank.y + 16, tank.movementAngle, tank.tankColor);
         if (tank.shooting) {
             ctx.beginPath();
             ctx.moveTo(tank.x + 16, tank.y + 16);
@@ -96,7 +122,7 @@
             ctx.fill();
             ctx.stroke();
         }
-        drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
+        drawColoredRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle, tank.tankColor);
 
         var yMod = tank.y > canvas.height / 2 ? -10 : 34;
         var yNameMod = tank.y > canvas.height / 2 ? -14 : 54;
@@ -319,6 +345,7 @@
                     _.extend(renderTank, gameTank.tank);
                 }
 
+                renderTank.tankColor = gameTank.tankColor;
                 renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
                 renderTank.movementAngle = calculateAngle(renderTank, gameTank.movementTarget);
                 renderTank.shooting = gameTank.shooting;

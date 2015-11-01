@@ -5,5 +5,6 @@ namespace TowerDefense.Interfaces
 	{
 	    ILocation MovementTarget { get; }
 		ILocation ShotTarget { get; }
+        string TankColor { get; }
 	}
 }
