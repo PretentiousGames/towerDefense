@@ -57,6 +57,9 @@ namespace TowerDefense.Business.Models
                 MoveTank(gameTank, tankUpdate, tank);
                 DoTankAttack(gameTank, tankUpdate, tank);
             }
+            var top = gameState.GameTanks[0];
+            gameState.GameTanks.RemoveAt(0);
+            gameState.GameTanks.Add(top);
         }
 
         private void UpdateAllMonsters(GameState gameState)

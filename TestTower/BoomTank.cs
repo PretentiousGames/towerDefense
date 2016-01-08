@@ -33,6 +33,8 @@ namespace TestTower
                 UpdateMovementTarget(tankUpdate, gameState);
             }
 
+            tankUpdate.TankColor = ConvertColorToHexString(Color.CornflowerBlue);
+
             return tankUpdate;
         }
 
