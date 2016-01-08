@@ -4,9 +4,36 @@
     var tanks = [];
     var goals = [];
     var booms = [];
+    var gravities = [];
     var lost = false;
     var wave = 0;
     window.towerDefense = window.towerDefense || {};
+
+    var drawColoredRotatedImage = function(image, x, y, angle, color) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        
+        var tintCanvas = document.createElement('canvas');
+        tintCanvas.width = image.width;
+        tintCanvas.height = image.height;
+        var tintCtx = tintCanvas.getContext('2d');
+
+        if (color) {
+            // this will draw the tint on top of the image
+            tintCtx.fillStyle = color;
+            tintCtx.fillRect(0, 0, image.width, image.height); // destination image
+            tintCtx.globalCompositeOperation = "destination-atop"; // Displays the destination image on top of the source image. The part of the destination image that is outside the source image is not shown
+            tintCtx.drawImage(image, 0, 0); // source image
+        }
+
+        ctx.drawImage(image, -(image.width / 2), -(image.height / 2));
+        ctx.globalAlpha = 0.5;
+        ctx.drawImage(tintCanvas, -(image.width / 2), -(image.height / 2));
+        ctx.globalAlpha = 1;
+
+        ctx.restore();
+    }
 
     var drawRotatedImage = function (image, x, y, angle) {
         ctx.save();
@@ -61,7 +88,7 @@
     }
 
     var drawtank = function (tank) {
-        ctx.drawImage(tankBaseImage, tank.x, tank.y, 32, 32);
+        drawColoredRotatedImage(tankBaseImage, tank.x + 16, tank.y + 16, tank.movementAngle, tank.tankColor);
         if (tank.shooting) {
             ctx.beginPath();
             ctx.moveTo(tank.x + 16, tank.y + 16);
@@ -95,14 +122,25 @@
             ctx.fill();
             ctx.stroke();
         }
-        drawRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle);
+        drawColoredRotatedImage(tankTurretImage, tank.x + 16, tank.y + 16, tank.angle, tank.tankColor);
 
-        var yMod = tank.y > canvas.height / 2 ? -6 : 36;
+        var yMod = tank.y > canvas.height / 2 ? -10 : 34;
+        var yNameMod = tank.y > canvas.height / 2 ? -14 : 54;
 
         ctx.fillStyle = "#000";
-        ctx.fillRect(tank.x, tank.y + yMod, 32, 5);
+        ctx.fillRect(tank.x, tank.y + yMod, 32, 9);
         ctx.fillStyle = "#F00";
-        ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 5);
+        ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 9);
+        
+        ctx.textAlign = "center";
+        ctx.font = '7pt Calibri';
+        ctx.fillStyle = 'rgba(255,255,255,1)';
+        ctx.fillText(Math.round(tank.heat), tank.center.x, tank.y + yMod + 7, 32);
+
+        ctx.textAlign = "center";
+        ctx.font = '10pt Calibri';
+        ctx.fillStyle = 'rgba(255,255,255,1)';
+        ctx.fillText(tank.name, tank.center.x, tank.y + yNameMod, 100);
     }
 
     var drawFoe = function (foe) {
@@ -137,6 +175,16 @@
         ctx.fillText("Wave " + wave, 400, 25);
     }
 
+    var drawGravity = function(gravity) {
+        ctx.beginPath();
+        ctx.arc(gravity.x + 5, gravity.y + 5, 10, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
+        ctx.strokeStyle = 'rgba(255, 255, 0, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.fill();
+        ctx.stroke();
+    }
+
     var rendering = false;
     var renderLoop = function () {
         if (rendering) {
@@ -146,6 +194,9 @@
         drawSpawn();
         _.each(goals, function (goal) {
             drawgoal(goal);
+        });
+        _.each(gravities, function(gravity) {
+            drawGravity(gravity);
         });
         _.each(tanks, function (tank) {
             drawtank(tank);
@@ -209,6 +260,9 @@
             if (!ctx) { return; }
             lost = gameState.lost;
             wave = gameState.wave;
+
+            gravities = gameState.gravityEntities;
+
             _.each(gameState.foes, function (foe) {
                 var renderFoe = _.find(foes, function (f) {
                     return f.id === foe.id;
@@ -290,10 +344,12 @@
                 } else {
                     _.extend(renderTank, gameTank.tank);
                 }
+
+                renderTank.tankColor = gameTank.tankColor;
                 renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
+                renderTank.movementAngle = calculateAngle(renderTank, gameTank.movementTarget);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.bullet = gameTank.bullet;
-
 
                 renderTank.killed = gameTank.killed;
                 renderTank.damage = gameTank.damage;

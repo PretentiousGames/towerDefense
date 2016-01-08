@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -36,7 +37,7 @@ namespace TowerDefense.Interfaces
             get { return LocationProvider.GetLocation(X + Size.Width / 2, Y + Size.Height / 2); }
         }
         public int Id { get; }
-
+    
         public abstract string Name { get; }
 
         public double Speed
@@ -92,6 +93,11 @@ namespace TowerDefense.Interfaces
         protected double GetDistanceFromTank(ILocation location)
         {
             return GetDistance(this, location.X, location.Y);
+        }
+
+        protected string ConvertColorToHexString(Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
     }
 }

@@ -32,6 +32,7 @@ namespace TestTower
         public override TankUpdate Update(IGameState gameState)
         {
             TankUpdate tankUpdate = new TankUpdate();
+            tankUpdate.TankColor = ConvertColorToHexString(Color.Red);
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {

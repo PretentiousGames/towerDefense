@@ -43,6 +43,7 @@
     <Compile Include="BoomTank.cs" />
     <Compile Include="FreezeTank.cs" />
     <Compile Include="BaseTank.cs" />
+    <Compile Include="GravityTank.cs" />
     <Compile Include="TestTank.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

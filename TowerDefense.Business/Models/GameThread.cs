@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using TowerDefense.Interfaces;
+using Size = TowerDefense.Interfaces.Size;
 
 namespace TowerDefense.Business.Models
 {
@@ -24,6 +25,7 @@ namespace TowerDefense.Business.Models
             {
                 _game.GameBroadcaster.BroadcastGameState(gameState);
                 SpawnFoes(gameState);
+                UpdateGravityEntities(gameState);
                 UpdateAllMonsters(gameState);
                 UpdateAllTanks(gameState);
                 KillDeadGoals(gameState);
@@ -51,7 +53,8 @@ namespace TowerDefense.Business.Models
                 var tank = gameTank.Tank;
                 var tankUpdate = tank.Update(gameState);
 
-                MoveTank(tankUpdate, tank);
+                gameTank.TankColor = tankUpdate.TankColor;
+                MoveTank(gameTank, tankUpdate, tank);
                 DoTankAttack(gameTank, tankUpdate, tank);
             }
         }
@@ -67,6 +70,33 @@ namespace TowerDefense.Business.Models
                 monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
             }
             gameState.Foes.RemoveAll(foe => foe.Health == 0);
+        }
+
+        private void UpdateGravityEntities(GameState gameState)
+        {
+            // Update existing gravity bullets
+            foreach (GravityEntity gravityEntity in gameState.GravityEntities)
+            {
+                gravityEntity.Duration -= .01;
+            }
+            
+            gameState.GravityEntities.RemoveAll(x => x.Duration <= 0);
+
+            // Add new gravity bullets
+            gameState.GameTanks.ForEach((gameTank) =>
+            {
+                if (gameTank.Shooting && gameTank.Bullet.GravityDuration > 0)
+                {
+                    gameState.GravityEntities.Add(new GravityEntity
+                    {
+                        Duration = gameTank.Bullet.GravityDuration,
+                        Size = new Size(1, 1),
+                        X = gameTank.ShotTarget.X,
+                        Y = gameTank.ShotTarget.Y,
+                        Strength = gameTank.Bullet.GravityStrength
+                    });
+                }
+            });
         }
 
         private void SpawnFoes(GameState gameState)
@@ -185,17 +215,19 @@ namespace TowerDefense.Business.Models
             }
         }
 
-        private void MoveTank(TankUpdate tankUpdate, Tank tank)
+        private void MoveTank(IGameTank gameTank, TankUpdate tankUpdate, Tank tank)
         {
             var gameState = _game.GameState;
             if (tankUpdate.MovementTarget != null)
             {
+                gameTank.MovementTarget = tankUpdate.MovementTarget;
+
                 var V = new Vector(tankUpdate.MovementTarget.X - tank.X, tankUpdate.MovementTarget.Y - tank.Y);
                 var angle = Math.Atan2(V.Y, V.X);
                 var speed = Math.Min(tank.Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
                 var xMovement = speed * Math.Cos(angle);
                 var yMovement = speed * Math.Sin(angle);
-
+                
                 if (_game.IsTankInBounds(tank, tank.X + xMovement, tank.Y, gameState))
                 {
                     ((Location)tank.Location).X += xMovement;

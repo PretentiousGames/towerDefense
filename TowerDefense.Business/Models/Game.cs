@@ -38,7 +38,7 @@ namespace TowerDefense.Business.Models
                 Players.Add(new Player
                 {
                     Name = "demo",
-                    Tanks = new List<Tank> { new BaseTank(), new TestTank(), new FreezeTank(), new BoomTank() }
+                    Tanks = new List<Tank> { new GravityTank(), new FreezeTank(), new TestTank() } //new BaseTank(), new TestTank(), new FreezeTank(), new BoomTank() }
                 });
             }
 
@@ -116,6 +116,7 @@ namespace TowerDefense.Business.Models
                     new Goal {Location = new Location(width - Goal.Width, height - Goal.Height)}
                 },
                 GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList(),
+                GravityEntities = new List<IGravityEntity>(),
                 Wave = 0,
                 Lost = false
             };

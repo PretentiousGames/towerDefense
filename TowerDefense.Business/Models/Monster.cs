@@ -100,7 +100,7 @@ namespace TowerDefense.Business.Models
 
         public void Update(IGameState gameState)
         {
-            var pull = GeneratePull(gameState.Goals);
+            var pull = GeneratePull(gameState.Goals, gameState.GravityEntities);
             var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
             pull += randomComponent;
             V += pull;
@@ -146,7 +146,7 @@ namespace TowerDefense.Business.Models
             return _random.NextDouble() * .1 - .05;
         }
 
-        private Vector GeneratePull(List<IGoal> goals)
+        private Vector GeneratePull(List<IGoal> goals, List<IGravityEntity> gravityEntities)
         {
             var pull = new Vector();
             foreach (var goal in goals)
@@ -158,6 +158,18 @@ namespace TowerDefense.Business.Models
                 var magnitude = _gravityConstant / distanceSquared;
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
+
+            foreach (var gravityEntity in gravityEntities)
+            {
+                var xComponent = gravityEntity.X + gravityEntity.Size.Width / 2 - X;
+                var yComponent = gravityEntity.Y + gravityEntity.Size.Height / 2 - Y;
+                var distanceSquared = xComponent * xComponent + yComponent * yComponent;
+                var angle = Math.Atan2(yComponent, xComponent);
+                var magnitude = _gravityConstant / distanceSquared;
+                magnitude *= gravityEntity.Strength;
+                pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
+            }
+
             return pull;
         }
 
