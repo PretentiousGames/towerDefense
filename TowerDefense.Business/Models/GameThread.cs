@@ -57,6 +57,9 @@ namespace TowerDefense.Business.Models
                 MoveTank(gameTank, tankUpdate, tank);
                 DoTankAttack(gameTank, tankUpdate, tank);
             }
+            var top = gameState.GameTanks[0];
+            gameState.GameTanks.RemoveAt(0);
+            gameState.GameTanks.Add(top);
         }
 
         private void UpdateAllMonsters(GameState gameState)
@@ -106,7 +109,7 @@ namespace TowerDefense.Business.Models
             int foesToSpawnLog = _game.FoesToSpawn;
             while (foesToSpawnLog > 0)
             {
-                if (_game.GameState.Wave % 2 == 0)
+                if (_game.GameState.Wave % 10 == 0)
                 {
                     _game.FoesToSpawn = 0;
                     BossMonster m =
@@ -121,7 +124,7 @@ namespace TowerDefense.Business.Models
                 {
                     _game.FoesToSpawn--;
                     foesToSpawnLog /= 10;
-                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), gameState.Wave % 2 == 0 ? AbilityType.Kamakaze : AbilityType.RangedHeat)
+                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), gameState.Wave % 5 == 0 ? AbilityType.RangedHeat : AbilityType.Kamakaze)
                     {
                         Location =
                             new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,
@@ -139,18 +142,26 @@ namespace TowerDefense.Business.Models
 
             if (gameTank.Heat <= 0 && gameTank.ShotTarget != null)
             {
-                var bullet = (Bullet)tank.GetBullet();
-                if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
+                try
                 {
-                    gameTank.Shooting = true;
-                    gameTank.Shots++;
-                    gameTank.Bullet = bullet;
-                    gameTank.Heat += bullet.ReloadTime;
+                    var bullet = (Bullet) tank.GetBullet();
+                    if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
+                    {
+                        gameTank.Shooting = true;
+                        gameTank.Shots++;
+                        gameTank.Bullet = bullet;
+                        gameTank.Heat += bullet.ReloadTime;
 
-                    List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y, bullet.SplashRange);
+                        List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X,
+                            tankUpdate.ShotTarget.Y, bullet.SplashRange);
 
-                    ApplyDamage(gameTank, bullet, foesInRange);
-                    ApplyFreeze(gameTank, bullet, foesInRange);
+                        ApplyDamage(gameTank, bullet, foesInRange);
+                        ApplyFreeze(gameTank, bullet, foesInRange);
+                    }
+                }
+                catch
+                {
+                    //They made a bad bullet, bad tank!
                 }
             }
             else
