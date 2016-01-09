@@ -4,10 +4,24 @@
     var tanks = [];
     var goals = [];
     var booms = [];
+    var bloodSplatters = [];
     var gravities = [];
     var lost = false;
     var wave = 0;
     window.towerDefense = window.towerDefense || {};
+
+    var splatterOptions = {
+        spread: 1,
+        consistency: 0.04,
+        partCount: 15,
+        partLifespan: 5,
+        updateFrames: 2
+    }
+
+    var foeType = {
+        monster: 0,
+        boss: 1
+    }
 
     var drawColoredRotatedImage = function(image, x, y, angle, color) {
         ctx.save();
@@ -185,6 +199,63 @@
         ctx.stroke();
     }
 
+    var updateBloodSplatterPart = function (part, i, partArray) {
+        if (part.update) {
+            part.dy -= 0;
+            part.x -= (part.dx / splatterOptions.updateFrames);
+            part.y -= (part.dy / splatterOptions.updateFrames);
+            part.size -= (0.05 / splatterOptions.updateFrames);
+        }
+
+        if (part.size < 0.3 || Math.random() < splatterOptions.consistency) {
+            part.update = false;
+            part.lifespan--;
+            
+            drawBloodSplatterPart(part);
+
+            if (part.lifespan <= 0) {
+                partArray.splice(i, 1);
+            }
+        }
+    };
+
+    var drawBloodSplatterPart = function (part) {
+        if (part.size > 0) {
+            var alpha = 1 - (1 / part.lifespan);
+
+            ctx.beginPath();
+            ctx.arc(part.x + 5, part.y + 5, part.size * 5, 0, 2 * Math.PI, false);
+            ctx.fillStyle = 'rgba(255, 0, 0, ' + alpha + ')';
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.25)';
+            ctx.fill();
+        }
+    };
+
+    var drawBloodSplatter = function (bloodSplatter) {
+        for (var i = 0; i < bloodSplatter.parts.length; i++) {
+            drawBloodSplatterPart(bloodSplatter.parts[i]);
+            updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts);
+        }
+    }
+
+    var createBloodSplatterParts = function (isBoss, startX, startY, partArray) {
+        for (var i = 0; i < splatterOptions.partCount; i++) {
+            var s = Math.random() * Math.PI;
+            var dirx = (((Math.random() < .5) ? 3 : -3) * (Math.random() * 3)) * splatterOptions.spread;
+            var diry = (((Math.random() < .5) ? 3 : -3) * (Math.random() * 3)) * splatterOptions.spread;
+
+            partArray.push({
+                x: startX,
+                y: startY,
+                dx: dirx,
+                dy: diry,
+                size: s,
+                update: true,
+                lifespan: splatterOptions.partLifespan
+            });
+        }
+    }
+
     var rendering = false;
     var renderLoop = function () {
         if (rendering) {
@@ -194,6 +265,9 @@
         drawSpawn();
         _.each(goals, function (goal) {
             drawgoal(goal);
+        });
+        _.each(bloodSplatters, function (bloodSplatter) {
+            drawBloodSplatter(bloodSplatter);
         });
         _.each(gravities, function(gravity) {
             drawGravity(gravity);
@@ -259,6 +333,7 @@
         drawGame: function (gameState) {
             if (!ctx) { return; }
             lost = gameState.lost;
+
             wave = gameState.wave;
 
             gravities = gameState.gravityEntities;
@@ -300,25 +375,18 @@
             var deadFoes = _.filter(foes, function (foe) {
                 return !_.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
+
             _.each(deadFoes, function (deadFoe) {
-                deadFoe = _.extend({}, deadFoe);
-                deadFoe.sprite = window.towerDefense.makeSprite({
-                    context: ctx,
-                    width: 2560,
-                    height: 64,
-                    image: boomImage,
-                    numberOfFrames: 40,
-                    ticksPerFrame: 1,
-                    loop: false,
-                    destroyCallback: function () {
-                        booms = _.filter(booms, function (boom) {
-                            return boom.id !== deadFoe.id;
-                        });
-                    }
-                });
-                deadFoe.sprite.x = Math.floor(deadFoe.x - 32);
-                deadFoe.sprite.y = Math.floor(deadFoe.y - 32);
-                booms.push(deadFoe);
+                var bloodSplatter = {};
+
+                var splatterParts = [];
+
+                var isBoss = deadFoe.foeType === foeType.boss;
+
+                createBloodSplatterParts(isBoss, Math.floor(deadFoe.x), Math.floor(deadFoe.y), splatterParts);
+
+                bloodSplatter.parts = splatterParts;
+                bloodSplatters.push(bloodSplatter);
             });
 
             foes = _.filter(foes, function (foe) {
