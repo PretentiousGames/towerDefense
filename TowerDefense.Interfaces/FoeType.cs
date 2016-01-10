@@ -15,5 +15,6 @@ namespace TowerDefense.Interfaces
         None = 0,
         Kamakaze = 1,
         RangedHeat = 2,
+        Healing = 3
     }
 }

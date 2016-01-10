@@ -124,11 +124,23 @@ namespace TowerDefense.Business.Models
                 {
                     _game.FoesToSpawn--;
                     foesToSpawnLog /= 10;
-                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), gameState.Wave % 5 == 0 ? AbilityType.RangedHeat : AbilityType.Kamakaze)
+
+                    AbilityType type;
+                    int rand = new Random().Next(1, 10);
+
+                    if (rand == 1)
                     {
-                        Location =
-                            new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,
-                                gameState.Size.Height / 2 - Monster.Height / 2.0),
+                        type = AbilityType.Healing;
+                    }
+                    else
+                    {
+                        type = gameState.Wave%5 == 0 ? AbilityType.RangedHeat : AbilityType.Kamakaze;
+                    }
+
+                    Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), type)
+                    {
+                        Location = new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,
+                            gameState.Size.Height / 2 - Monster.Height / 2.0)
                     };
                     gameState.Foes.Add(m);
                 }

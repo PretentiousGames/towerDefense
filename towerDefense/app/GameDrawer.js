@@ -23,6 +23,12 @@
         boss: 1
     }
 
+    var monsterType = {
+        kamakaze: 1,
+        fire: 2,
+        healing: 3
+    }
+
     var drawColoredRotatedImage = function(image, x, y, angle, color) {
         ctx.save();
         ctx.translate(x, y);
@@ -73,7 +79,9 @@
     var goalImage = new Image();
     goalImage.src = "../Sprites/tower.png";
     var jellyImage = new Image();
-    jellyImage.src = "../Sprites/jelly.png";
+    jellyImage.src = "../Sprites/kamakaze.png";
+    var healerImage = new Image();
+    healerImage.src = "../Sprites/healing.png";
     var flameImage = new Image();
     flameImage.src = "../Sprites/flame.png";
     var tankTurretImage = new Image();
@@ -169,13 +177,21 @@
         ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
         ctx.fillRect(foe.x, foe.y + yMod, percent * foe.size.width, 5);
 
-        if (foe.abilityResult.abilityType === 1) {
+        if (foe.abilityResult.abilityType === monsterType.kamakaze) {
             ///kamakaze
-        } else if (foe.abilityResult.abilityType === 2) {
+        } else if (foe.abilityResult.abilityType === monsterType.fire) {
             ctx.beginPath();
             ctx.arc(foe.x + foe.size.width / 2, foe.y + foe.size.height / 2, foe.abilityResult.range, 0, 2 * Math.PI, false);
             ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
             ctx.strokeStyle = 'rgba(255, 0, 0, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.fill();
+            ctx.stroke();
+        } else if (foe.abilityResult.abilityType === monsterType.healing) {
+            ctx.beginPath();
+            ctx.arc(foe.x + foe.size.width / 2, foe.y + foe.size.height / 2, foe.abilityResult.range, 0, 2 * Math.PI, false);
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.25)';
             ctx.lineWidth = 1;
             ctx.fill();
             ctx.stroke();
@@ -344,8 +360,20 @@
                 });
                 if (typeof renderFoe === "undefined") {
                     renderFoe = _.extend({}, foe);
-                    var image = foe.abilityType === 2 ? flameImage :
-                                jellyImage;
+
+                    var image;
+                    switch(foe.abilityType) {
+                        case monsterType.kamakaze:
+                            image = jellyImage;
+                            break;
+                        case monsterType.fire:
+                            image = flameImage;
+                            break;
+                        case monsterType.healing:
+                            image = healerImage;
+                            break;
+                    }
+
                     var imageWidth = foe.abilityType === 2 ? 80 : 48;
                     var imageHeight = foe.abilityType === 2 ? 36 : 16;
                     var frameCount = foe.abilityType === 2 ? 4 : 3;

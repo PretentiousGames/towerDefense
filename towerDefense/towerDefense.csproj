@@ -337,12 +337,13 @@
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Sprites\boss.png" />
+    <Content Include="Sprites\explosion.png" />
     <Content Include="Sprites\flame.png" />
+    <Content Include="Sprites\healer.png" />
     <Content Include="Sprites\tower.png" />
     <Content Include="Sprites\background.png" />
     <Content Include="Sprites\boom.2.png" />
     <Content Include="Sprites\boom.4.png" />
-    <Content Include="Sprites\boom.png" />
     <Content Include="Sprites\bullet_0.png" />
     <Content Include="Sprites\jelly.png" />
     <Content Include="Sprites\spawnPoint.png" />

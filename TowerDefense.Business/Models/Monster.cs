@@ -95,6 +95,25 @@ namespace TowerDefense.Business.Models
                         return  new AbilityResult() {Heat = 2, AbilityType = AbilityType.RangedHeat, Range=range};
                     }
                 },
+                {
+                    AbilityType.Healing,
+                    gameState => {
+                        var range = 100;
+                        foreach (var foe in ((IGameState)gameState).Foes)
+                        {
+                            if (IsEntityInRange(range, foe))
+                            {
+                                var monster = (Monster) foe;
+                                if (monster.Health < monster.MaxHealth*1.5)
+                                {
+                                    monster.Health++;
+                                }
+                            }
+                        }
+
+                        return new AbilityResult() {Heat = 10, AbilityType = AbilityType.Healing, Range=range};
+                    }
+                },
             };
         }
 
