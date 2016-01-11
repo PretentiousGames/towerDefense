@@ -336,10 +336,13 @@
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Sprites\boom.png" />
     <Content Include="Sprites\boss.png" />
     <Content Include="Sprites\explosion.png" />
     <Content Include="Sprites\flame.png" />
     <Content Include="Sprites\healer.png" />
+    <Content Include="Sprites\splitling.png" />
+    <Content Include="Sprites\splitter.png" />
     <Content Include="Sprites\tower.png" />
     <Content Include="Sprites\background.png" />
     <Content Include="Sprites\boom.2.png" />

@@ -26,7 +26,9 @@
     var monsterType = {
         kamakaze: 1,
         fire: 2,
-        healing: 3
+        healing: 3,
+        splitter: 4,
+        splitling: 5
     }
 
     var drawColoredRotatedImage = function(image, x, y, angle, color) {
@@ -73,21 +75,32 @@
         ctx.fillStyle = backgroundPattern;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-
+    
+    // Board
     var spawnImage = new Image();
     spawnImage.src = "../Sprites/spawnPoint.png";
     var goalImage = new Image();
     goalImage.src = "../Sprites/tower.png";
+
+    // Foe
     var jellyImage = new Image();
-    jellyImage.src = "../Sprites/kamakaze.png";
+    jellyImage.src = "../Sprites/jelly.png";
     var healerImage = new Image();
-    healerImage.src = "../Sprites/healing.png";
+    healerImage.src = "../Sprites/healer.png";
     var flameImage = new Image();
     flameImage.src = "../Sprites/flame.png";
+    var splitterImage = new Image();
+    splitterImage.src = "../Sprites/splitter.png";
+    var splitlingImage = new Image();
+    splitlingImage.src = "../Sprites/splitling.png";
+
+    // Tank
     var tankTurretImage = new Image();
     tankTurretImage.src = "../Sprites/tankTurret.png";
     var tankBaseImage = new Image();
     tankBaseImage.src = "../Sprites/tankBase.png";
+
+    // Explosions
     var boomImage = new Image();
     boomImage.src = "../Sprites/boom.2.png";
     var goalBoomImage = new Image();
@@ -177,9 +190,7 @@
         ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
         ctx.fillRect(foe.x, foe.y + yMod, percent * foe.size.width, 5);
 
-        if (foe.abilityResult.abilityType === monsterType.kamakaze) {
-            ///kamakaze
-        } else if (foe.abilityResult.abilityType === monsterType.fire) {
+        if (foe.abilityResult.abilityType === monsterType.fire) {
             ctx.beginPath();
             ctx.arc(foe.x + foe.size.width / 2, foe.y + foe.size.height / 2, foe.abilityResult.range, 0, 2 * Math.PI, false);
             ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
@@ -362,21 +373,33 @@
                     renderFoe = _.extend({}, foe);
 
                     var image;
+                    var imageWidth = 48;
+                    var imageHeight = 16;
+                    var frameCount = 3;
                     switch(foe.abilityType) {
                         case monsterType.kamakaze:
                             image = jellyImage;
                             break;
                         case monsterType.fire:
                             image = flameImage;
+                            imageWidth = 80;
+                            imageHeight = 36;
+                            frameCount = 4;
                             break;
                         case monsterType.healing:
                             image = healerImage;
                             break;
+                        case monsterType.splitter:
+                            image = splitterImage;
+                            break;
+                        case monsterType.splitling:
+                            image = splitlingImage;
+                            imageWidth = 36;
+                            imageHeight = 12;
+                            frameCount = 3;
+                            break;
                     }
 
-                    var imageWidth = foe.abilityType === 2 ? 80 : 48;
-                    var imageHeight = foe.abilityType === 2 ? 36 : 16;
-                    var frameCount = foe.abilityType === 2 ? 4 : 3;
                     renderFoe.sprite = window.towerDefense.makeSprite({
                         context: ctx,
                         width: imageWidth,

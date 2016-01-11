@@ -11,6 +11,21 @@ namespace TowerDefense.Business.Models
     public class GameThread
     {
         private readonly Game _game;
+        
+        private readonly Func<IGameState, Monster, bool> _splitterOnDeathListener = (gameState, monster) =>
+        {
+            int numSpawns = new Random().Next(2, 4);
+
+            for (int i = 0; i < numSpawns; i++)
+            {
+                gameState.Foes.Add(new Monster(monster.MaxHealth / 2, AbilityType.Splitling)
+                {
+                    Location = new Location(monster.X, monster.Y)
+                });
+            }
+
+            return true;
+        };
 
         public GameThread(Game game)
         {
@@ -64,7 +79,7 @@ namespace TowerDefense.Business.Models
 
         private void UpdateAllMonsters(GameState gameState)
         {
-            foreach (IFoe foe in gameState.Foes)
+            foreach(var foe in gameState.Foes)
             {
                 var monster = (Monster)foe;
                 monster.Update(gameState);
@@ -72,7 +87,8 @@ namespace TowerDefense.Business.Models
                 //Thaw out monsters
                 monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
             }
-            gameState.Foes.RemoveAll(foe => foe.Health == 0);
+            
+            gameState.Foes.RemoveAll(foe => foe.Health == 0); //TODO: I believe this is useless. See KilledMonster()
         }
 
         private void UpdateGravityEntities(GameState gameState)
@@ -126,11 +142,15 @@ namespace TowerDefense.Business.Models
                     foesToSpawnLog /= 10;
 
                     AbilityType type;
-                    int rand = new Random().Next(1, 10);
+                    int rand = new Random().Next(1, 20);
 
                     if (rand == 1)
                     {
                         type = AbilityType.Healing;
+                    }
+                    else if (rand == 2)
+                    {
+                        type = AbilityType.Splitter;
                     }
                     else
                     {
@@ -142,6 +162,12 @@ namespace TowerDefense.Business.Models
                         Location = new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,
                             gameState.Size.Height / 2 - Monster.Height / 2.0)
                     };
+
+                    if (m.AbilityType == AbilityType.Splitter)
+                    {
+                        m.OnDeathListener = _splitterOnDeathListener;
+                    }
+
                     gameState.Foes.Add(m);
                 }
             }
@@ -200,6 +226,9 @@ namespace TowerDefense.Business.Models
         private void KilledMonster(IGameTank gameTank, Monster monster)
         {
             var gameState = _game.GameState;
+
+            monster.OnDeathListener?.Invoke(gameState, monster);
+
             gameState.Foes.Remove(monster);
             if (!gameState.Lost)
             {

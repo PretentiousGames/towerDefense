@@ -1,4 +1,6 @@
-﻿namespace TowerDefense.Interfaces
+﻿using System.Drawing.Text;
+
+namespace TowerDefense.Interfaces
 {
     public interface IKillable
     {

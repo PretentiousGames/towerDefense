@@ -13,6 +13,7 @@ namespace TowerDefense.Business.Models
         public const int Height = 16;
         protected int _heat = 0;
         public AbilityType AbilityType { get; protected set; }
+        public Func<IGameState, Monster, bool> OnDeathListener { get; protected internal set; } 
         protected static Random _random = new Random();
         protected int _gravityConstant = 500;
 
@@ -114,6 +115,25 @@ namespace TowerDefense.Business.Models
                         return new AbilityResult() {Heat = 10, AbilityType = AbilityType.Healing, Range=range};
                     }
                 },
+                {
+                    AbilityType.Splitter,
+                    gameState => {
+                        return new AbilityResult() {Heat = 0, AbilityType = AbilityType.Splitter};
+                    }
+                },
+                {
+                    AbilityType.Splitling,
+                    gameState => {
+                        var goal = IsAtGoal(gameState.Goals);
+                        if (goal != null)
+                        {
+                            ((Goal)goal).Health -= (Health / 10);
+                            Health = 0;
+                        }
+
+                        return new AbilityResult() {Heat = 0, AbilityType = AbilityType.Splitling};
+                    }
+                }
             };
         }
 
@@ -224,6 +244,5 @@ namespace TowerDefense.Business.Models
 
             return null;
         }
-
     }
 }
