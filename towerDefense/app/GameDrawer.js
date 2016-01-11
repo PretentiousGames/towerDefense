@@ -24,11 +24,11 @@
     }
 
     var monsterType = {
+        none: 0,
         kamakaze: 1,
         fire: 2,
         healing: 3,
-        splitter: 4,
-        splitling: 5
+        splitter: 4
     }
 
     var drawColoredRotatedImage = function(image, x, y, angle, color) {
@@ -91,8 +91,6 @@
     flameImage.src = "../Sprites/flame.png";
     var splitterImage = new Image();
     splitterImage.src = "../Sprites/splitter.png";
-    var splitlingImage = new Image();
-    splitlingImage.src = "../Sprites/splitling.png";
 
     // Tank
     var tankTurretImage = new Image();
@@ -190,6 +188,9 @@
         ctx.fillStyle = percent > .5 ? "#0f0" : percent > .25 ? "#ff0" : "#F00";
         ctx.fillRect(foe.x, foe.y + yMod, percent * foe.size.width, 5);
 
+        if (!foe.abilityResult) {
+            return;
+        }
         if (foe.abilityResult.abilityType === monsterType.fire) {
             ctx.beginPath();
             ctx.arc(foe.x + foe.size.width / 2, foe.y + foe.size.height / 2, foe.abilityResult.range, 0, 2 * Math.PI, false);
@@ -206,6 +207,25 @@
             ctx.lineWidth = 1;
             ctx.fill();
             ctx.stroke();
+        } else if (foe.abilityResult.abilityType === monsterType.kamakaze) {
+            var deadFoe = _.extend({}, foe);
+            deadFoe.sprite = window.towerDefense.makeSprite({
+                context: ctx,
+                width: 2560,
+                height: 64,
+                image: boomImage,
+                numberOfFrames: 40,
+                ticksPerFrame: 1,
+                loop: false,
+                destroyCallback: function () {
+                    booms = _.filter(booms, function (boom) {
+                        return boom.id !== deadFoe.id;
+                    });
+                }
+            });
+            deadFoe.sprite.x = Math.floor(deadFoe.x - 32);
+            deadFoe.sprite.y = Math.floor(deadFoe.y - 32);
+            booms.push(deadFoe);
         }
     };
 
@@ -251,9 +271,9 @@
             var alpha = 1 - (1 / part.lifespan);
 
             ctx.beginPath();
-            ctx.arc(part.x + 2, part.y + 2, part.size * 2, 0, 2 * Math.PI, false);
-            ctx.fillStyle = 'rgba(255, 0, 0, ' + alpha + ')';
-            ctx.strokeStyle = 'rgba(255, 0, 0, 0.25)';
+            ctx.arc(part.x + 1.5, part.y + 1.5, part.size * 1.5, 0, 2 * Math.PI, false);
+            ctx.fillStyle = 'rgba(0, 255, 0, ' + alpha + ')';
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.25)';
             ctx.fill();
         }
     };
@@ -391,12 +411,6 @@
                             break;
                         case monsterType.splitter:
                             image = splitterImage;
-                            break;
-                        case monsterType.splitling:
-                            image = splitlingImage;
-                            imageWidth = 36;
-                            imageHeight = 12;
-                            frameCount = 3;
                             break;
                     }
 

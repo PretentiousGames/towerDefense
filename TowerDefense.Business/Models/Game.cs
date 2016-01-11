@@ -38,13 +38,13 @@ namespace TowerDefense.Business.Models
                 Players.Add(new Player
                 {
                     Name = "demo",
-                    Tanks = new List<Tank> { new GravityTank(), new FreezeTank(), new TestTank() } //new BaseTank(), new TestTank(), new FreezeTank(), new BoomTank() }
+                    Tanks = new List<Tank> { new BoomTank(), new FreezeTank(), new TestTank() } //new BaseTank(), new TestTank(), new FreezeTank(), new BoomTank() }
                 });
             }
 
             GameState = GenerateGameState(DefaultSize.Height, DefaultSize.Width, this);
 
-            MonsterStartHealth = 10;
+            MonsterStartHealth = 100;
             FoeCount = 0;
             NewWave();
         }
@@ -113,7 +113,15 @@ namespace TowerDefense.Business.Models
                     new Goal {Location = new Location(0,0)},
                     new Goal {Location = new Location(width - Goal.Width, 0)},
                     new Goal {Location = new Location(0, height - Goal.Height)},
-                    new Goal {Location = new Location(width - Goal.Width, height - Goal.Height)}
+                    new Goal {Location = new Location(width - Goal.Width, height - Goal.Height)},
+                    new Goal {Location = new Location(50+0,50+0)},
+                    new Goal {Location = new Location(-50+width - Goal.Width, 50+0)},
+                    new Goal {Location = new Location(50+0, -50+height - Goal.Height)},
+                    new Goal {Location = new Location(-50+width - Goal.Width, -50+height - Goal.Height)},
+                    new Goal {Location = new Location(100+0,100+0)},
+                    new Goal {Location = new Location(-100+width - Goal.Width, 100+0)},
+                    new Goal {Location = new Location(100+0, -100+height - Goal.Height)},
+                    new Goal {Location = new Location(-100+width - Goal.Width, -100+height - Goal.Height)},
                 },
                 GameTanks = game.Players.SelectMany(player => player.Tanks.Select(tank => (IGameTank)new GameTank(tank, player.Name))).ToList(),
                 GravityEntities = new List<IGravityEntity>(),

@@ -13,13 +13,15 @@ namespace TowerDefense.Business.Models
         public const int Height = 16;
         protected int _heat = 0;
         public AbilityType AbilityType { get; protected set; }
-        public Func<IGameState, Monster, bool> OnDeathListener { get; protected internal set; } 
+        public Action<IGameState> OnDeathAbility { get; protected internal set; }
+        public Action<IGameState, int> OnHitAbility { get; protected internal set; }
+        public Action<IGameState> DoMovement { get; protected internal set; }
         protected static Random _random = new Random();
         protected int _gravityConstant = 500;
 
         [JsonIgnore]
         public Dictionary<AbilityType, Func<IGameState, AbilityResult>> AbilitiesDictionary { get; set; }
-        
+
         public AbilityResult AbilityResult { get; set; }
         public int Id { get; }
         public double X { get { return Location.X; } }
@@ -37,7 +39,6 @@ namespace TowerDefense.Business.Models
         public double MaxSpeed { get; set; }
         public Size Size { get; set; }
 
-
         public Monster(int MonsterMaxHealth) : this(MonsterMaxHealth, AbilityType.Kamakaze)
         {
         }
@@ -52,8 +53,10 @@ namespace TowerDefense.Business.Models
             CreateAbilities();
             AbilityType = abilityType;
             Ability = AbilitiesDictionary[AbilityType];
+            SetOnDeathAbilities();
+            SetOnHitAbilities();
+            SetMovementTypes();
         }
-
 
         private void CreateAbilities()
         {
@@ -67,9 +70,10 @@ namespace TowerDefense.Business.Models
                         {
                             ((Goal)goal).Health -= (Health / 10);
                             Health = 0;
+                            return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.Kamakaze};
                         }
 
-                        return new AbilityResult() {Heat = 0, AbilityType = AbilityType.Kamakaze};
+                        return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.None};
                     }
                 },
                 {
@@ -93,45 +97,49 @@ namespace TowerDefense.Business.Models
                             }
                         }
 
-                        return  new AbilityResult() {Heat = 2, AbilityType = AbilityType.RangedHeat, Range=range};
+                        _heat += 2;
+                        return  new AbilityResult() {Heat = _heat, AbilityType = AbilityType.RangedHeat, Range=range};
                     }
                 },
                 {
                     AbilityType.Healing,
                     gameState => {
-                        var range = 100;
-                        foreach (var foe in ((IGameState)gameState).Foes)
+                        var range = 10*(int) Math.Log(Health, 1.5);
+                        if (FoeType == FoeType.Boss)
+                        {
+                            range = 10;
+                            Health += 10;
+                            return new AbilityResult() {Heat = 10, AbilityType = AbilityType.Healing, Range=range};
+                        }
+                        foreach (var foe in ((IGameState) gameState).Foes)
                         {
                             if (IsEntityInRange(range, foe))
                             {
                                 var monster = (Monster) foe;
                                 if (monster.Health < monster.MaxHealth*1.5)
                                 {
-                                    monster.Health++;
+                                    monster.Health += 5;
                                 }
                             }
                         }
 
-                        return new AbilityResult() {Heat = 10, AbilityType = AbilityType.Healing, Range=range};
+                        _heat += 1;
+                        return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.Healing, Range=range};
                     }
                 },
                 {
                     AbilityType.Splitter,
-                    gameState => {
-                        return new AbilityResult() {Heat = 0, AbilityType = AbilityType.Splitter};
-                    }
-                },
-                {
-                    AbilityType.Splitling,
                     gameState => {
                         var goal = IsAtGoal(gameState.Goals);
                         if (goal != null)
                         {
                             ((Goal)goal).Health -= (Health / 10);
                             Health = 0;
+
+                            return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.Kamakaze};
                         }
 
-                        return new AbilityResult() {Heat = 0, AbilityType = AbilityType.Splitling};
+                        return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.None};
                     }
                 }
             };
@@ -139,33 +147,7 @@ namespace TowerDefense.Business.Models
 
         public void Update(IGameState gameState)
         {
-            var pull = GeneratePull(gameState.Goals, gameState.GravityEntities);
-            var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
-            pull += randomComponent;
-            V += pull;
-            var angle = Math.Atan2(V.Y, V.X);
-            var speed = Math.Min(Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
-            var xMovement = speed * Math.Cos(angle);
-            var yMovement = speed * Math.Sin(angle);
-
-            if (CanMove(X + xMovement, Y, gameState))
-            {
-                ((Location)Location).X += xMovement;
-            }
-            else
-            {
-                V.X /= 2;
-            }
-
-            if (CanMove(X, Y + yMovement, gameState))
-            {
-                ((Location)Location).Y += yMovement;
-            }
-            else
-            {
-                V.Y /= 2;
-            }
-
+            DoMovement(gameState);
             if (_heat <= 0)
             {
                 var abilityResult = ExecuteAbility(gameState);
@@ -177,6 +159,7 @@ namespace TowerDefense.Business.Models
                 _heat--;
             }
         }
+
         [JsonIgnore]
         public Func<IGameState, AbilityResult> Ability { get; protected set; }
 
@@ -185,27 +168,20 @@ namespace TowerDefense.Business.Models
             return _random.NextDouble() * .1 - .05;
         }
 
-        private Vector GeneratePull(List<IGoal> goals, List<IGravityEntity> gravityEntities)
+        private Vector GeneratePull(IEnumerable<IEntity> targets)
         {
             var pull = new Vector();
-            foreach (var goal in goals)
+            foreach (var target in targets)
             {
-                var xComponent = goal.X + goal.Size.Width / 2 - X;
-                var yComponent = goal.Y + goal.Size.Height / 2 - Y;
+                var xComponent = target.X + target.Size.Width / 2 - X;
+                var yComponent = target.Y + target.Size.Height / 2 - Y;
                 var distanceSquared = xComponent * xComponent + yComponent * yComponent;
                 var angle = Math.Atan2(yComponent, xComponent);
                 var magnitude = _gravityConstant / distanceSquared;
-                pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
-            }
-
-            foreach (var gravityEntity in gravityEntities)
-            {
-                var xComponent = gravityEntity.X + gravityEntity.Size.Width / 2 - X;
-                var yComponent = gravityEntity.Y + gravityEntity.Size.Height / 2 - Y;
-                var distanceSquared = xComponent * xComponent + yComponent * yComponent;
-                var angle = Math.Atan2(yComponent, xComponent);
-                var magnitude = _gravityConstant / distanceSquared;
-                magnitude *= gravityEntity.Strength;
+                if (target is IGravityEntity)
+                {
+                    magnitude *= ((GravityEntity) target).Strength;
+                }
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
 
@@ -243,6 +219,135 @@ namespace TowerDefense.Business.Models
             }
 
             return null;
+        }
+
+        private int GetFoesInRange(int range, double xTarget, double yTarget, IGameState gameState)
+        {
+            var foes = 0;
+            foreach (var foe in gameState.Foes)
+            {
+                if (Math.Abs(foe.X - xTarget) < range && Math.Abs(foe.Y - yTarget) < range)
+                {
+                    foes++;
+                }
+            }
+            return foes;
+        }
+
+        private double _xTarget = 400;
+        private double _yTarget = 400;
+
+        private void SetMovementTypes()
+        {
+            if (AbilityType == AbilityType.Healing)
+            {
+                DoMovement = (gameState) =>
+                {
+                    var range = 10 * (int)Math.Log(Health, 1.5);
+                    int maxFoes = GetFoesInRange(range, _xTarget, _yTarget, gameState);
+
+                    for (int i = 0; i < 20; i++)
+                    {
+                        var y = _random.NextDouble() * gameState.Size.Height;
+                        var x = _random.NextDouble() * gameState.Size.Width;
+                        var f = GetFoesInRange(range, x, y, gameState);
+                        if (f > maxFoes)
+                        {
+                            maxFoes = f;
+                            _xTarget = x;
+                            _yTarget = y;
+                        }
+                    }
+
+                    var location = new Location(_xTarget, _yTarget);
+
+                    var pull = GeneratePull(new List<IEntity>
+                    {
+                        new GravityEntity
+                    {
+                        Duration = 1,
+                        Size = new Size(1, 1),
+                        X = location.X,
+                        Y = location.Y,
+                        Strength = 100
+                    }
+                    }.Union(gameState.GravityEntities));
+                    DoActualMovement(pull, gameState);
+                };
+            }
+            else
+            {
+                DoMovement = (gameState) =>
+                {
+                    var pull = GeneratePull(gameState.Goals.Select(x=>(IEntity)x).Union(gameState.GravityEntities));
+                    DoActualMovement(pull, gameState);
+                };
+            }
+        }
+
+        private void DoActualMovement(Vector pull, IGameState gameState)
+        {
+            V.X = Math.Min(Math.Max(V.X, -100), 100);
+            V.Y = Math.Min(Math.Max(V.Y, -100), 100);
+
+            var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
+            pull += randomComponent;
+            V += pull;
+            var angle = Math.Atan2(V.Y, V.X);
+            var speed = Math.Min(Speed, Math.Sqrt(V.X*V.X + V.Y*V.Y));
+            var xMovement = speed*Math.Cos(angle);
+            var yMovement = speed*Math.Sin(angle);
+
+            if (CanMove(X + xMovement, Y, gameState))
+            {
+                ((Location) Location).X += xMovement;
+            }
+            else
+            {
+                V.X /= 2;
+            }
+
+            if (CanMove(X, Y + yMovement, gameState))
+            {
+                ((Location) Location).Y += yMovement;
+            }
+            else
+            {
+                V.Y /= 2;
+            }
+        }
+
+        protected void SetOnDeathAbilities()
+        {
+
+        }
+
+        protected void SetOnHitAbilities()
+        {
+            if (AbilityType == AbilityType.Splitter)
+            {
+                OnHitAbility = (gameState, damageTaken) =>
+                {
+                    if (_heat <= 0)
+                    {
+                        var heatGain = 20;
+                        _heat += heatGain;
+                        Health /= 2;
+                        if (Health > 0)
+                        {
+                            var splitling = new Monster(Health, AbilityType.Splitter)
+                            {
+                                Location = new Location(X, Y),
+                                V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
+                                Speed = Speed,
+                            };
+                            splitling._heat = heatGain;
+                            gameState.Foes.Add(splitling);
+                        }
+                    }
+                };
+            }
+
         }
     }
 }

@@ -16,7 +16,6 @@ namespace TowerDefense.Interfaces
         Kamakaze = 1,
         RangedHeat = 2,
         Healing = 3,
-        Splitter = 4,
-        Splitling = 5
+        Splitter = 4
     }
 }

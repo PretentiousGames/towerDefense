@@ -16,6 +16,8 @@ namespace TowerDefense.Business.Models
             FoeType = FoeType.Boss;
             AbilityType = type ?? AbilityType.Kamakaze;
             Ability = AbilitiesDictionary[AbilityType];
+            SetOnDeathAbilities();
+            SetOnHitAbilities();
         }
     }
 }
