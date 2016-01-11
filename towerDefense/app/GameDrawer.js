@@ -251,7 +251,7 @@
             var alpha = 1 - (1 / part.lifespan);
 
             ctx.beginPath();
-            ctx.arc(part.x + 5, part.y + 5, part.size * 5, 0, 2 * Math.PI, false);
+            ctx.arc(part.x + 2, part.y + 2, part.size * 2, 0, 2 * Math.PI, false);
             ctx.fillStyle = 'rgba(255, 0, 0, ' + alpha + ')';
             ctx.strokeStyle = 'rgba(255, 0, 0, 0.25)';
             ctx.fill();

@@ -11,7 +11,7 @@ namespace TowerDefense.Business.Models
     public class GameThread
     {
         private readonly Game _game;
-        
+
         private readonly Func<IGameState, Monster, bool> _splitterOnDeathListener = (gameState, monster) =>
         {
             int numSpawns = new Random().Next(2, 4);
@@ -79,7 +79,7 @@ namespace TowerDefense.Business.Models
 
         private void UpdateAllMonsters(GameState gameState)
         {
-            foreach(var foe in gameState.Foes)
+            foreach (var foe in gameState.Foes)
             {
                 var monster = (Monster)foe;
                 monster.Update(gameState);
@@ -87,7 +87,7 @@ namespace TowerDefense.Business.Models
                 //Thaw out monsters
                 monster.Speed = (monster.Speed * 9999 + monster.MaxSpeed) / 10000.0;
             }
-            
+
             gameState.Foes.RemoveAll(foe => foe.Health == 0); //TODO: I believe this is useless. See KilledMonster()
         }
 
@@ -98,7 +98,7 @@ namespace TowerDefense.Business.Models
             {
                 gravityEntity.Duration -= .01;
             }
-            
+
             gameState.GravityEntities.RemoveAll(x => x.Duration <= 0);
 
             // Add new gravity bullets
@@ -128,9 +128,30 @@ namespace TowerDefense.Business.Models
                 if (_game.GameState.Wave % 10 == 0)
                 {
                     _game.FoesToSpawn = 0;
+
+                    AbilityType type;
+                    int rand = new Random().Next(1, 20);
+
+                    if (rand == 1)
+                    {
+                        type = AbilityType.Healing;
+                    }
+                    else if (rand == 2)
+                    {
+                        type = AbilityType.Splitter;
+                    }
+                    else if (rand == 3)
+                    {
+                        type = AbilityType.RangedHeat;
+                    }
+                    else
+                    {
+                        type = AbilityType.Kamakaze;
+                    }
+
                     BossMonster m =
                         new BossMonster(foesToSpawnLog *
-                                        (int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1));
+                                        (int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), type);
                     m.Location = new Location(gameState.Size.Width / 2 - m.Size.Width / 2.0,
                                 gameState.Size.Height / 2 - m.Size.Height / 2.0);
                     foesToSpawnLog = 0;
@@ -152,9 +173,13 @@ namespace TowerDefense.Business.Models
                     {
                         type = AbilityType.Splitter;
                     }
+                    else if (rand == 3)
+                    {
+                        type = AbilityType.RangedHeat;
+                    }
                     else
                     {
-                        type = gameState.Wave%5 == 0 ? AbilityType.RangedHeat : AbilityType.Kamakaze;
+                        type = AbilityType.Kamakaze;
                     }
 
                     Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), type)
@@ -182,7 +207,7 @@ namespace TowerDefense.Business.Models
             {
                 try
                 {
-                    var bullet = (Bullet) tank.GetBullet();
+                    var bullet = (Bullet)tank.GetBullet();
                     if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
                     {
                         gameTank.Shooting = true;
@@ -271,7 +296,7 @@ namespace TowerDefense.Business.Models
                 var speed = Math.Min(tank.Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
                 var xMovement = speed * Math.Cos(angle);
                 var yMovement = speed * Math.Sin(angle);
-                
+
                 if (_game.IsTankInBounds(tank, tank.X + xMovement, tank.Y, gameState))
                 {
                     ((Location)tank.Location).X += xMovement;
