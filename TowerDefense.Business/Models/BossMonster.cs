@@ -18,6 +18,7 @@ namespace TowerDefense.Business.Models
             Ability = AbilitiesDictionary[AbilityType];
             SetOnDeathAbilities();
             SetOnHitAbilities();
+            SetMonsterSize();
         }
     }
 }

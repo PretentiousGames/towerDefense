@@ -56,6 +56,7 @@ namespace TowerDefense.Business.Models
             SetOnDeathAbilities();
             SetOnHitAbilities();
             SetMovementTypes();
+            SetMonsterSize();
         }
 
         private void CreateAbilities()
@@ -347,7 +348,21 @@ namespace TowerDefense.Business.Models
                     }
                 };
             }
+        }
 
+        protected void SetMonsterSize()
+        {
+            if (AbilityType == AbilityType.Healing)
+            {
+                if (FoeType == FoeType.Monster)
+                {
+                    Size = new Size(36, 36);
+                }
+                else if(FoeType == FoeType.Boss)
+                {
+                    Size = new Size(72, 72);
+                }
+            }
         }
     }
 }

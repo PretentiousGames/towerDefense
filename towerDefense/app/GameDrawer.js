@@ -86,7 +86,7 @@
     var jellyImage = new Image();
     jellyImage.src = "../Sprites/jelly.png";
     var healerImage = new Image();
-    healerImage.src = "../Sprites/healer.png";
+    healerImage.src = "../Sprites/spacestation.png";
     var flameImage = new Image();
     flameImage.src = "../Sprites/flame.png";
     var splitterImage = new Image();
@@ -393,8 +393,9 @@
                     renderFoe = _.extend({}, foe);
 
                     var image;
-                    var imageWidth = 48;
-                    var imageHeight = 16;
+                    var imageWidth = 48, imageHeight = 16;
+                    var renderWidth = foe.size.width;
+                    var renderHeight = foe.size.height;
                     var frameCount = 3;
                     switch(foe.abilityType) {
                         case monsterType.kamakaze:
@@ -407,6 +408,9 @@
                             frameCount = 4;
                             break;
                         case monsterType.healing:
+                            imageWidth = 2100;
+                            imageHeight = 105;
+                            frameCount = 20;
                             image = healerImage;
                             break;
                         case monsterType.splitter:
@@ -421,8 +425,8 @@
                         image: image,
                         numberOfFrames: frameCount,
                         ticksPerFrame: 5,
-                        renderWidth: foe.size.width,
-                        renderHeight: foe.size.height
+                        renderWidth: renderWidth,
+                        renderHeight: renderHeight
                     });
                     renderFoe.sprite.x = Math.floor(renderFoe.x);
                     renderFoe.sprite.y = Math.floor(renderFoe.y);
