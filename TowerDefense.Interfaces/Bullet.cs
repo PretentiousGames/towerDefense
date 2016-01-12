@@ -20,7 +20,7 @@ namespace TowerDefense.Business.Models
         {
 	        get
 	        {
-	            var splash = (Math.Abs(SplashRange) * SplashHeatMultiplier) + 1; // MUST have +1 or reload time will become 0 if SplashRange is 0
+	            var splash = (Math.Abs(SplashRange) * SplashHeatMultiplier);
 	            var freeze = (Math.Abs(Freeze) * FreezeHeatMultiplier);
 	            var gravity = (Math.Abs(GravityDuration) * Math.Abs(GravityStrength) * GravityMultiplier);
 
@@ -30,7 +30,7 @@ namespace TowerDefense.Business.Models
 	            }
 	            else
 	            {
-                    return Range * ((Math.Abs(Damage) + freeze) * splash) / 1000;
+                    return Range * ((Math.Abs(Damage) + freeze) + (Math.Abs(Damage) * splash)) / 1000;
                 }
             }
         }

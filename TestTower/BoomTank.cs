@@ -61,7 +61,7 @@ namespace TestTower
         private int GetFoesInRange(double xTarget, double yTarget, IGameState gameState)
         {
             var foes = 0;
-            var range = 50;
+            var range = 100;
             foreach (var foe in gameState.Foes)
             {
                 if (Math.Abs(foe.X - xTarget) < range && Math.Abs(foe.Y - yTarget) < range)
