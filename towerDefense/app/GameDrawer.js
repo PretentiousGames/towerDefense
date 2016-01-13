@@ -13,9 +13,10 @@
     var splatterOptions = {
         spread: 1,
         consistency: 0.04,
-        partCount: 15,
+        partCount: 50,
         partLifespan: 5,
-        updateFrames: 2
+        updateFrames: 2,
+        maxSplatterPartsToDraw: 1000
     }
 
     var foeType = {
@@ -313,9 +314,16 @@
         _.each(goals, function (goal) {
             drawgoal(goal);
         });
-        _.each(bloodSplatters, function (bloodSplatter) {
-            drawBloodSplatter(bloodSplatter);
-        });
+
+        console.log("drawing " + bloodSplatters.length + " splatters (" + bloodSplatters.length * splatterOptions.partCount + " parts)");
+        for (var i = bloodSplatters.length - 1; i >= 0; i--) {
+            drawBloodSplatter(bloodSplatters[i]);
+
+            if (bloodSplatters[i].parts.length === 0) {
+                bloodSplatters.splice(i, 1);
+            }
+        }
+
         _.each(gravities, function(gravity) {
             drawGravity(gravity);
         });
@@ -442,14 +450,21 @@
                 return !_.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
 
+            var splattersToDraw = splatterOptions.maxSplatterPartsToDraw / splatterOptions.partCount;
             _.each(deadFoes, function (deadFoe) {
+                var maxSplatterParts = splatterOptions.partCount;
+                var oldMaxSplatterParts = maxSplatterParts;
+                if (bloodSplatters.length >= splattersToDraw) {
+                    maxSplatterParts = 2;
+                }
+
                 var bloodSplatter = {};
-
                 var splatterParts = [];
-
                 var isBoss = deadFoe.foeType === foeType.boss;
 
+                splatterOptions.partCount = maxSplatterParts;
                 createBloodSplatterParts(isBoss, Math.floor(deadFoe.x), Math.floor(deadFoe.y), splatterParts);
+                splatterOptions.partCount = oldMaxSplatterParts;
 
                 bloodSplatter.parts = splatterParts;
                 bloodSplatters.push(bloodSplatter);

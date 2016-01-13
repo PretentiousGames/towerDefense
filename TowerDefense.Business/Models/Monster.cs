@@ -336,6 +336,7 @@ namespace TowerDefense.Business.Models
                         var heatGain = 20;
                         _heat += heatGain;
                         Health /= 2;
+                        Generation++;
                         if (Health > 0)
                         {
                             var splitling = new Monster(Health, AbilityType.Splitter)
@@ -343,7 +344,7 @@ namespace TowerDefense.Business.Models
                                 Location = new Location(X, Y),
                                 V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
                                 Speed = Speed,
-                                Generation = Generation + 1
+                                Generation = Generation
                             };
                             splitling._heat = heatGain;
                             gameState.Foes.Add(splitling);
