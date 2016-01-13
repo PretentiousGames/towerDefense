@@ -13,7 +13,7 @@
     var splatterOptions = {
         spread: 1,
         consistency: 0.04,
-        partCount: 50,
+        partCount: 15,
         partLifespan: 5,
         updateFrames: 2,
         maxSplatterPartsToDraw: 1000
