@@ -181,7 +181,7 @@ namespace TowerDefense.Business.Models
                 var magnitude = _gravityConstant / distanceSquared;
                 if (target is IGravityEntity)
                 {
-                    magnitude *= ((GravityEntity) target).Strength;
+                    magnitude *= ((GravityEntity)target).Strength;
                 }
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
@@ -280,7 +280,7 @@ namespace TowerDefense.Business.Models
             {
                 DoMovement = (gameState) =>
                 {
-                    var pull = GeneratePull(gameState.Goals.Select(x=>(IEntity)x).Union(gameState.GravityEntities));
+                    var pull = GeneratePull(gameState.Goals.Select(x => (IEntity)x).Union(gameState.GravityEntities));
                     DoActualMovement(pull, gameState);
                 };
             }
@@ -295,13 +295,13 @@ namespace TowerDefense.Business.Models
             pull += randomComponent;
             V += pull;
             var angle = Math.Atan2(V.Y, V.X);
-            var speed = Math.Min(Speed, Math.Sqrt(V.X*V.X + V.Y*V.Y));
-            var xMovement = speed*Math.Cos(angle);
-            var yMovement = speed*Math.Sin(angle);
+            var speed = Math.Min(Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
+            var xMovement = speed * Math.Cos(angle);
+            var yMovement = speed * Math.Sin(angle);
 
             if (CanMove(X + xMovement, Y, gameState))
             {
-                ((Location) Location).X += xMovement;
+                ((Location)Location).X += xMovement;
             }
             else
             {
@@ -310,7 +310,7 @@ namespace TowerDefense.Business.Models
 
             if (CanMove(X, Y + yMovement, gameState))
             {
-                ((Location) Location).Y += yMovement;
+                ((Location)Location).Y += yMovement;
             }
             else
             {
@@ -329,22 +329,19 @@ namespace TowerDefense.Business.Models
             {
                 OnHitAbility = (gameState, damageTaken) =>
                 {
-                    if (_heat <= 0)
+                    if (_heat <= 0 && gameState.Foes.Count < 100 && Health > 1)
                     {
                         var heatGain = 20;
                         _heat += heatGain;
                         Health /= 2;
-                        if (Health > 0)
+                        var splitling = new Monster(Health, AbilityType.Splitter)
                         {
-                            var splitling = new Monster(Health, AbilityType.Splitter)
-                            {
-                                Location = new Location(X, Y),
-                                V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
-                                Speed = Speed,
-                            };
-                            splitling._heat = heatGain;
-                            gameState.Foes.Add(splitling);
-                        }
+                            Location = new Location(X, Y),
+                            V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
+                            Speed = Speed,
+                        };
+                        splitling._heat = heatGain;
+                        gameState.Foes.Add(splitling);
                     }
                 };
             }
@@ -358,7 +355,7 @@ namespace TowerDefense.Business.Models
                 {
                     Size = new Size(36, 36);
                 }
-                else if(FoeType == FoeType.Boss)
+                else if (FoeType == FoeType.Boss)
                 {
                     Size = new Size(72, 72);
                 }

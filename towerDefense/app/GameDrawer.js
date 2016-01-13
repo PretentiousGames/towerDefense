@@ -31,11 +31,11 @@
         splitter: 4
     }
 
-    var drawColoredRotatedImage = function(image, x, y, angle, color) {
+    var drawColoredRotatedImage = function (image, x, y, angle, color) {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
-        
+
         var tintCanvas = document.createElement('canvas');
         tintCanvas.width = image.width;
         tintCanvas.height = image.height;
@@ -75,7 +75,7 @@
         ctx.fillStyle = backgroundPattern;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-    
+
     // Board
     var spawnImage = new Image();
     spawnImage.src = "../Sprites/spawnPoint.png";
@@ -164,7 +164,7 @@
         ctx.fillRect(tank.x, tank.y + yMod, 32, 9);
         ctx.fillStyle = "#F00";
         ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 9);
-        
+
         ctx.textAlign = "center";
         ctx.font = '7pt Calibri';
         ctx.fillStyle = 'rgba(255,255,255,1)';
@@ -236,7 +236,7 @@
         ctx.fillText("Wave " + wave, 400, 25);
     }
 
-    var drawGravity = function(gravity) {
+    var drawGravity = function (gravity) {
         ctx.beginPath();
         ctx.arc(gravity.x + 5, gravity.y + 5, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
@@ -246,7 +246,7 @@
         ctx.stroke();
     }
 
-    var updateBloodSplatterPart = function (part, i, partArray) {
+    var updateBloodSplatterPart = function (part, i, partArray, splatter) {
         if (part.update) {
             part.dy -= 0;
             part.x -= (part.dx / splatterOptions.updateFrames);
@@ -257,11 +257,18 @@
         if (part.size < 0.3 || Math.random() < splatterOptions.consistency) {
             part.update = false;
             part.lifespan--;
-            
+
             drawBloodSplatterPart(part);
 
             if (part.lifespan <= 0) {
                 partArray.splice(i, 1);
+            }
+
+            if (partArray.length === 0) {
+                var index = bloodSplatters.indexOf(splatter);
+                if (index > -1) {
+                    bloodSplatters.splice(index, 1);
+                }
             }
         }
     };
@@ -279,9 +286,11 @@
     };
 
     var drawBloodSplatter = function (bloodSplatter) {
-        for (var i = 0; i < bloodSplatter.parts.length; i++) {
-            drawBloodSplatterPart(bloodSplatter.parts[i]);
-            updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts);
+        if (bloodSplatter) {
+            for (var i = 0; i < bloodSplatter.parts.length; i++) {
+                drawBloodSplatterPart(bloodSplatter.parts[i]);
+                updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts, bloodSplatter);
+            }
         }
     }
 
@@ -316,7 +325,7 @@
         _.each(bloodSplatters, function (bloodSplatter) {
             drawBloodSplatter(bloodSplatter);
         });
-        _.each(gravities, function(gravity) {
+        _.each(gravities, function (gravity) {
             drawGravity(gravity);
         });
         _.each(tanks, function (tank) {
@@ -397,7 +406,7 @@
                     var renderWidth = foe.size.width;
                     var renderHeight = foe.size.height;
                     var frameCount = 3;
-                    switch(foe.abilityType) {
+                    switch (foe.abilityType) {
                         case monsterType.kamakaze:
                             image = jellyImage;
                             break;
@@ -455,7 +464,9 @@
                 createBloodSplatterParts(isBoss, Math.floor(deadFoe.x), Math.floor(deadFoe.y), splatterParts);
 
                 bloodSplatter.parts = splatterParts;
-                bloodSplatters.push(bloodSplatter);
+                if (bloodSplatters.length < 500) {
+                    bloodSplatters.push(bloodSplatter);
+                }
             });
 
             foes = _.filter(foes, function (foe) {
