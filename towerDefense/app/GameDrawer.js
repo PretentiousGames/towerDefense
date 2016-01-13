@@ -16,7 +16,7 @@
         partCount: 15,
         partLifespan: 5,
         updateFrames: 2,
-        maxSplatterPartsToDraw: 1000
+        maxSplatters: 300
     }
 
     var foeType = {
@@ -32,7 +32,7 @@
         splitter: 4
     }
 
-    var drawColoredRotatedImage = function(image, x, y, angle, color) {
+    var drawColoredRotatedImage = function (image, x, y, angle, color) {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
@@ -237,7 +237,7 @@
         ctx.fillText("Wave " + wave, 400, 25);
     }
 
-    var drawGravity = function(gravity) {
+    var drawGravity = function (gravity) {
         ctx.beginPath();
         ctx.arc(gravity.x + 5, gravity.y + 5, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
@@ -247,7 +247,7 @@
         ctx.stroke();
     }
 
-    var updateBloodSplatterPart = function (part, i, partArray) {
+    var updateBloodSplatterPart = function (part, i, partArray, splatter) {
         if (part.update) {
             part.dy -= 0;
             part.x -= (part.dx / splatterOptions.updateFrames);
@@ -264,6 +264,13 @@
             if (part.lifespan <= 0) {
                 partArray.splice(i, 1);
             }
+
+            if (partArray.length === 0) {
+                var index = bloodSplatters.indexOf(splatter);
+                if (index > -1) {
+                    bloodSplatters.splice(index, 1);
+                }
+        }
         }
     };
 
@@ -280,10 +287,12 @@
     };
 
     var drawBloodSplatter = function (bloodSplatter) {
+        if (bloodSplatter) {
         for (var i = 0; i < bloodSplatter.parts.length; i++) {
             drawBloodSplatterPart(bloodSplatter.parts[i]);
-            updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts);
+                updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts, bloodSplatter);
         }
+    }
     }
 
     var createBloodSplatterParts = function (isBoss, startX, startY, partArray) {
@@ -314,17 +323,10 @@
         _.each(goals, function (goal) {
             drawgoal(goal);
         });
-
-        console.log("drawing " + bloodSplatters.length + " splatters (" + bloodSplatters.length * splatterOptions.partCount + " parts)");
-        for (var i = bloodSplatters.length - 1; i >= 0; i--) {
-            drawBloodSplatter(bloodSplatters[i]);
-
-            if (bloodSplatters[i].parts.length === 0) {
-                bloodSplatters.splice(i, 1);
-            }
-        }
-
-        _.each(gravities, function(gravity) {
+        _.each(bloodSplatters, function (bloodSplatter) {
+            drawBloodSplatter(bloodSplatter);
+        });
+        _.each(gravities, function (gravity) {
             drawGravity(gravity);
         });
         _.each(tanks, function (tank) {
@@ -405,7 +407,7 @@
                     var renderWidth = foe.size.width;
                     var renderHeight = foe.size.height;
                     var frameCount = 3;
-                    switch(foe.abilityType) {
+                    switch (foe.abilityType) {
                         case monsterType.kamakaze:
                             image = jellyImage;
                             break;
@@ -450,24 +452,19 @@
                 return !_.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
 
-            var splattersToDraw = splatterOptions.maxSplatterPartsToDraw / splatterOptions.partCount;
             _.each(deadFoes, function (deadFoe) {
-                var maxSplatterParts = splatterOptions.partCount;
-                var oldMaxSplatterParts = maxSplatterParts;
-                if (bloodSplatters.length >= splattersToDraw) {
-                    maxSplatterParts = 2;
-                }
-
                 var bloodSplatter = {};
+
                 var splatterParts = [];
+
                 var isBoss = deadFoe.foeType === foeType.boss;
 
-                splatterOptions.partCount = maxSplatterParts;
                 createBloodSplatterParts(isBoss, Math.floor(deadFoe.x), Math.floor(deadFoe.y), splatterParts);
-                splatterOptions.partCount = oldMaxSplatterParts;
 
                 bloodSplatter.parts = splatterParts;
-                bloodSplatters.push(bloodSplatter);
+                if (bloodSplatters.length < splatterOptions.maxSplatters) {
+                    bloodSplatters.push(bloodSplatter);
+                }
             });
 
             foes = _.filter(foes, function (foe) {
