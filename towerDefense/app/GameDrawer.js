@@ -86,7 +86,7 @@
     var jellyImage = new Image();
     jellyImage.src = "../Sprites/jelly.png";
     var healerImage = new Image();
-    healerImage.src = "../Sprites/spacestation.png";
+    healerImage.src = "../Sprites/healer.png";
     var flameImage = new Image();
     flameImage.src = "../Sprites/flame.png";
     var splitterImage = new Image();
@@ -417,9 +417,6 @@
                             frameCount = 4;
                             break;
                         case monsterType.healing:
-                            imageWidth = 2100;
-                            imageHeight = 105;
-                            frameCount = 20;
                             image = healerImage;
                             break;
                         case monsterType.splitter:
@@ -464,7 +461,7 @@
                 createBloodSplatterParts(isBoss, Math.floor(deadFoe.x), Math.floor(deadFoe.y), splatterParts);
 
                 bloodSplatter.parts = splatterParts;
-                if (bloodSplatters.length < 500) {
+                if (bloodSplatters.length < 300) {
                     bloodSplatters.push(bloodSplatter);
                 }
             });
