@@ -38,24 +38,27 @@ namespace TowerDefense.Business.Models
         public double Speed { get; set; }
         public double MaxSpeed { get; set; }
         public Size Size { get; set; }
+        public int Generation { get; set; }
 
-        public Monster(int MonsterMaxHealth) : this(MonsterMaxHealth, AbilityType.Kamakaze)
+        public Monster(int monsterMaxHealth) : this(monsterMaxHealth, AbilityType.Kamakaze)
         {
         }
 
-        public Monster(int MonsterMaxHealth, AbilityType abilityType)
+        public Monster(int monsterMaxHealth, AbilityType abilityType)
         {
             V = new Vector(GetRandomVDelta() * 20, GetRandomVDelta() * 20);
             Size = new Size(Width, Height);
             Id = _id++;
-            Health = MaxHealth = MonsterMaxHealth;
+            Health = MaxHealth = monsterMaxHealth;
             Speed = MaxSpeed = 1;
+            Generation = 1;
             CreateAbilities();
             AbilityType = abilityType;
             Ability = AbilitiesDictionary[AbilityType];
             SetOnDeathAbilities();
             SetOnHitAbilities();
             SetMovementTypes();
+            SetMonsterSize();
         }
 
         private void CreateAbilities()
@@ -180,7 +183,7 @@ namespace TowerDefense.Business.Models
                 var magnitude = _gravityConstant / distanceSquared;
                 if (target is IGravityEntity)
                 {
-                    magnitude *= ((GravityEntity) target).Strength;
+                    magnitude *= ((GravityEntity)target).Strength;
                 }
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
@@ -279,7 +282,7 @@ namespace TowerDefense.Business.Models
             {
                 DoMovement = (gameState) =>
                 {
-                    var pull = GeneratePull(gameState.Goals.Select(x=>(IEntity)x).Union(gameState.GravityEntities));
+                    var pull = GeneratePull(gameState.Goals.Select(x => (IEntity)x).Union(gameState.GravityEntities));
                     DoActualMovement(pull, gameState);
                 };
             }
@@ -294,13 +297,13 @@ namespace TowerDefense.Business.Models
             pull += randomComponent;
             V += pull;
             var angle = Math.Atan2(V.Y, V.X);
-            var speed = Math.Min(Speed, Math.Sqrt(V.X*V.X + V.Y*V.Y));
-            var xMovement = speed*Math.Cos(angle);
-            var yMovement = speed*Math.Sin(angle);
+            var speed = Math.Min(Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
+            var xMovement = speed * Math.Cos(angle);
+            var yMovement = speed * Math.Sin(angle);
 
             if (CanMove(X + xMovement, Y, gameState))
             {
-                ((Location) Location).X += xMovement;
+                ((Location)Location).X += xMovement;
             }
             else
             {
@@ -309,7 +312,7 @@ namespace TowerDefense.Business.Models
 
             if (CanMove(X, Y + yMovement, gameState))
             {
-                ((Location) Location).Y += yMovement;
+                ((Location)Location).Y += yMovement;
             }
             else
             {
@@ -328,26 +331,39 @@ namespace TowerDefense.Business.Models
             {
                 OnHitAbility = (gameState, damageTaken) =>
                 {
-                    if (_heat <= 0)
+                    if (_heat <= 0 && gameState.Foes.Count < 100 && Health > 1 && Generation < 5)
                     {
                         var heatGain = 20;
                         _heat += heatGain;
                         Health /= 2;
-                        if (Health > 0)
+                        Generation++;
+                        var splitling = new Monster(Health, AbilityType.Splitter)
                         {
-                            var splitling = new Monster(Health, AbilityType.Splitter)
-                            {
-                                Location = new Location(X, Y),
-                                V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
-                                Speed = Speed,
-                            };
-                            splitling._heat = heatGain;
-                            gameState.Foes.Add(splitling);
-                        }
+                            Location = new Location(X, Y),
+                            V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
+                            Speed = Speed,
+                            Generation = Generation
+                        };
+                        splitling._heat = heatGain;
+                        gameState.Foes.Add(splitling);
                     }
                 };
             }
+        }
 
+        protected void SetMonsterSize()
+        {
+            if (AbilityType == AbilityType.Healing)
+            {
+                //if (FoeType == FoeType.Monster)
+                //{
+                //    Size = new Size(36, 36);
+                //}
+                //else if (FoeType == FoeType.Boss)
+                //{
+                //    Size = new Size(72, 72);
+                //}
+            }
         }
     }
 }

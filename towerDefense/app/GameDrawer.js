@@ -15,7 +15,8 @@
         consistency: 0.04,
         partCount: 15,
         partLifespan: 5,
-        updateFrames: 2
+        updateFrames: 2,
+        maxSplatters: 300
     }
 
     var foeType = {
@@ -31,7 +32,7 @@
         splitter: 4
     }
 
-    var drawColoredRotatedImage = function(image, x, y, angle, color) {
+    var drawColoredRotatedImage = function (image, x, y, angle, color) {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
@@ -236,7 +237,7 @@
         ctx.fillText("Wave " + wave, 400, 25);
     }
 
-    var drawGravity = function(gravity) {
+    var drawGravity = function (gravity) {
         ctx.beginPath();
         ctx.arc(gravity.x + 5, gravity.y + 5, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
@@ -246,7 +247,7 @@
         ctx.stroke();
     }
 
-    var updateBloodSplatterPart = function (part, i, partArray) {
+    var updateBloodSplatterPart = function (part, i, partArray, splatter) {
         if (part.update) {
             part.dy -= 0;
             part.x -= (part.dx / splatterOptions.updateFrames);
@@ -263,6 +264,13 @@
             if (part.lifespan <= 0) {
                 partArray.splice(i, 1);
             }
+
+            if (partArray.length === 0) {
+                var index = bloodSplatters.indexOf(splatter);
+                if (index > -1) {
+                    bloodSplatters.splice(index, 1);
+                }
+        }
         }
     };
 
@@ -279,10 +287,12 @@
     };
 
     var drawBloodSplatter = function (bloodSplatter) {
+        if (bloodSplatter) {
         for (var i = 0; i < bloodSplatter.parts.length; i++) {
             drawBloodSplatterPart(bloodSplatter.parts[i]);
-            updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts);
+                updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts, bloodSplatter);
         }
+    }
     }
 
     var createBloodSplatterParts = function (isBoss, startX, startY, partArray) {
@@ -316,7 +326,7 @@
         _.each(bloodSplatters, function (bloodSplatter) {
             drawBloodSplatter(bloodSplatter);
         });
-        _.each(gravities, function(gravity) {
+        _.each(gravities, function (gravity) {
             drawGravity(gravity);
         });
         _.each(tanks, function (tank) {
@@ -393,10 +403,11 @@
                     renderFoe = _.extend({}, foe);
 
                     var image;
-                    var imageWidth = 48;
-                    var imageHeight = 16;
+                    var imageWidth = 48, imageHeight = 16;
+                    var renderWidth = foe.size.width;
+                    var renderHeight = foe.size.height;
                     var frameCount = 3;
-                    switch(foe.abilityType) {
+                    switch (foe.abilityType) {
                         case monsterType.kamakaze:
                             image = jellyImage;
                             break;
@@ -421,8 +432,8 @@
                         image: image,
                         numberOfFrames: frameCount,
                         ticksPerFrame: 5,
-                        renderWidth: foe.size.width,
-                        renderHeight: foe.size.height
+                        renderWidth: renderWidth,
+                        renderHeight: renderHeight
                     });
                     renderFoe.sprite.x = Math.floor(renderFoe.x);
                     renderFoe.sprite.y = Math.floor(renderFoe.y);
@@ -451,7 +462,9 @@
                 createBloodSplatterParts(isBoss, Math.floor(deadFoe.x), Math.floor(deadFoe.y), splatterParts);
 
                 bloodSplatter.parts = splatterParts;
-                bloodSplatters.push(bloodSplatter);
+                if (bloodSplatters.length < splatterOptions.maxSplatters) {
+                    bloodSplatters.push(bloodSplatter);
+                }
             });
 
             foes = _.filter(foes, function (foe) {
