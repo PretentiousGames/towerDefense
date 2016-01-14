@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TowerDefense.Business.Models;
@@ -13,12 +14,14 @@ namespace TestTower
         public override string Name { get { return "Mr. Boomy"; } }
         private double _xTarget;
         private double _yTarget;
+        private int _range;
 
         public BoomTank()
             : base(300, 300)
         {
             _xTarget = 400;
             _yTarget = 400;
+            _range = 10;
         }
         public override TankUpdate Update(IGameState gameState)
         {
@@ -26,8 +29,8 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                tankUpdate.ShotTarget = this.Center;
-                ChangeBulletPower(tankUpdate.ShotTarget);
+                tankUpdate.ShotTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
+                ChangeBulletPower(tankUpdate.ShotTarget, gameState);
 
 
                 UpdateMovementTarget(tankUpdate, gameState);
@@ -40,48 +43,63 @@ namespace TestTower
 
         private void UpdateMovementTarget(TankUpdate tankUpdate, IGameState gameState)
         {
-            int maxFoes = GetFoesInRange(_xTarget, _yTarget, gameState);
+            double maxFoes = GetFoeCountInRange(_xTarget, _yTarget, gameState, _range) / (_range * Bullet.SplashHeatMultiplier);
 
-            for (int i = 0; i < 20; i++)
+            for (int range = 10; range < 200; range += 20)
             {
-                var y = _rng.NextDouble() * gameState.Size.Height;
-                var x = _rng.NextDouble() * gameState.Size.Width;
-                var f = GetFoesInRange(x, y, gameState);
-                if (f > maxFoes)
+                for (int i = 0; i < 20; i++)
                 {
-                    maxFoes = f;
-                    _xTarget = x;
-                    _yTarget = y;
+                    var y = _rng.NextDouble() * gameState.Size.Height;
+                    var x = _rng.NextDouble() * gameState.Size.Width;
+                    var f = GetFoeCountInRange(x, y, gameState, range);
+                    var fd = f / (range * Bullet.SplashHeatMultiplier);
+                    if (fd > maxFoes)
+                    {
+                        maxFoes = f;
+                        _xTarget = x;
+                        _yTarget = y;
+                        _range = range;
+                    }
                 }
             }
 
             tankUpdate.MovementTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
         }
 
-        private int GetFoesInRange(double xTarget, double yTarget, IGameState gameState)
+        private int GetFoeCountInRange(double xTarget, double yTarget, IGameState gameState, int range)
         {
-            var foes = 0;
-            var range = 100;
-            foreach (var foe in gameState.Foes)
-            {
-                if (Math.Abs(foe.X - xTarget) < range && Math.Abs(foe.Y - yTarget) < range)
-                {
-                    foes++;
-                }
-            }
-            return foes;
+            var foesInRange = GetFoesInRange(xTarget, yTarget, gameState, range);
+            return foesInRange.Count();
         }
 
-        private void ChangeBulletPower(ILocation target)
+        private static IEnumerable<IFoe> GetFoesInRange(double xTarget, double yTarget, IGameState gameState, int range)
         {
-            var range = GetDistanceFromTank(target) + 1;
-            var damage = 5;
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = -0, SplashRange = 100 };
+            return gameState.Foes.Where(foe => Math.Abs(foe.X - xTarget) < range && Math.Abs(foe.Y - yTarget) < range);
+        }
+
+        private void ChangeBulletPower(ILocation target, IGameState gameState)
+        {
+            var foes = GetFoesInRange(target.X, target.Y, gameState, _range);
+            if (foes.Any())
+            {
+                var damage = foes.Max(foe => foe.Health);
+                var range = GetDistanceFromTank(target) + 1;
+                Bullet = new Bullet { Damage = damage, Range = range, Freeze = -0, SplashRange = _range };
+            }
+            else
+            {
+                Bullet = new Bullet { Damage = 0, Range = 0, Freeze = 0, SplashRange = 0 };
+            }
         }
 
         public override IBullet GetBullet()
         {
-            return Bullet;
+            var range = GetDistanceFromTank(new GravityEntity { X = _yTarget, Y = _yTarget, Size = new TowerDefense.Interfaces.Size(1, 1) }) + 1;
+            if (Bullet.ReloadTime < 1000 || range < 100)
+            {
+                return Bullet;
+            }
+            return new Bullet();
         }
     }
 }
