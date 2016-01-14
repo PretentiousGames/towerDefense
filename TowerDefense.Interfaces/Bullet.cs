@@ -14,7 +14,7 @@ namespace TowerDefense.Business.Models
         public double FreezeHeatMultiplier => .5;
         public double GravityDuration { get; set; }
         public double GravityStrength { get; set; }
-        public double GravityMultiplier => 10;
+        public double GravityMultiplier => 10000;
 
         public double ReloadTime
         {

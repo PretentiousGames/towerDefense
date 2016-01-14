@@ -30,32 +30,19 @@ namespace TestTower
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
                 double highestAverageDistance = 0;
-                IGoal furthestGoal = null;
-
-                gameState.Goals.ForEach(goal =>
-                {
-                    var average = gameState.Foes.Average(foe => GetDistanceToGoal(foe, new List<IGoal> {goal}));
-
-                    if (average > highestAverageDistance)
-                    {
-                        highestAverageDistance = average;
-                        furthestGoal = goal;
-                    }
-                });
-
-                var target = furthestGoal;
+                var target = LocationProvider.GetLocation(375,375);
 
                 if (target != null)
                 {
-                    tankUpdate.ShotTarget = target.Center;
+                    tankUpdate.ShotTarget = target;
                     Bullet = new Bullet
                     {
                         Damage = 0,
                         Range = GetDistanceFromTank(target),
                         Freeze = 0,
                         SplashRange = 0,
-                        GravityDuration = 1,
-                        GravityStrength = 10
+                        GravityDuration = 0.1,
+                        GravityStrength = 0.01
                     };
                 }
             }
