@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
 
 namespace TestTower
@@ -55,7 +54,7 @@ namespace TestTower
                 freeze = damage - 1;
                 damage = 1;
             }
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze };
+            Bullet = new Bullet { Damage = damage, Freeze = freeze };
         }
     }
 }

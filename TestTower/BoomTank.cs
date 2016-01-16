@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
 
 namespace TestTower
@@ -33,7 +32,7 @@ namespace TestTower
                 ChangeBulletPower(tankUpdate.ShotTarget, gameState);
 
                 var range = GetDistanceFromTank(new GravityEntity { X = _yTarget, Y = _yTarget, Size = new TowerDefense.Interfaces.Size(1, 1) }) + 1;
-                if (Bullet.ReloadTime < 1000 || range < 100)
+                if (Bullet.GetReloadTime(range) < 1000 || range < 100)
                 {
                     tankUpdate.Bullet = Bullet;
                 }
@@ -93,11 +92,11 @@ namespace TestTower
             {
                 var damage = foes.Max(foe => foe.Health);
                 var range = GetDistanceFromTank(target) + 1;
-                Bullet = new Bullet { Damage = damage, Range = range, Freeze = -0, SplashRange = _range };
+                Bullet = new Bullet { Damage = damage, Freeze = -0, SplashRange = _range };
             }
             else
             {
-                Bullet = new Bullet { Damage = 0, Range = 0, Freeze = 0, SplashRange = 0 };
+                Bullet = new Bullet { Damage = 0, Freeze = 0, SplashRange = 0 };
             }
         }
     }

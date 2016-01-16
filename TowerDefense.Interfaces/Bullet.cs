@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Drawing;
-using TowerDefense.Interfaces;
 
-namespace TowerDefense.Business.Models
+namespace TowerDefense.Interfaces
 {
     public class Bullet : IBullet
     {
-        public double Range { get; set; }
         public int Damage { get; set; }
         public int Freeze { get; set; }
 	    public double SplashRange { get; set; }
@@ -16,22 +13,19 @@ namespace TowerDefense.Business.Models
         public double GravityStrength { get; set; }
         public double GravityMultiplier => 10000;
 
-        public double ReloadTime
+        public double GetReloadTime(double range)
         {
-	        get
-	        {
-	            var splash = (Math.Abs(SplashRange) * SplashHeatMultiplier);
-	            var freeze = (Math.Abs(Freeze) * FreezeHeatMultiplier);
-	            var gravity = (Math.Abs(GravityDuration) * Math.Abs(GravityStrength) * GravityMultiplier);
+            var splash = (Math.Abs(SplashRange) * SplashHeatMultiplier);
+            var freeze = (Math.Abs(Freeze) * FreezeHeatMultiplier);
+            var gravity = (Math.Abs(GravityDuration) * Math.Abs(GravityStrength) * GravityMultiplier);
 
-	            if (gravity > 0)
-	            {
-	                return gravity;
-	            }
-	            else
-	            {
-                    return Range * ((Math.Abs(Damage) + freeze) + (Math.Abs(Damage) * splash)) / 1000;
-                }
+            if (gravity > 0)
+            {
+                return gravity;
+            }
+            else
+            {
+                return range * ((Math.Abs(Damage) + freeze) + (Math.Abs(Damage) * splash)) / 1000;
             }
         }
     }

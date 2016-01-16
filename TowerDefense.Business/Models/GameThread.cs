@@ -188,19 +188,17 @@ namespace TowerDefense.Business.Models
                 try
                 {
                     var bullet = (Bullet) tankUpdate.Bullet;
-                    if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
-                    {
-                        gameTank.Shooting = true;
-                        gameTank.Shots++;
-                        gameTank.Bullet = bullet;
-                        gameTank.Heat += bullet.ReloadTime;
+                    
+                    gameTank.Shooting = true;
+                    gameTank.Shots++;
+                    gameTank.Bullet = bullet;
+                    gameTank.Heat += bullet.GetReloadTime(Game.GetDistance(tank.Center.X, tank.Center.Y, tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y));
+                    
+                    List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X,
+                        tankUpdate.ShotTarget.Y, bullet.SplashRange);
 
-                        List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X,
-                            tankUpdate.ShotTarget.Y, bullet.SplashRange);
-
-                        ApplyDamage(gameTank, bullet, foesInRange);
-                        ApplyFreeze(gameTank, bullet, foesInRange);
-                    }
+                    ApplyDamage(gameTank, bullet, foesInRange);
+                    ApplyFreeze(gameTank, bullet, foesInRange);
                 }
                 catch
                 {

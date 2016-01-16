@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TowerDefense.Business.Models;
 using TowerDefense.Interfaces;
 
 namespace TestTower
@@ -12,14 +11,10 @@ namespace TestTower
         private Random _rng = new Random();
         public Bullet Bullet { get; set; }
         public override string Name { get { return "Mr. Gravity"; } }
-        private double _xTarget;
-        private double _yTarget;
 
         public GravityTank()
             : base(200, 200)
         {
-            _xTarget = 200;
-            _yTarget = 200;
         }
         public override TankUpdate Update(IGameState gameState)
         {
@@ -37,7 +32,6 @@ namespace TestTower
                     Bullet = new Bullet
                     {
                         Damage = 0,
-                        Range = GetDistanceFromTank(target),
                         Freeze = 0,
                         SplashRange = 0,
                         GravityDuration = 0.1,

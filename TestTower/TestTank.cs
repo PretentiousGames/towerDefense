@@ -1,17 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TowerDefense.Business.Models;
+﻿using System.Linq;
 using TowerDefense.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TowerDefense.Business.Models;
-using TowerDefense.Interfaces;
 
 namespace TestTower
 {
@@ -92,7 +82,7 @@ namespace TestTower
         {
             var range = GetDistanceFromTank(foe) + 1;
             var damage = (int)(1000 / range);
-            Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, SplashRange = 0 };
+            Bullet = new Bullet { Damage = damage, Freeze = 0, SplashRange = 0 };
         }
     }
 }

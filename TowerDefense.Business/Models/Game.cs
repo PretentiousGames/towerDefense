@@ -80,7 +80,15 @@ namespace TowerDefense.Business.Models
 
             return foesInRange;
         }
-        protected static double GetDistance(IEntity entity1, double x, double y)
+
+        public static double GetDistance(double startX, double startY, double endX, double endY)
+        {
+            var xDistance = startX - endX;
+            var yDistance = startY - endY;
+            return Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
+        }
+
+        public static double GetDistance(IEntity entity1, double x, double y)
         {
             var xDistance = entity1.Center.X - x;
             var yDistance = entity1.Center.Y - y;
@@ -92,16 +100,7 @@ namespace TowerDefense.Business.Models
             return newX + tank.Size.Width < gameState.Size.Width && newX > 0 &&
                    newY + tank.Size.Height < gameState.Size.Height && newY > 0;
         }
-
-        public bool CanReach(IEntity shooter, Bullet bullet, ILocation target)
-        {
-            var xDistance = shooter.X + (shooter.Size.Width / 2) - (target.X);
-            var yDistance = shooter.Y + (shooter.Size.Height / 2) - (target.Y);
-            var shooterSize = (shooter.Size.Width + shooter.Size.Height) / 2;
-            var distance = bullet.Range + shooterSize - Math.Sqrt(Math.Pow(xDistance, 2) + Math.Pow(yDistance, 2));
-            return target != null && (distance > 0);
-        }
-
+        
         private static GameState GenerateGameState(double height, double width, Game game)
         {
             return new GameState
