@@ -34,7 +34,7 @@ namespace TestTower
                         Damage = 0,
                         Freeze = 0,
                         SplashRange = 0,
-                        GravityDuration = 0.1,
+                        GravityDuration = 10,
                         GravityStrength = 0.01
                     };
                     tankUpdate.Bullet = Bullet;

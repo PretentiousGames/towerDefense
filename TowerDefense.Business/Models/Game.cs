@@ -140,6 +140,8 @@ namespace TowerDefense.Business.Models
             GameState.Wave++;
             FoeCount++;
             FoesToSpawn = FoeCount;
+
+            GameState.GravityEntities.Clear();
         }
     }
 }

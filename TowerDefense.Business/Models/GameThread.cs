@@ -32,7 +32,7 @@ namespace TowerDefense.Business.Models
                 UpdateAllMonsters(gameState);
                 UpdateAllTanks(gameState);
                 KillDeadGoals(gameState);
-                Thread.Sleep(1);
+                Thread.Sleep(10);
 
                 if (gameOver)
                 {
