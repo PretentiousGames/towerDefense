@@ -11,7 +11,7 @@ namespace TowerDefense.Business.Models
     public class GameThread
     {
         private readonly Game _game;
-        
+
         public GameThread(Game game)
         {
             _game = game;
@@ -122,35 +122,14 @@ namespace TowerDefense.Business.Models
             CheckForNewWave();
 
             int foesToSpawnLog = _game.FoesToSpawn;
+            
             while (foesToSpawnLog > 0)
             {
                 if (_game.GameState.Wave % 5 == 0)
                 {
                     _game.FoesToSpawn = 0;
 
-                    AbilityType type;
-                    int rand = new Random().Next(1, 20);
-
-                    if (rand == 1)
-                    {
-                        type = AbilityType.Healing;
-                    }
-                    else if (rand == 2)
-                    {
-                        type = AbilityType.Splitter;
-                    }
-                    else if (rand == 3)
-                    {
-                        type = AbilityType.RangedHeat;
-                    }
-                    else if (rand == 4)
-                    {
-                        type = AbilityType.Fast;
-                    }
-                    else
-                    {
-                        type = AbilityType.Kamakaze;
-                    }
+                    AbilityType type = _game.GameState.WaveType;
 
                     BossMonster m =
                         new BossMonster(foesToSpawnLog *
@@ -181,15 +160,19 @@ namespace TowerDefense.Business.Models
                     {
                         type = AbilityType.RangedHeat;
                     }
-                    else if (rand == 4 || rand < 9)
+                    else if (rand == 4)
                     {
                         type = AbilityType.Fast;
                     }
-                    else
+                    else if (rand == 5)
                     {
                         type = AbilityType.Kamakaze;
                     }
-
+                    else
+                    {
+                        type = _game.GameState.WaveType;
+                    }
+                    
                     Monster m = new Monster((int)(_game.MonsterStartHealth * Math.Pow(1.1, gameState.Wave) + 1), type)
                     {
                         Location = new Location(gameState.Size.Width / 2 - Monster.Width / 2.0,
@@ -199,6 +182,34 @@ namespace TowerDefense.Business.Models
                     gameState.Foes.Add(m);
                 }
             }
+        }
+
+        private AbilityType GetRandomType()
+        {
+            AbilityType type;
+            int rand = new Random().Next(1, 6);
+
+            if (rand == 1)
+            {
+                type = AbilityType.Healing;
+            }
+            else if (rand == 2)
+            {
+                type = AbilityType.Splitter;
+            }
+            else if (rand == 3)
+            {
+                type = AbilityType.RangedHeat;
+            }
+            else if (rand == 4)
+            {
+                type = AbilityType.Fast;
+            }
+            else
+            {
+                type = AbilityType.Kamakaze;
+            }
+            return type;
         }
 
         private void DoTankAttack(IGameTank gameTank, TankUpdate tankUpdate, Tank tank)
@@ -273,6 +284,7 @@ namespace TowerDefense.Business.Models
             if (!gameState.Foes.Any())
             {
                 _game.NewWave();
+                _game.GameState.WaveType = GetRandomType();
             }
         }
 

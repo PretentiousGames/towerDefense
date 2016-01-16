@@ -39,5 +39,6 @@ namespace TowerDefense.Business.Models
         public Size Size { get; set; }
         public bool Lost { get; set; }
         public int Wave { get; set; }
+        public AbilityType WaveType { get; set; }
     }
 }
