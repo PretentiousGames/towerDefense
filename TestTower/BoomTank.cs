@@ -32,7 +32,7 @@ namespace TestTower
                 ChangeBulletPower(tankUpdate.ShotTarget, gameState);
 
                 var range = GetDistanceFromTank(new GravityEntity { X = _yTarget, Y = _yTarget, Size = new TowerDefense.Interfaces.Size(1, 1) }) + 1;
-                if (Bullet.GetReloadTime(range) < 1000 || range < 100)
+                if (Bullet.GetReloadTime((int)range) < 1000 || range < 100)
                 {
                     tankUpdate.Bullet = Bullet;
                 }

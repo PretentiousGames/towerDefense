@@ -95,7 +95,7 @@ namespace TowerDefense.Business.Models
             // Update existing gravity bullets
             foreach (GravityEntity gravityEntity in gameState.GravityEntities)
             {
-                gravityEntity.Duration -= .01;
+                gravityEntity.Duration -= 1;
             }
 
             gameState.GravityEntities.RemoveAll(x => x.Duration <= 0);
@@ -207,7 +207,7 @@ namespace TowerDefense.Business.Models
                     gameTank.Shooting = true;
                     gameTank.Shots++;
                     gameTank.Bullet = bullet;
-                    gameTank.Heat += bullet.GetReloadTime(Game.GetDistance(tank.Center.X, tank.Center.Y, tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y));
+                    gameTank.Heat += bullet.GetReloadTime((int)Game.GetDistance(tank.Center.X, tank.Center.Y, tankUpdate.ShotTarget.X, tankUpdate.ShotTarget.Y));
                     
                     List<Monster> foesInRange = _game.GetFoesInRange(tankUpdate.ShotTarget.X,
                         tankUpdate.ShotTarget.Y, bullet.SplashRange);

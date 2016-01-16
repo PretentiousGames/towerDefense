@@ -6,27 +6,32 @@ namespace TowerDefense.Interfaces
     {
         public int Damage { get; set; }
         public int Freeze { get; set; }
-	    public double SplashRange { get; set; }
+	    public int SplashRange { get; set; }
         public double SplashHeatMultiplier => 2;
         public double FreezeHeatMultiplier => .5;
-        public double GravityDuration { get; set; }
+        public int GravityDuration { get; set; }
         public double GravityStrength { get; set; }
-        public double GravityMultiplier => 10000;
+        public int GravityMultiplier => 10;
 
-        public double GetReloadTime(double range)
+        public long GetReloadTime(double range)
         {
-            var splash = (Math.Abs(SplashRange) * SplashHeatMultiplier);
-            var freeze = (Math.Abs(Freeze) * FreezeHeatMultiplier);
-            var gravity = (Math.Abs(GravityDuration) * Math.Abs(GravityStrength) * GravityMultiplier);
+            var splash = (Abs(SplashRange) * SplashHeatMultiplier);
+            var freeze = (Abs(Freeze) * FreezeHeatMultiplier);
+            var gravity = (Abs(GravityDuration) * Math.Abs(GravityStrength) * GravityMultiplier);
 
             if (gravity > 0)
             {
-                return gravity;
+                return (long)gravity;
             }
             else
             {
-                return range * ((Math.Abs(Damage) + freeze) + (Math.Abs(Damage) * splash)) / 1000;
+                return (long)(range * ((Abs(Damage) + freeze) + (Abs(Damage) * splash)) / 1000);
             }
+        }
+
+        private long Abs(long value)
+        {
+            return value > 0 ? value : -value;
         }
     }
 }

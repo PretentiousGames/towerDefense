@@ -2,7 +2,7 @@
 {
     public interface IGravityEntity : IEntity
     {
-        double Duration { get; }
+        int Duration { get; }
         double Strength { get; }
     }
 }

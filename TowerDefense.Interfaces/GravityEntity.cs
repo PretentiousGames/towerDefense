@@ -8,7 +8,7 @@
         public double Y { get; set; }
         public Size Size { get; set; }
         public ILocation Center { get; }
-        public double Duration { get; set; }
+        public int Duration { get; set; }
         public double Strength { get; set; }
     }
 }

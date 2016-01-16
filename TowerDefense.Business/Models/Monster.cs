@@ -188,7 +188,7 @@ namespace TowerDefense.Business.Models
                 var magnitude = _gravityConstant / distanceSquared;
                 if (target is IGravityEntity)
                 {
-                    magnitude *= ((GravityEntity)target).Strength;
+                    magnitude *= ((GravityEntity)target).Strength * 1000 / Health;
                 }
                 pull += new Vector(Math.Cos(angle) * magnitude, Math.Sin(angle) * magnitude);
             }
@@ -269,13 +269,13 @@ namespace TowerDefense.Business.Models
                     var pull = GeneratePull(new List<IEntity>
                     {
                         new GravityEntity
-                    {
-                        Duration = 1,
-                        Size = new Size(1, 1),
-                        X = location.X,
-                        Y = location.Y,
-                        Strength = 100
-                    }
+                        {
+                            Duration = 1,
+                            Size = new Size(1, 1),
+                            X = location.X,
+                            Y = location.Y,
+                            Strength = MaxHealth
+                        }
                     }.Union(gameState.GravityEntities));
                     DoActualMovement(pull, gameState);
                 };

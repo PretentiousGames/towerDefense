@@ -4,9 +4,9 @@
     {
         int Damage { get; }
         int Freeze { get; }
-        double SplashRange { get; }
-        double GetReloadTime(double range);
-        double GravityDuration { get; }
+        int SplashRange { get; }
+        long GetReloadTime(double range);
+        int GravityDuration { get; }
         double GravityStrength { get; }
     }
 }
