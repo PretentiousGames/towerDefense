@@ -23,6 +23,8 @@ namespace TowerDefense.Business.Models
 
             while (true)
             {
+                bool gameOver = gameState.Lost;
+
                 _game.GameBroadcaster.BroadcastGameState(gameState);
                 gameState.Foes.RemoveAll(foe => foe.Health == 0);
                 SpawnFoes(gameState);
@@ -30,7 +32,12 @@ namespace TowerDefense.Business.Models
                 UpdateAllMonsters(gameState);
                 UpdateAllTanks(gameState);
                 KillDeadGoals(gameState);
-                Thread.Sleep(10);
+                Thread.Sleep(1);
+
+                if (gameOver)
+                {
+                    break;
+                }
             }
         }
 
