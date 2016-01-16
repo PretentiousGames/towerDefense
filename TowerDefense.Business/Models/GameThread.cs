@@ -64,6 +64,7 @@ namespace TowerDefense.Business.Models
                 gameTank.TankColor = tankUpdate.TankColor;
                 MoveTank(gameTank, tankUpdate, tank);
                 DoTankAttack(gameTank, tankUpdate, tank);
+                tank.Heat = gameTank.Heat;
             }
             var top = gameState.GameTanks[0];
             gameState.GameTanks.RemoveAt(0);

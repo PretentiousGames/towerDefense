@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace TowerDefense.Interfaces
 {
@@ -32,6 +30,7 @@ namespace TowerDefense.Interfaces
         public double X { get { return Location.X; } }
         public double Y { get { return Location.Y; } }
         public Size Size { get; }
+        public double Heat { get; set; }
         public ILocation Center
         {
             get { return LocationProvider.GetLocation(X + Size.Width / 2, Y + Size.Height / 2); }
