@@ -47,7 +47,6 @@ namespace TowerDefense.Interfaces
         }
 
         public abstract TankUpdate Update(IGameState gameState);
-        public abstract IBullet GetBullet();
 
         protected double GetDistanceToGoal(IFoe foe, List<IGoal> goals)
         {

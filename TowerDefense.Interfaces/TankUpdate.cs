@@ -14,5 +14,7 @@ namespace TowerDefense.Interfaces
         /// Tank color as a hex value (i.e. '#0000ff')
         /// </summary>
         public string TankColor { get; set; }
+
+	    public IBullet Bullet { get; set; }
 	}
 }

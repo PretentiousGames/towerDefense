@@ -32,6 +32,7 @@ namespace TestTower
                 {
                     tankUpdate.ShotTarget = target.Center;
                     ChangeBulletPower(target);
+                    tankUpdate.Bullet = Bullet;
                 }
 
                 var x = (gameState.Foes.Max(foe => foe.X) + 9 * gameState.Goals.Last().X) / 10;
@@ -55,11 +56,6 @@ namespace TestTower
                 damage = 1;
             }
             Bullet = new Bullet { Damage = damage, Range = range, Freeze = freeze };
-        }
-
-        public override IBullet GetBullet()
-        {
-            return Bullet; //new Bullet { Damage = 1000 / 400, Range = 400 };
         }
     }
 }

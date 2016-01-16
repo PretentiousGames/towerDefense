@@ -45,6 +45,7 @@ namespace TestTower
                 {
                     tankUpdate.ShotTarget = target.Center;
                     ChangeBulletPower(target);
+                    tankUpdate.Bullet = Bullet;
                 }
 
                 UpdateMovementTarget(tankUpdate, gameState);
@@ -92,11 +93,6 @@ namespace TestTower
             var range = GetDistanceFromTank(foe) + 1;
             var damage = (int)(1000 / range);
             Bullet = new Bullet { Damage = damage, Range = range, Freeze = 0, SplashRange = 0 };
-        }
-
-        public override IBullet GetBullet()
-        {
-            return Bullet; //new Bullet { Damage = 1000 / 400, Range = 400 };
         }
     }
 }

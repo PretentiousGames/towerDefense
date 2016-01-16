@@ -4,6 +4,5 @@
     {
         string Name { get; }
         TankUpdate Update(IGameState gameState);
-        IBullet GetBullet();
     }
 }

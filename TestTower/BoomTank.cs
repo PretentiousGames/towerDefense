@@ -32,6 +32,15 @@ namespace TestTower
                 tankUpdate.ShotTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
                 ChangeBulletPower(tankUpdate.ShotTarget, gameState);
 
+                var range = GetDistanceFromTank(new GravityEntity { X = _yTarget, Y = _yTarget, Size = new TowerDefense.Interfaces.Size(1, 1) }) + 1;
+                if (Bullet.ReloadTime < 1000 || range < 100)
+                {
+                    tankUpdate.Bullet = Bullet;
+                }
+                else
+                {
+                    tankUpdate.Bullet = new Bullet();
+                }
 
                 UpdateMovementTarget(tankUpdate, gameState);
             }
@@ -90,16 +99,6 @@ namespace TestTower
             {
                 Bullet = new Bullet { Damage = 0, Range = 0, Freeze = 0, SplashRange = 0 };
             }
-        }
-
-        public override IBullet GetBullet()
-        {
-            var range = GetDistanceFromTank(new GravityEntity { X = _yTarget, Y = _yTarget, Size = new TowerDefense.Interfaces.Size(1, 1) }) + 1;
-            if (Bullet.ReloadTime < 1000 || range < 100)
-            {
-                return Bullet;
-            }
-            return new Bullet();
         }
     }
 }

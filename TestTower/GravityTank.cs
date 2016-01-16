@@ -29,7 +29,6 @@ namespace TestTower
 
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
-                double highestAverageDistance = 0;
                 var target = LocationProvider.GetLocation(375,375);
 
                 if (target != null)
@@ -44,15 +43,11 @@ namespace TestTower
                         GravityDuration = 0.1,
                         GravityStrength = 0.01
                     };
+                    tankUpdate.Bullet = Bullet;
                 }
             }
 
             return tankUpdate;
-        }
-
-        public override IBullet GetBullet()
-        {
-            return Bullet;
         }
 
         private string GetRandomColor()

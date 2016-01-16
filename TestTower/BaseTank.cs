@@ -42,15 +42,10 @@ namespace TestTower
 
                 // Move toward tower
                 tankUpdate.MovementTarget = LocationProvider.GetLocation(_goalToDefend.X, _goalToDefend.Y);
+                tankUpdate.Bullet = new Bullet { Damage = 200, Range = 500, Freeze = 0, SplashRange = 0 };
             }
 
             return tankUpdate;
-        }
-
-        public override IBullet GetBullet()
-        {
-            // Create a bullet
-            return new Bullet { Damage = 200, Range = 500, Freeze = 0, SplashRange = 0 };
         }
     }
 }

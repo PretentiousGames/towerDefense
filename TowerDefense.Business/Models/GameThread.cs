@@ -187,7 +187,7 @@ namespace TowerDefense.Business.Models
             {
                 try
                 {
-                    var bullet = (Bullet)tank.GetBullet();
+                    var bullet = (Bullet) tankUpdate.Bullet;
                     if (_game.CanReach(tank, bullet, gameTank.ShotTarget))
                     {
                         gameTank.Shooting = true;
