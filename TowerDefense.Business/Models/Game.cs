@@ -24,6 +24,11 @@ namespace TowerDefense.Business.Models
         public int FoesToSpawn { get; set; }
         public int MonsterStartHealth { get; set; }
 
+        public string Version
+        {
+            get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
+        }
+
         public Game()
         {
             Players = new List<Player>();
