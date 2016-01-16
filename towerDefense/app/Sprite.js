@@ -16,7 +16,7 @@
         sprite.x = options.x || 0;
         sprite.y = options.y || 0;
         sprite.loop = typeof options.loop === 'undefined' ? true : options.loop;
-        sprite.destroy = options.destroyCallback || function() {};
+        sprite.destroy = options.destroyCallback || function () { };
 
         sprite.update = function () {
             tickCount += 1;
@@ -36,16 +36,35 @@
 
         sprite.render = function () {
             sprite.update();
+
+            var x = sprite.x;
+            var y = sprite.y;
+            var xs = sprite.width / numberOfFrames;
+            var ys = sprite.height;
+            sprite.context.translate(x, y);
+            if (sprite.angle) {
+                sprite.context.translate(sprite.renderWidth / 2, sprite.renderHeight / 2);
+                sprite.context.rotate(sprite.angle);
+                sprite.context.translate(-sprite.renderWidth / 2, -sprite.renderHeight / 2);
+            }
+
             sprite.context.drawImage(
                 sprite.image,
-                frameIndex * sprite.width / numberOfFrames,
+                frameIndex * xs,
                 0,
-                sprite.width / numberOfFrames,
-                sprite.height,
-                sprite.x,
-                sprite.y,
+                xs,
+                ys,
+                0,
+                0,
                 sprite.renderWidth,
                 sprite.renderHeight);
+
+            if (sprite.angle) {
+                sprite.context.translate(sprite.renderWidth / 2, sprite.renderHeight / 2);
+                sprite.context.rotate(-sprite.angle);
+                sprite.context.translate(-sprite.renderWidth / 2, -sprite.renderHeight / 2);
+            }
+            sprite.context.translate(-x, -y);
         };
 
         return sprite;

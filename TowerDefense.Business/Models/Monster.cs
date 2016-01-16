@@ -57,8 +57,8 @@ namespace TowerDefense.Business.Models
             V = new Vector(GetRandomVDelta() * 20, GetRandomVDelta() * 20);
             Size = new Size(Width, Height);
             Id = _id++;
-            Health = MaxHealth = monsterMaxHealth;
-            Speed = MaxSpeed = 1;
+            Health = MaxHealth = GetMonsterMaxHealth(monsterMaxHealth, abilityType);
+            Speed = MaxSpeed = GetMaxSpeed(abilityType);
             Generation = 1;
             CreateAbilities();
             AbilityType = abilityType;
@@ -67,6 +67,16 @@ namespace TowerDefense.Business.Models
             SetOnHitAbilities();
             SetMovementTypes();
             SetMonsterSize();
+        }
+
+        private static int GetMonsterMaxHealth(int monsterMaxHealth, AbilityType abilityType)
+        {
+            return abilityType == AbilityType.Fast ? monsterMaxHealth / 2 : monsterMaxHealth;
+        }
+
+        private static int GetMaxSpeed(AbilityType abilityType)
+        {
+            return abilityType == AbilityType.Fast ? 3 : 1;
         }
 
         private void CreateAbilities()
@@ -152,7 +162,24 @@ namespace TowerDefense.Business.Models
 
                         return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.None};
                     }
-                }
+                },
+                {
+                    AbilityType.Fast,
+                    gameState => {
+                        var goal = IsAtGoal(gameState.Goals);
+                        if (goal != null)
+                        {
+                            ((Goal)goal).Health -= (Health / 10);
+                            Health = 0;
+                            return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.Kamakaze};
+                        }
+
+                        Speed = (Speed * 9 + MaxSpeed)/10;
+
+                        return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.None};
+                    }
+                },
+
             };
         }
 
@@ -355,16 +382,16 @@ namespace TowerDefense.Business.Models
 
         protected void SetMonsterSize()
         {
-            if (AbilityType == AbilityType.Healing)
+            if (AbilityType == AbilityType.Fast)
             {
-                //if (FoeType == FoeType.Monster)
-                //{
-                //    Size = new Size(36, 36);
-                //}
-                //else if (FoeType == FoeType.Boss)
-                //{
-                //    Size = new Size(72, 72);
-                //}
+                if (FoeType == FoeType.Monster)
+                {
+                    Size = new Size(36, 38);
+                }
+                else if (FoeType == FoeType.Boss)
+                {
+                    Size = new Size(67, 72);
+                }
             }
         }
     }

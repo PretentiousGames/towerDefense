@@ -29,14 +29,15 @@
         kamakaze: 1,
         fire: 2,
         healing: 3,
-        splitter: 4
+        splitter: 4,
+        fast: 5
     }
 
     var drawColoredRotatedImage = function (image, x, y, angle, color) {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
-        
+
         var tintCanvas = document.createElement('canvas');
         tintCanvas.width = image.width;
         tintCanvas.height = image.height;
@@ -76,7 +77,7 @@
         ctx.fillStyle = backgroundPattern;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-    
+
     // Board
     var spawnImage = new Image();
     spawnImage.src = "../Sprites/spawnPoint.png";
@@ -84,6 +85,8 @@
     goalImage.src = "../Sprites/tower.png";
 
     // Foe
+    var fastImage = new Image();
+    fastImage.src = "../Sprites/spider.png";
     var jellyImage = new Image();
     jellyImage.src = "../Sprites/jelly.png";
     var healerImage = new Image();
@@ -165,7 +168,7 @@
         ctx.fillRect(tank.x, tank.y + yMod, 32, 9);
         ctx.fillStyle = "#F00";
         ctx.fillRect(tank.x, tank.y + yMod, -500 / (tank.heat + 16) + 32, 9);
-        
+
         ctx.textAlign = "center";
         ctx.font = '7pt Calibri';
         ctx.fillStyle = 'rgba(255,255,255,1)';
@@ -258,7 +261,7 @@
         if (part.size < 0.3 || Math.random() < splatterOptions.consistency) {
             part.update = false;
             part.lifespan--;
-            
+
             drawBloodSplatterPart(part);
 
             if (part.lifespan <= 0) {
@@ -270,7 +273,7 @@
                 if (index > -1) {
                     bloodSplatters.splice(index, 1);
                 }
-        }
+            }
         }
     };
 
@@ -288,11 +291,11 @@
 
     var drawBloodSplatter = function (bloodSplatter) {
         if (bloodSplatter) {
-        for (var i = 0; i < bloodSplatter.parts.length; i++) {
-            drawBloodSplatterPart(bloodSplatter.parts[i]);
+            for (var i = 0; i < bloodSplatter.parts.length; i++) {
+                drawBloodSplatterPart(bloodSplatter.parts[i]);
                 updateBloodSplatterPart(bloodSplatter.parts[i], i, bloodSplatter.parts, bloodSplatter);
+            }
         }
-    }
     }
 
     var createBloodSplatterParts = function (isBoss, startX, startY, partArray) {
@@ -379,6 +382,15 @@
         }
     }
 
+    var calculateAngle = function (source, target) {
+        if (target) {
+            var xComponent = target.x - source.x;
+            var yComponent = target.y - source.y;
+            return Math.atan2(xComponent, -yComponent);
+        }
+        return 0;
+    };
+
     var gameDrawer = {
         init: function (c) {
             canvas = c;
@@ -407,7 +419,15 @@
                     var renderWidth = foe.size.width;
                     var renderHeight = foe.size.height;
                     var frameCount = 3;
+                    var directional = false;
                     switch (foe.abilityType) {
+                        case monsterType.fast:
+                            image = fastImage;
+                            imageWidth = 768;
+                            imageHeight = 205;
+                            frameCount = 4;
+                            directional = true;
+                            break;
                         case monsterType.kamakaze:
                             image = jellyImage;
                             break;
@@ -435,15 +455,21 @@
                         renderWidth: renderWidth,
                         renderHeight: renderHeight
                     });
-                    renderFoe.sprite.x = Math.floor(renderFoe.x);
-                    renderFoe.sprite.y = Math.floor(renderFoe.y);
+                    renderFoe.sprite.x = renderFoe.x;
+                    renderFoe.sprite.y = renderFoe.y;
                     renderFoe.abilityResult = foe.abilityResult;
+                    renderFoe.directional = directional;
 
                     foes.push(renderFoe);
                 } else {
                     _.extend(renderFoe, foe);
-                    renderFoe.sprite.x = Math.floor(renderFoe.x);
-                    renderFoe.sprite.y = Math.floor(renderFoe.y);
+                    var newX = renderFoe.x;
+                    var newY = renderFoe.y;
+                    renderFoe.sprite.angle = renderFoe.directional ?
+                        Math.PI + calculateAngle({ x: renderFoe.sprite.x, y: renderFoe.sprite.y }, { x: newX, y: newY }) :
+                        undefined;
+                    renderFoe.sprite.x = newX;
+                    renderFoe.sprite.y = newY;
                     renderFoe.abilityResult = foe.abilityResult;
                 }
             });
@@ -471,15 +497,6 @@
                 return _.find(gameState.foes, function (f) { return f.id === foe.id; });
             });
 
-            var calculateAngle = function (tank, target) {
-                if (target) {
-                    var xComponent = target.x - tank.x - 16;
-                    var yComponent = target.y - tank.y - 16;
-                    return Math.atan2(xComponent, -yComponent);
-                }
-                return 0;
-            };
-
             _.each(gameState.gameTanks, function (gameTank) {
                 var renderTank = _.find(tanks, function (f) {
                     return f.id === gameTank.tank.id;
@@ -492,8 +509,9 @@
                 }
 
                 renderTank.tankColor = gameTank.tankColor;
-                renderTank.angle = calculateAngle(renderTank, gameTank.shotTarget);
-                renderTank.movementAngle = calculateAngle(renderTank, gameTank.movementTarget);
+                var tankcenter = { x: renderTank.x - 16, y: renderTank.y - 16 };
+                renderTank.angle = calculateAngle(tankcenter, gameTank.shotTarget);
+                renderTank.movementAngle = calculateAngle(tankcenter, gameTank.movementTarget);
                 renderTank.shooting = gameTank.shooting;
                 renderTank.bullet = gameTank.bullet;
 

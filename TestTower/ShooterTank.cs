@@ -27,8 +27,7 @@ namespace TestTower
             if (gameState.Foes.Any() && gameState.Goals.Any())
             {
                 var target = gameState.Foes
-                    .Where(foe => 1000 / GetDistanceFromTank(foe) >= 1)
-                    .OrderBy(GetDistanceFromTank)
+                    .OrderBy(foe => GetDistanceFromTank(foe) + ModifyDistanceByDanger(foe))
                     .FirstOrDefault();
 
                 if (target != null)
@@ -42,6 +41,11 @@ namespace TestTower
             }
 
             return tankUpdate;
+        }
+
+        private double ModifyDistanceByDanger(IFoe foe)
+        {
+            return foe.AbilityType == AbilityType.Healing || foe.AbilityType == AbilityType.RangedHeat ? -100 : 0;
         }
 
         private void UpdateMovementTarget(TankUpdate tankUpdate, IGameState gameState)

@@ -143,6 +143,10 @@ namespace TowerDefense.Business.Models
                     {
                         type = AbilityType.RangedHeat;
                     }
+                    else if (rand == 4)
+                    {
+                        type = AbilityType.Fast;
+                    }
                     else
                     {
                         type = AbilityType.Kamakaze;
@@ -176,6 +180,10 @@ namespace TowerDefense.Business.Models
                     else if (rand == 3)
                     {
                         type = AbilityType.RangedHeat;
+                    }
+                    else if (rand == 4 || rand < 9)
+                    {
+                        type = AbilityType.Fast;
                     }
                     else
                     {
