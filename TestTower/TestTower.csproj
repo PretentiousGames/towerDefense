@@ -40,13 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\towerDefense\Properties\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="BoomTank.cs" />
     <Compile Include="ErrorTank.cs" />
     <Compile Include="FreezeTank.cs" />
     <Compile Include="BaseTank.cs" />
     <Compile Include="GravityTank.cs" />
     <Compile Include="ShooterTank.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TowerDefense.Interfaces\TowerDefense.Interfaces.csproj">
