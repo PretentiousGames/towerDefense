@@ -41,10 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoomTank.cs" />
+    <Compile Include="ErrorTank.cs" />
     <Compile Include="FreezeTank.cs" />
     <Compile Include="BaseTank.cs" />
     <Compile Include="GravityTank.cs" />
-    <Compile Include="TestTank.cs" />
+    <Compile Include="ShooterTank.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

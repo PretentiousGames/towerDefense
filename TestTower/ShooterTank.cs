@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace TestTower
 {
-    public class TestTank : Tank
+    public class ShooterTank : Tank
     {
         private Random _rng = new Random();
         public Bullet Bullet { get; set; }
@@ -13,7 +13,7 @@ namespace TestTower
         private double _xTarget;
         private double _yTarget;
 
-        public TestTank()
+        public ShooterTank()
             : base(400, 400)
         {
             _xTarget = 400;

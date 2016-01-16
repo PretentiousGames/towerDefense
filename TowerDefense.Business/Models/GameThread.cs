@@ -59,12 +59,19 @@ namespace TowerDefense.Business.Models
             foreach (var gameTank in gameState.GameTanks)
             {
                 var tank = gameTank.Tank;
-                var tankUpdate = tank.Update(gameState);
+                try
+                {
+                    var tankUpdate = tank.Update(gameState);
 
-                gameTank.TankColor = tankUpdate.TankColor;
-                MoveTank(gameTank, tankUpdate, tank);
-                DoTankAttack(gameTank, tankUpdate, tank);
-                tank.Heat = gameTank.Heat;
+                    gameTank.TankColor = tankUpdate.TankColor;
+                    MoveTank(gameTank, tankUpdate, tank);
+                    DoTankAttack(gameTank, tankUpdate, tank);
+                    tank.Heat = gameTank.Heat;
+                }
+                catch (Exception e)
+                {
+                    //The tank threw an exception. Bad tank!
+                }
             }
             var top = gameState.GameTanks[0];
             gameState.GameTanks.RemoveAt(0);

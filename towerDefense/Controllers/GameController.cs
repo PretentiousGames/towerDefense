@@ -59,36 +59,46 @@ namespace towerDefense.Controllers
             file.InputStream.Read(data, 0, data.Length);
             var assembly = Assembly.Load(data);
 
-            var type = assembly.GetTypes().Single(t => t.GetInterfaces().Contains(typeof(ITank)));
-
-            var constructor = type.GetConstructor(new Type[] { });
-
-            var tower = (Tank)constructor.Invoke(new object[] { });
+            var types = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(ITank)));
 
             var game = GameManager.GetGame(gamename);
             if (game != null)
             {
-                Player player = game.Players.FirstOrDefault(x => x.Name == playername);
-
-                if (player != null)
+                foreach (var type in types)
                 {
-                    var tank = player.Tanks.Find(t => t.Name == tower.Name);
-
-                    if (tank != null)
+                    try
                     {
-                        player.Tanks.Remove(tank);
+                        var constructor = type.GetConstructor(new Type[] {});
+
+                        var newTank = (Tank) constructor.Invoke(new object[] {});
+
+                        Player player = game.Players.FirstOrDefault(x => x.Name == playername);
+
+                        if (player != null)
+                        {
+                            var tank = player.Tanks.Find(t => t.Name == newTank.Name);
+
+                            if (tank != null)
+                            {
+                                player.Tanks.Remove(tank);
+                            }
+
+                            player.Tanks.Add(newTank);
+                        }
+                        else
+                        {
+                            List<Tank> tanks = new List<Tank> {newTank};
+                            game.Players.Add(new Player
+                            {
+                                Name = playername,
+                                Tanks = tanks
+                            });
+                        }
                     }
-
-                    player.Tanks.Add(tower);
-                }
-                else
-                {
-                    List<Tank> towers = new List<Tank> { tower };
-                    game.Players.Add(new Player
+                    catch (Exception e)
                     {
-                        Name = playername,
-                        Tanks = towers
-                    });
+                        //There was an error making a tank - that is ok.
+                    }
                 }
             }
             return RedirectToAction("../Game/" + gamename);

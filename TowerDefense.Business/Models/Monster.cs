@@ -13,9 +13,13 @@ namespace TowerDefense.Business.Models
         public const int Height = 16;
         protected int _heat = 0;
         public AbilityType AbilityType { get; protected set; }
+        [JsonIgnore]
         public Action<IGameState> OnDeathAbility { get; protected internal set; }
+        [JsonIgnore]
         public Action<IGameState, int> OnHitAbility { get; protected internal set; }
+        [JsonIgnore]
         public Action<IGameState> DoMovement { get; protected internal set; }
+        [JsonIgnore]
         protected static Random _random = new Random();
         protected int _gravityConstant = 500;
 
@@ -39,6 +43,10 @@ namespace TowerDefense.Business.Models
         public double MaxSpeed { get; set; }
         public Size Size { get; set; }
         public int Generation { get; set; }
+        private double _xTarget = 400;
+        private double _yTarget = 400;
+        [JsonIgnore]
+        public Func<IGameState, AbilityResult> Ability { get; protected set; }
 
         public Monster(int monsterMaxHealth) : this(monsterMaxHealth, AbilityType.Kamakaze)
         {
@@ -163,9 +171,6 @@ namespace TowerDefense.Business.Models
             }
         }
 
-        [JsonIgnore]
-        public Func<IGameState, AbilityResult> Ability { get; protected set; }
-
         private static double GetRandomVDelta()
         {
             return _random.NextDouble() * .1 - .05;
@@ -236,9 +241,6 @@ namespace TowerDefense.Business.Models
             }
             return foes;
         }
-
-        private double _xTarget = 400;
-        private double _yTarget = 400;
 
         private void SetMovementTypes()
         {
