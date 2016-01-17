@@ -35,7 +35,7 @@ namespace TowerDefense.Business.Models
         {
             get { return new Location(X + Size.Width / 2, Y + Size.Height / 2); }
         }
-        public Vector V { get; set; }
+        public Vector Velocity { get; set; }
         public int MaxHealth { get; }
         public int Health { get; set; }
         public FoeType FoeType { get; protected set; }
@@ -54,7 +54,7 @@ namespace TowerDefense.Business.Models
 
         public Monster(int monsterMaxHealth, AbilityType abilityType)
         {
-            V = new Vector(GetRandomVDelta() * 40, GetRandomVDelta() * 40);
+            Velocity = new Vector(GetRandomVDelta() * 40, GetRandomVDelta() * 40);
             Size = new Size(Width, Height);
             Id = _id++;
             Health = MaxHealth = GetMonsterMaxHealth(monsterMaxHealth, abilityType);
@@ -174,7 +174,9 @@ namespace TowerDefense.Business.Models
                             return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.Kamakaze};
                         }
 
-                        Speed = (Speed * 9 + MaxSpeed)/10;
+                Speed = (Speed + MaxSpeed) / 2;
+                Velocity.X *= 1.1;
+                Velocity.Y *= 1.1;
 
                         return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.None};
                     }
@@ -319,14 +321,14 @@ namespace TowerDefense.Business.Models
 
         private void DoActualMovement(Vector pull, IGameState gameState)
         {
-            V.X = Math.Min(Math.Max(V.X, -100), 100);
-            V.Y = Math.Min(Math.Max(V.Y, -100), 100);
+            Velocity.X = Math.Min(Math.Max(Velocity.X, -100), 100);
+            Velocity.Y = Math.Min(Math.Max(Velocity.Y, -100), 100);
 
             var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
             pull += randomComponent;
-            V += pull;
-            var angle = Math.Atan2(V.Y, V.X);
-            var speed = Math.Min(Speed, Math.Sqrt(V.X * V.X + V.Y * V.Y));
+            Velocity += pull;
+            var angle = Math.Atan2(Velocity.Y, Velocity.X);
+            var speed = Math.Min(Speed, Math.Sqrt(Velocity.X * Velocity.X + Velocity.Y * Velocity.Y));
             var xMovement = speed * Math.Cos(angle);
             var yMovement = speed * Math.Sin(angle);
 
@@ -336,7 +338,7 @@ namespace TowerDefense.Business.Models
             }
             else
             {
-                V.X /= 2;
+                Velocity.X /= 2;
             }
 
             if (CanMove(X, Y + yMovement, gameState))
@@ -345,7 +347,7 @@ namespace TowerDefense.Business.Models
             }
             else
             {
-                V.Y /= 2;
+                Velocity.Y /= 2;
             }
         }
 
@@ -356,7 +358,13 @@ namespace TowerDefense.Business.Models
 
         protected void SetOnHitAbilities()
         {
-            if (AbilityType == AbilityType.Splitter)
+            if (AbilityType == AbilityType.Fast)
+            {
+                Speed = (Speed + MaxSpeed) / 2;
+                Velocity.X *= 1.1;
+                Velocity.Y *= 1.1;
+            }
+            else if (AbilityType == AbilityType.Splitter)
             {
                 OnHitAbility = (gameState, damageTaken) =>
                 {
@@ -369,7 +377,7 @@ namespace TowerDefense.Business.Models
                         var splitling = new Monster(Health, AbilityType.Splitter)
                         {
                             Location = new Location(X, Y),
-                            V = new Vector(V.X + _random.NextDouble() - .5, V.Y + _random.NextDouble() - .5),
+                            Velocity = new Vector(Velocity.X + _random.NextDouble() - .5, Velocity.Y + _random.NextDouble() - .5),
                             Speed = Speed,
                             Generation = Generation
                         };
@@ -393,7 +401,7 @@ namespace TowerDefense.Business.Models
                     Size = new Size(67, 72);
                 }
             }
-else            if (AbilityType == AbilityType.Fast)
+            else if (AbilityType == AbilityType.Fast)
             {
                 if (FoeType == FoeType.Monster)
                 {
