@@ -85,8 +85,8 @@
     goalImage.src = "../Sprites/tower.png";
 
     // Foe
-    var fastImage = new Image();
-    fastImage.src = "../Sprites/spider.png";
+    var spiderImage = new Image();
+    spiderImage.src = "../Sprites/spider.png";
     var jellyImage = new Image();
     jellyImage.src = "../Sprites/jelly.png";
     var healerImage = new Image();
@@ -95,6 +95,9 @@
     flameImage.src = "../Sprites/flame.png";
     var splitterImage = new Image();
     splitterImage.src = "../Sprites/splitter.png";
+    var rocketImage = new Image();
+    rocketImage.src = "../Sprites/rocket.png";
+
 
     // Tank
     var tankTurretImage = new Image();
@@ -422,14 +425,18 @@
                     var directional = false;
                     switch (foe.abilityType) {
                         case monsterType.fast:
-                            image = fastImage;
+                            image = rocketImage;
+                            imageWidth = 738;
+                            imageHeight = 141;
+                            frameCount = 9;
+                            directional = true;
+                            break;
+                        case monsterType.kamakaze:
+                            image = spiderImage;
                             imageWidth = 768;
                             imageHeight = 205;
                             frameCount = 4;
                             directional = true;
-                            break;
-                        case monsterType.kamakaze:
-                            image = jellyImage;
                             break;
                         case monsterType.fire:
                             image = flameImage;

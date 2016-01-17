@@ -394,6 +394,7 @@
     <Content Include="Sprites\healer.png" />
     <Content Include="Sprites\rocket.png" />
     <Content Include="Sprites\spacestation.png" />
+    <Content Include="Sprites\spider.png" />
     <Content Include="Sprites\splitling.png" />
     <Content Include="Sprites\splitter.png" />
     <Content Include="Sprites\tower.png" />

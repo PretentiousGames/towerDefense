@@ -54,7 +54,7 @@ namespace TowerDefense.Business.Models
 
         public Monster(int monsterMaxHealth, AbilityType abilityType)
         {
-            V = new Vector(GetRandomVDelta() * 20, GetRandomVDelta() * 20);
+            V = new Vector(GetRandomVDelta() * 40, GetRandomVDelta() * 40);
             Size = new Size(Width, Height);
             Id = _id++;
             Health = MaxHealth = GetMonsterMaxHealth(monsterMaxHealth, abilityType);
@@ -71,7 +71,7 @@ namespace TowerDefense.Business.Models
 
         private static int GetMonsterMaxHealth(int monsterMaxHealth, AbilityType abilityType)
         {
-            return abilityType == AbilityType.Fast ? monsterMaxHealth / 2 : monsterMaxHealth;
+            return abilityType == AbilityType.Fast ? monsterMaxHealth / 3 : monsterMaxHealth;
         }
 
         private static int GetMaxSpeed(AbilityType abilityType)
@@ -382,7 +382,7 @@ namespace TowerDefense.Business.Models
 
         protected void SetMonsterSize()
         {
-            if (AbilityType == AbilityType.Fast)
+            if (AbilityType == AbilityType.Kamakaze)
             {
                 if (FoeType == FoeType.Monster)
                 {
@@ -391,6 +391,17 @@ namespace TowerDefense.Business.Models
                 else if (FoeType == FoeType.Boss)
                 {
                     Size = new Size(67, 72);
+                }
+            }
+else            if (AbilityType == AbilityType.Fast)
+            {
+                if (FoeType == FoeType.Monster)
+                {
+                    Size = new Size(23, 40);
+                }
+                else if (FoeType == FoeType.Boss)
+                {
+                    Size = new Size(41, 70);
                 }
             }
         }
