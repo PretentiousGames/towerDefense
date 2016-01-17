@@ -16,16 +16,20 @@
 <body>
     <script>
         (function() {
-            var rawModel = @Html.Raw(JsonConvert.SerializeObject(Model));
+            var rawModel = @Html.Raw(Model.RawJson);
 
-            window.towerDefense = window.towerDefense || {};
-            window.towerDefense.game = towerDefense.mapToJsObject(rawModel);
+            if (rawModel.error) {
+                //document.querySelector('#toast0').open();
+            } else {
+                window.towerDefense = window.towerDefense || {};
+                window.towerDefense.game = towerDefense.mapToJsObject(rawModel);    
+            }
         })();
 
     </script>
 
     @*<p>The website is currently not available for testing purposes.</p>*@
-    <game-page gamename="@Model.Name"></game-page>
+    <game-page id="gamepage" gamename="@Model.Name"></game-page>
     version @Model.Version
 </body>
 </html>

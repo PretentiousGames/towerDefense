@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Newtonsoft.Json;
 using towerDefense.Hubs;
 using TowerDefense.Business;
 using TowerDefense.Business.Models;
@@ -19,6 +20,18 @@ namespace towerDefense.Controllers
         public ActionResult Index(string gameName)
         {
             var game = GameManager.GetGame(gameName);
+            if (game != null)
+            {
+                try
+                {
+                    game.RawJson = JsonConvert.SerializeObject(game);
+                }
+                catch (Exception e)
+                {
+                    game.RawJson = JsonConvert.SerializeObject(new { error = e.Message });
+                }
+            }
+
             return game == null ? (ActionResult)RedirectToAction("Index", "Home") : View("Index", game);
         }
 
@@ -27,7 +40,7 @@ namespace towerDefense.Controllers
         {
             var game = GameManager.GetGame(gamename);
 
-            if (game != null)
+            if (game != null && (game.GameThread == null || !game.GameThread.IsAlive))
             {
                 Player player = game.Players.FirstOrDefault(x => x.Name == playername);
 
@@ -47,9 +60,11 @@ namespace towerDefense.Controllers
                         }
                     }
                 }
+
+                return Json(new { success = true });
             }
 
-            return RedirectToAction("../Game/" + gamename);
+            return Json(new {error = "You cannot delete tanks while a game is in progress." });
         }
 
         [HttpPost]
@@ -71,6 +86,15 @@ namespace towerDefense.Controllers
                         var constructor = type.GetConstructor(new Type[] {});
 
                         var newTank = (Tank) constructor.Invoke(new object[] {});
+
+                        try
+                        {
+                            JsonConvert.SerializeObject(newTank);
+                        }
+                        catch (Exception e)
+                        {
+                            return Json(new { error = "Failed to upload tank. " + e.Message });
+                        }
 
                         Player player = game.Players.FirstOrDefault(x => x.Name == playername);
 
@@ -97,11 +121,11 @@ namespace towerDefense.Controllers
                     }
                     catch (Exception e)
                     {
-                        //There was an error making a tank - that is ok.
+                        return Json(new { error = "Failed to upload tank. " + e.Message });
                     }
                 }
             }
-            return RedirectToAction("../Game/" + gamename);
+            return Json(new { success = true });
         }
 
         [HttpPost]

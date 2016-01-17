@@ -14,7 +14,7 @@
 
             <div>
                 <h3>Upload a tank:</h3>
-                <form action="../Game/UploadFile" method="post" enctype="multipart/form-data">
+                <form id="uploadTank" action="../Game/UploadFile" method="post" enctype="multipart/form-data">
                     <input type="file" name="file" id="file" />
                     <input type="hidden" name="playername" value="{{playername}}" />
                     <input type="hidden" name="gamename" value="{{gamename}}" />
@@ -29,7 +29,7 @@
 
                     <template is="dom-repeat" items="{{player.tanks}}" as="tank">
                         <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tank.name}}</span>
-                            <iron-icon id="{{tank.name}}" icon="delete" on-click="_deleteTank"></iron-icon>
+                            <iron-icon tankname="{{tank.name}}" icon="delete" playername="{{player.name}}" on-click="_deleteTank"></iron-icon>
                         </div>
                     </template>
                 </template>
@@ -40,6 +40,8 @@
             <div>
                 <canvas id="gameCanvas"></canvas>
             </div>
+
+            <paper-toast id="toast0" text="Welcome back!"></paper-toast>
         </div>
     </template>
 
@@ -61,22 +63,33 @@
                 var canvas = document.getElementById("gameCanvas");
                 towerDefense.gameDrawer.init(canvas);
 
-                var proxy = $.connection.gameHub;
+                $('#uploadTank').submit(function (event) {
+                    event.preventDefault();
 
-                //var tankTurretImage = new Image();
-                //tankTurretImage.src = "../Sprites/tankTurret.png";
-                //var tankBaseImage = new Image();
-                //tankBaseImage.src = "../Sprites/tankBase.png";
+                    var formData = new FormData();
+                    formData.append('file', event.currentTarget[0].files[0]);
+                    formData.append('playername', event.currentTarget[1].value);
+                    formData.append('gamename', event.currentTarget[2].value);
 
-                //var ctx = canvas.getContext("2d");
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', $(this).attr('action'), true);
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
 
-                //_.each(this.players, function (player) {
-                //    _.each(player.tanks, function (tank) {
-                //        ctx.drawImage(tankBaseImage, tank.x, tank.y, 32, 32);
-                //        ctx.translate(tank.x + 16, tank.y + 16);
-                //        ctx.drawImage(tankTurretImage, -(tankTurretImage.width / 2), -(tankTurretImage.height / 2));
-                //    });
-                //});
+                            if (response.error) {
+                                document.querySelector('#toast0').text = response.error;
+                                document.querySelector('#toast0').open();
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    };
+
+                    xhr.send(formData);
+
+                    return false;
+                });
             },
             start: function () {
                 var url = "../Game/Start";
@@ -115,16 +128,22 @@
             _deleteTank: function(e) {
                 var url = "../Game/DeleteTank";
                 var xhr = new XMLHttpRequest();
-                var params = JSON.stringify({ gameName: this.gamename, playername: this.playername, tankname: e.currentTarget.id });
+                var params = JSON.stringify({ gameName: this.gamename, playername: e.currentTarget.playername, tankname: e.currentTarget.tankname });
                 xhr.open('POST', url);
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.onload = function () {
                     if (xhr.status === 200) {
-                        //var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
+                        var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
 
-                        location.reload();
+                        if (response.error) {
+                            document.querySelector('#toast0').text = response.error;
+                            document.querySelector('#toast0').open();
+                        } else {
+                            location.reload();
+                        }
                     }
                 };
+
                 xhr.send(params);
             }
         });

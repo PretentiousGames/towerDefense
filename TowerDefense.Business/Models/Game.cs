@@ -12,6 +12,7 @@ namespace TowerDefense.Business.Models
     {
         private Thread _thread;
         private GameThread _gameThread;
+        public Thread GameThread { get { return _thread; } }
 
         public int Killed { get; set; }
         public GameState GameState { get; private set; }
@@ -23,6 +24,7 @@ namespace TowerDefense.Business.Models
         public int FoeCount { get; set; }
         public int FoesToSpawn { get; set; }
         public int MonsterStartHealth { get; set; }
+        public string RawJson { get; set; }
 
         public string Version
         {
