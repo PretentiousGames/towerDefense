@@ -90,7 +90,7 @@
     var jellyImage = new Image();
     jellyImage.src = "../Sprites/jelly.png";
     var healerImage = new Image();
-    healerImage.src = "../Sprites/healer.png";
+    healerImage.src = "../Sprites/hoverBot.png";
     var flameImage = new Image();
     flameImage.src = "../Sprites/flame.png";
     var splitterImage = new Image();
@@ -446,6 +446,9 @@
                             break;
                         case monsterType.healing:
                             image = healerImage;
+                            imageWidth = 128;
+                            imageHeight = 32;
+                            frameCount = 4;
                             break;
                         case monsterType.splitter:
                             image = splitterImage;

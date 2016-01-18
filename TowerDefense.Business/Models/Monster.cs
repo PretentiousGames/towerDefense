@@ -322,7 +322,7 @@ namespace TowerDefense.Business.Models
                                 Size = new Size(1, 1),
                                 X = location.X,
                                 Y = location.Y,
-                                Strength = MaxHealth / 1000.0
+                                Strength = MaxHealth / 100.0
                             }
                         }.Union(gameState.GravityEntities));
                     }
@@ -341,8 +341,10 @@ namespace TowerDefense.Business.Models
 
         private void DoActualMovement(Vector pull, IGameState gameState)
         {
-            Velocity.X = Math.Min(Math.Max(Velocity.X, -100), 100);
-            Velocity.Y = Math.Min(Math.Max(Velocity.Y, -100), 100);
+            if (Velocity.Total > 200)
+            {
+                Velocity.Total = 200;
+            }
 
             var randomComponent = new Vector(GetRandomVDelta(), GetRandomVDelta());
             pull += randomComponent;
@@ -381,8 +383,7 @@ namespace TowerDefense.Business.Models
             if (AbilityType == AbilityType.Fast)
             {
                 Speed = (Speed + MaxSpeed) / 2;
-                Velocity.X *= 1.1;
-                Velocity.Y *= 1.1;
+                Velocity.Total *= 1.1;
             }
             else if (AbilityType == AbilityType.Splitter)
             {
@@ -430,6 +431,17 @@ namespace TowerDefense.Business.Models
                 else if (FoeType == FoeType.Boss)
                 {
                     Size = new Size(41, 70);
+                }
+            }
+            else if (AbilityType == AbilityType.Healing)
+            {
+                if (FoeType == FoeType.Monster)
+                {
+                    Size = new Size(32, 32);
+                }
+                else if (FoeType == FoeType.Boss)
+                {
+                    Size = new Size(64, 64);
                 }
             }
         }

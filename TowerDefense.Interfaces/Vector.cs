@@ -1,4 +1,6 @@
-﻿namespace TowerDefense.Interfaces
+﻿using System;
+
+namespace TowerDefense.Interfaces
 {
     public class Vector
     {
@@ -15,6 +17,15 @@
 
         public double X { get; set; }
         public double Y { get; set; }
+        public double Total {
+            get { return Math.Sqrt(X*X + Y*Y); }
+            set
+            {
+                var multiplier = value/Total;
+                X *= multiplier;
+                Y *= multiplier;
+            }
+        }
 
         public static Vector operator +(Vector c1, Vector c2)
         {

@@ -125,7 +125,7 @@ namespace TowerDefense.Business.Models
             
             while (foesToSpawnLog > 0)
             {
-                if (_game.GameState.Wave % 1 == 0)
+                if (_game.GameState.Wave % 5 == 0)
                 {
                     _game.FoesToSpawn = 0;
 
