@@ -19,7 +19,7 @@
             var rawModel = @Html.Raw(Model.RawJson);
 
             if (rawModel.error) {
-                //document.querySelector('#toast0').open();
+                //document.querySelector('#errorToast').open();
             } else {
                 window.towerDefense = window.towerDefense || {};
                 window.towerDefense.game = towerDefense.mapToJsObject(rawModel);    

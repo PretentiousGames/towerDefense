@@ -3,6 +3,11 @@
         iron-icon:hover {
             fill: gray;
         }
+
+        paper-button.white {
+            background-color: white;
+            color: black;
+        }
     </style>
 
     <template>
@@ -29,7 +34,7 @@
 
                     <template is="dom-repeat" items="{{player.tanks}}" as="tank">
                         <div>&nbsp;&nbsp;<span>{{getPlayerNumber(index)}}</span>. <span>{{tank.name}}</span>
-                            <iron-icon tankname="{{tank.name}}" icon="delete" playername="{{player.name}}" on-click="_deleteTank"></iron-icon>
+                            <iron-icon icon="delete" playername="{{player.name}}" tankname="{{tank.name}}" on-click="_showDeleteTankPrompt"></iron-icon>
                         </div>
                     </template>
                 </template>
@@ -41,7 +46,8 @@
                 <canvas id="gameCanvas"></canvas>
             </div>
 
-            <paper-toast id="toast0" text="Welcome back!"></paper-toast>
+            <paper-toast id="errorToast" text="Welcome back!"></paper-toast>
+            <paper-toast id="confirmDeleteToast" duration="0" text="Delete tank?"><paper-button raised class="white" playername="" tankname="" on-click="_deleteTank">Yes</paper-button><paper-button raised class="white" onclick="document.querySelector('#confirmDeleteToast').close();">No</paper-button></paper-toast>
         </div>
     </template>
 
@@ -57,6 +63,7 @@
                 return Number + 1;
             },
             ready: function () {
+                var self = this;
                 this.playername = localStorage.name;
                 this.players = towerDefense.game.players;
 
@@ -66,27 +73,33 @@
                 $('#uploadTank').submit(function (event) {
                     event.preventDefault();
 
-                    var formData = new FormData();
-                    formData.append('file', event.currentTarget[0].files[0]);
-                    formData.append('playername', event.currentTarget[1].value);
-                    formData.append('gamename', event.currentTarget[2].value);
+                    var playername = self.playername;
 
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', $(this).attr('action'), true);
-                    xhr.onload = function () {
-                        if (xhr.status === 200) {
-                            var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
+                    if (playername) {
+                        var formData = new FormData();
+                        formData.append('file', event.currentTarget[0].files[0]);
+                        formData.append('playername', playername);
+                        formData.append('gamename', event.currentTarget[2].value);
 
-                            if (response.error) {
-                                document.querySelector('#toast0').text = response.error;
-                                document.querySelector('#toast0').open();
-                            } else {
-                                location.reload();
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', $(this).attr('action'), true);
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
+
+                                if (response.error) {
+                                    document.querySelector('#errorToast').text = response.error;
+                                    document.querySelector('#errorToast').open();
+                                } else {
+                                    location.reload();
+                                }
                             }
-                        }
-                    };
-
-                    xhr.send(formData);
+                        };
+                        xhr.send(formData);
+                    } else {
+                        document.querySelector('#errorToast').text = 'Enter your name before you upload a tank.';
+                        document.querySelector('#errorToast').open();
+                    }
 
                     return false;
                 });
@@ -125,7 +138,17 @@
                 };
                 xhr.send(params);
             },
-            _deleteTank: function(e) {
+            _showDeleteTankPrompt: function(e) {
+                var playerName = e.currentTarget.playername;
+                var tankName = e.currentTarget.tankname;
+
+                document.querySelector('#confirmDeleteToast').children[1].playername = playerName;
+                document.querySelector('#confirmDeleteToast').children[1].tankname = tankName;
+
+                document.querySelector('#confirmDeleteToast').text = "Delete " + playerName + "'s " + tankName + "?";
+                document.querySelector('#confirmDeleteToast').open();
+            },
+            _deleteTank: function (e) {
                 var url = "../Game/DeleteTank";
                 var xhr = new XMLHttpRequest();
                 var params = JSON.stringify({ gameName: this.gamename, playername: e.currentTarget.playername, tankname: e.currentTarget.tankname });
@@ -136,9 +159,10 @@
                         var response = !xhr.responseText ? "" : JSON.parse(xhr.responseText);
 
                         if (response.error) {
-                            document.querySelector('#toast0').text = response.error;
-                            document.querySelector('#toast0').open();
+                            document.querySelector('#errorToast').text = response.error;
+                            document.querySelector('#errorToast').open();
                         } else {
+                            document.querySelector('#confirmDeleteToast').close();
                             location.reload();
                         }
                     }
