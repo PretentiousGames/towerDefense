@@ -124,24 +124,34 @@ namespace TowerDefense.Business.Models
                 },
                 {
                     AbilityType.Healing,
-                    gameState => {
+                    gameState =>
+                    {
                         var range = 10*(int) Math.Log(Health, 1.5);
                         if (FoeType == FoeType.Boss)
                         {
-                            range = 10;
                             Health += 10;
-                            return new AbilityResult() {Heat = 10, AbilityType = AbilityType.Healing, Range=range};
                         }
-                        foreach (var foe in ((IGameState) gameState).Foes)
+                        else
                         {
-                            if (IsEntityInRange(range, foe))
+                            foreach (var foe in ((IGameState) gameState).Foes)
                             {
-                                var monster = (Monster) foe;
-                                if (monster.Health < monster.MaxHealth*1.5)
+                                if (IsEntityInRange(range, foe))
                                 {
-                                    monster.Health += 5;
+                                    var monster = (Monster) foe;
+                                    if (monster.Health < monster.MaxHealth*1.5)
+                                    {
+                                        monster.Health += 5;
+                                    }
                                 }
                             }
+                        }
+
+                        var goal = IsAtGoal(gameState.Goals);
+                        if (goal != null)
+                        {
+                            ((Goal)goal).Health -= (Health / 20);
+                            Health = 0;
+                            return new AbilityResult() {Heat = _heat, AbilityType = AbilityType.Kamakaze};
                         }
 
                         _heat += 1;
@@ -279,7 +289,7 @@ namespace TowerDefense.Business.Models
                 {
                     var range = 10 * (int)Math.Log(Health, 1.5);
                     int maxFoes = GetFoesInRange(range, _xTarget, _yTarget, gameState);
-
+                    
                     for (int i = 0; i < 20; i++)
                     {
                         var y = _random.NextDouble() * gameState.Size.Height;
@@ -295,17 +305,27 @@ namespace TowerDefense.Business.Models
 
                     var location = new Location(_xTarget, _yTarget);
 
-                    var pull = GeneratePull(new List<IEntity>
+
+                    Vector pull;
+
+                    if (maxFoes == 1)
                     {
-                        new GravityEntity
+                        pull = GeneratePull(gameState.Goals.Select(x => (IEntity) x).Union(gameState.GravityEntities));
+                    }
+                    else
+                    {
+                        pull = GeneratePull(new List<IEntity>
                         {
-                            Duration = 1,
-                            Size = new Size(1, 1),
-                            X = location.X,
-                            Y = location.Y,
-                            Strength = MaxHealth
-                        }
-                    }.Union(gameState.GravityEntities));
+                            new GravityEntity
+                            {
+                                Duration = 1,
+                                Size = new Size(1, 1),
+                                X = location.X,
+                                Y = location.Y,
+                                Strength = MaxHealth / 1000.0
+                            }
+                        }.Union(gameState.GravityEntities));
+                    }
                     DoActualMovement(pull, gameState);
                 };
             }
