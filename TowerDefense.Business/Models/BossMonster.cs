@@ -8,16 +8,12 @@ namespace TowerDefense.Business.Models
 {
     public class BossMonster : Monster
     {
-        public BossMonster(int monsterMaxHealth, AbilityType? type = null) : base(monsterMaxHealth)
+        public BossMonster(int monsterMaxHealth, AbilityType? type = null) : base(monsterMaxHealth, type ?? AbilityType.Kamakaze)
         {
             Size = new Size((int)(Width * 1.5), (int)(Height * 1.5));
             Speed = MaxSpeed = 0.75;
             _gravityConstant = 400;
             FoeType = FoeType.Boss;
-            AbilityType = type ?? AbilityType.Kamakaze;
-            Ability = AbilitiesDictionary[AbilityType];
-            SetOnDeathAbilities();
-            SetOnHitAbilities();
             SetMonsterSize();
         }
     }

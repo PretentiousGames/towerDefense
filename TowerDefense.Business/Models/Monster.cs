@@ -210,8 +210,8 @@ namespace TowerDefense.Business.Models
             var pull = new Vector();
             foreach (var target in targets)
             {
-                var xComponent = target.X + target.Size.Width / 2 - X;
-                var yComponent = target.Y + target.Size.Height / 2 - Y;
+                var xComponent = target.Center.X - Center.X;
+                var yComponent = target.Center.Y - Center.Y;
                 var distanceSquared = xComponent * xComponent + yComponent * yComponent;
                 var angle = Math.Atan2(yComponent, xComponent);
                 var magnitude = _gravityConstant / distanceSquared;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using TowerDefense.Interfaces;
+using Size = TowerDefense.Interfaces.Size;
 
 namespace TestTower
 {
@@ -31,7 +32,7 @@ namespace TestTower
                 tankUpdate.ShotTarget = LocationProvider.GetLocation(_xTarget, _yTarget);
                 ChangeBulletPower(tankUpdate.ShotTarget, gameState);
 
-                var range = GetDistanceFromTank(new GravityEntity { X = _yTarget, Y = _yTarget, Size = new TowerDefense.Interfaces.Size(1, 1) }) + 1;
+                var range = GetDistanceFromTank(LocationProvider.GetLocation(_xTarget, _yTarget)) + 1;
                 if (Bullet.GetReloadTime((int)range) < 1000 || range < 100)
                 {
                     tankUpdate.Bullet = Bullet;

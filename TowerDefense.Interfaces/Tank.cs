@@ -92,6 +92,10 @@ namespace TowerDefense.Interfaces
         {
             return GetDistance(this, location.X, location.Y);
         }
+        protected double GetDistanceFromTank(double x, double y, Size size)
+        {
+            return GetDistance(this, x + size.Width / 2, y + size.Height / 2);
+        }
 
         protected string ConvertColorToHexString(Color c)
         {

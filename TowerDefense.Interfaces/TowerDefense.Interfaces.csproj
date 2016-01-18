@@ -46,7 +46,6 @@
     <Compile Include="AbilityResult.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="FoeType.cs" />
-    <Compile Include="GravityEntity.cs" />
     <Compile Include="IBullet.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IFoe.cs" />
