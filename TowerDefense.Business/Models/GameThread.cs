@@ -250,7 +250,10 @@ namespace TowerDefense.Business.Models
             foreach (var monster in foesInRange)
             {
                 monster.Health -= bullet.Damage;
-                monster.OnHitAbility?.Invoke(_game.GameState, bullet.Damage);
+                if (monster.OnHitAbility != null)
+                {
+                    monster.OnHitAbility.Invoke(_game.GameState, bullet.Damage);
+                }
                 gameTank.Damage += bullet.Damage;
                 gameTank.MaxDamageDealt = Math.Max(bullet.Damage, gameTank.MaxDamageDealt);
 
@@ -265,7 +268,10 @@ namespace TowerDefense.Business.Models
         {
             var gameState = _game.GameState;
 
-            monster.OnDeathAbility?.Invoke(gameState);
+            if (monster.OnDeathAbility != null)
+            {
+                monster.OnDeathAbility.Invoke(gameState);
+            }
 
             gameState.Foes.Remove(monster);
             if (!gameState.Lost)

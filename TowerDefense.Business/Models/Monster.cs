@@ -27,7 +27,7 @@ namespace TowerDefense.Business.Models
         public Dictionary<AbilityType, Func<IGameState, AbilityResult>> AbilitiesDictionary { get; set; }
 
         public AbilityResult AbilityResult { get; set; }
-        public int Id { get; }
+        public int Id { get; set; }
         public double X { get { return Location.X; } }
         public double Y { get { return Location.Y; } }
         public ILocation Location { get; set; }
@@ -36,7 +36,7 @@ namespace TowerDefense.Business.Models
             get { return new Location(X + Size.Width / 2, Y + Size.Height / 2); }
         }
         public Vector Velocity { get; set; }
-        public int MaxHealth { get; }
+        public int MaxHealth { get; set; }
         public int Health { get; set; }
         public FoeType FoeType { get; protected set; }
         public double Speed { get; set; }

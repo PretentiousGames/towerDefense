@@ -26,16 +26,16 @@ namespace TowerDefense.Interfaces
             Speed = 1;
         }
 
-        public ILocation Location { get; }
+        public ILocation Location { get; private set; }
         public double X { get { return Location.X; } }
         public double Y { get { return Location.Y; } }
-        public Size Size { get; }
+        public Size Size { get; private set; }
         public double Heat { get; set; }
         public ILocation Center
         {
             get { return LocationProvider.GetLocation(X + Size.Width / 2, Y + Size.Height / 2); }
         }
-        public int Id { get; }
+        public int Id { get; private set; }
     
         public abstract string Name { get; }
 

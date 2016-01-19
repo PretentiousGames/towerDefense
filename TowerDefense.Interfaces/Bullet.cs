@@ -7,11 +7,11 @@ namespace TowerDefense.Interfaces
         public int Damage { get; set; }
         public int Freeze { get; set; }
 	    public int SplashRange { get; set; }
-        public double SplashHeatMultiplier => 2;
-        public double FreezeHeatMultiplier => .5;
+        public const double SplashHeatMultiplier = 2;
+        public const double FreezeHeatMultiplier = .5;
         public int GravityDuration { get; set; }
         public double GravityStrength { get; set; }
-        public int GravityMultiplier => 10;
+        public const int GravityMultiplier = 10;
 
         public long GetReloadTime(double range)
         {

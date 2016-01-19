@@ -5,8 +5,8 @@ namespace TowerDefense.Business
 {
     public class GravityEntity : IGravityEntity
     {
-        public int Id { get; }
-        public ILocation Location { get; }
+        public int Id { get; set; }
+        public ILocation Location { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public Size Size { get; set; }
